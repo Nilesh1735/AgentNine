@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: git diff --check
+      - run: npm run check:migrations
+      - run: npm run check:anti-vibe
+      - run: npm run check:production-config
+        env:
+          CHECK_PRODUCTION_CONFIG: "1"
+          NEXT_PUBLIC_SITE_URL: https://agentnine.pro
+          NEXT_PUBLIC_SUPABASE_URL: https://ci-project.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+          SUPABASE_SERVICE_ROLE_KEY: ci-placeholder
+          ADMIN_DASHBOARD_KEY: ci-placeholder
+          NEXT_PUBLIC_CONTACT_EMAIL: ci@example.invalid
+          RESEND_API_KEY: ci-placeholder
+          CONTACT_FROM_EMAIL: AgentNine <contact@example.invalid>
+          UPSTASH_REDIS_REST_URL: https://ci-upstash.example.invalid
+          UPSTASH_REDIS_REST_TOKEN: ci-placeholder
+          TRUSTED_PROXY_HEADERS: "true"
+          CRON_SECRET: ci-placeholder
+      - run: npm run check:ux
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npm run check:admin-security
+      - run: npm run check:routes
+      - run: npm audit --omit=dev --audit-level=high
