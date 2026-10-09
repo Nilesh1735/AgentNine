@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/agents/metadata",
+      "schedule": "0 5 * * 1"
+    }
+  ]
+}
