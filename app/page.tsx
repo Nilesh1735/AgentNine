@@ -6,14 +6,28 @@ import { HomeCatalogLoadingSkeleton } from "@/components/HomeLoadingSkeleton";
 import { HomeFaqAccordion } from "@/components/HomeFaqAccordion";
 import { ProfileAvatars } from "@/components/ProfileAvatars";
 import { serializeJsonLd } from "@/lib/json-ld";
+import { createPublicPageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 export default function Home() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebSite", "@id": "#website", name: "AgentNine", ...(siteUrl ? { url: siteUrl } : {}), description: "Compare AI agent projects by source, setup requirements, and documented access." },
-      { "@type": "Organization", name: "AgentNine", ...(siteUrl ? { url: siteUrl } : {}) },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        url: SITE_URL,
+        name: "AgentNine",
+        description: "Compare AI agent projects by source, setup requirements, and documented access.",
+        publisher: { "@id": `${SITE_URL}/#organization` },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        url: SITE_URL,
+        name: "AgentNine",
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+      },
     ],
   };
 
@@ -71,22 +85,8 @@ export default function Home() {
   );
 }
 
-export const metadata = {
-  title: "Home",
-  description: "Find AI agent projects and review their sources, setup requirements, and documented access.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Home | AgentNine",
-    description: "Find AI agent projects and review their sources, setup requirements, and documented access.",
-    type: "website",
-    siteName: "AgentNine",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "AgentNine home" }],
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Home | AgentNine",
-    description: "Find AI agent projects and review their sources, setup requirements, and documented access.",
-    images: ["/og-image.png"],
-  },
-};
+export const metadata = createPublicPageMetadata({
+  title: "Open-Source AI Agents: Setup & Access",
+  description: "Find open-source AI agent projects. Compare source repositories, setup guidance, requirements, and documented access before you run them.",
+  path: "/",
+});

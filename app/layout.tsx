@@ -5,6 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,7 @@ const fraunces = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://agentnine.pro"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AgentNine | Compare AI agent projects",
     template: "%s | AgentNine",

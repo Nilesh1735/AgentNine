@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ArrowRight from "reicon-react/icons/ArrowRight";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPublicPageMetadata({
   title: "Trust and methodology",
   description: "How AgentNine records verification evidence, freshness, and uncertainty.",
-};
+  path: "/methodology",
+});
 
 export default function MethodologyPage() {
   return (

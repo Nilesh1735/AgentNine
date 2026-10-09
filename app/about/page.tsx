@@ -3,6 +3,9 @@ import Link from "next/link";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import { FounderPortraitMotion } from "@/components/FounderPortraitMotion";
 import { TeamRevealGrid, type TeamRevealMember } from "@/components/ui/team-reveal-grid";
+import { serializeJsonLd } from "@/lib/json-ld";
+import { createPublicPageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 const teamMembers = [
   {
@@ -27,15 +30,29 @@ const teamMembers = [
   },
 ] satisfies readonly TeamRevealMember[];
 
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "About",
   description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    url: `${SITE_URL}/about`,
+    name: "About AgentNine",
+    about: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "AgentNine",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon.svg`,
+    },
+  };
   return (
     <main id="main-content" className="page-shell founder-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
       <div className="container">
         <section className="founder-hero" aria-labelledby="founder-title">
           <div className="founder-intro">

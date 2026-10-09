@@ -89,11 +89,13 @@ export function DirectoryPreview({ agents, categories }: { agents: Agent[]; cate
           {ringCollection.map((agent, index) => {
             const category = categoryById.get(agent.category_id);
             const displayIndex = index % collection.length;
+            const isDuplicate = index >= collection.length;
             return (
               <motion.article
                 className="agent-ring-card"
-                key={`${agent.id}-${index}`}
+                key={`${agent.id}-${isDuplicate ? "duplicate" : "original"}`}
                 data-index={String(displayIndex + 1).padStart(2, "0")}
+                aria-hidden={isDuplicate || undefined}
                 whileHover={reduceMotion ? undefined : { y: -4 }}
               >
                 <div className="agent-ring-card-top">
@@ -101,10 +103,17 @@ export function DirectoryPreview({ agents, categories }: { agents: Agent[]; cate
                   <span>{category?.name ?? "AI agent"}</span>
                 </div>
                 <AgentArtwork seed={agent.slug} categorySlug={category?.slug} />
-                <Link href={`/agents/${agent.slug}`} prefetch={false} className="agent-ring-card-title">
-                  <strong>{agent.name}</strong>
-                  <ArrowUpRight size={16} aria-hidden="true" />
-                </Link>
+                {isDuplicate ? (
+                  <span className="agent-ring-card-title">
+                    <strong>{agent.name}</strong>
+                    <ArrowUpRight size={16} aria-hidden="true" />
+                  </span>
+                ) : (
+                  <Link href={`/agents/${agent.slug}`} prefetch={false} className="agent-ring-card-title">
+                    <strong>{agent.name}</strong>
+                    <ArrowUpRight size={16} aria-hidden="true" />
+                  </Link>
+                )}
                 <p>{agent.short_description}</p>
                 <div className="agent-ring-card-bottom">
                   <span>{agent.version_tag || "Version pending"}</span>

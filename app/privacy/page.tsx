@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "Privacy policy",
   description: "How AgentNine handles account, feedback, analytics, and contact information.",
-  alternates: { canonical: "/privacy" },
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
