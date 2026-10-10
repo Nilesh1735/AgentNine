@@ -1,3 +1,5 @@
+"use client";
+
 import type { CatalogResult } from "@/lib/data";
 
 type CatalogStateProps = {
