@@ -1,7 +1,5 @@
 const requiredInProduction = [
   "NEXT_PUBLIC_SITE_URL",
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "ADMIN_DASHBOARD_KEY",
   "NEXT_PUBLIC_CONTACT_EMAIL",
@@ -24,6 +22,12 @@ if (!production) {
 }
 
 const missing = requiredInProduction.filter((name) => !process.env[name]?.trim());
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() && !process.env.SUPABASE_URL?.trim()) {
+  missing.push("Configure NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL");
+}
+if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() && !process.env.SUPABASE_ANON_KEY?.trim()) {
+  missing.push("Configure NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_ANON_KEY");
+}
 if (!process.env.CONTACT_LAMBDA_URL?.trim() && (!process.env.RESEND_API_KEY?.trim() || !process.env.CONTACT_FROM_EMAIL?.trim())) {
   missing.push("Configure CONTACT_LAMBDA_URL or both RESEND_API_KEY and CONTACT_FROM_EMAIL");
 }
