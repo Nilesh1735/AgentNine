@@ -2,12 +2,13 @@ import Link from "next/link";
 import { FaqDirectory } from "@/components/FaqDirectory";
 import { faqGroups } from "@/lib/faq";
 import { serializeJsonLd } from "@/lib/json-ld";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "Listings, setup, and verification",
   description: "Answers about agent submissions, recorded checks, setup details, and what a verification mark means.",
-  alternates: { canonical: "/faq" },
-};
+  path: "/faq",
+});
 
 export default function FaqPage() {
   const jsonLd = {

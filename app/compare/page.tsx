@@ -6,6 +6,10 @@ import type { Agent } from "@/lib/types";
 import { getComparisonFit } from "@/lib/compare";
 
 export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Compare AI agent projects",
+  robots: { index: false, follow: false },
+};
 
 const rows: Array<[string, (agent: Agent) => string]> = [
   ["Status", (agent) => getAgentTrustState(agent).label],

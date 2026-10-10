@@ -1,9 +1,13 @@
 import { AnalyticsPrivacyChoices } from "@/components/AnalyticsPrivacyChoices";
+import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata = {
+  ...createPublicPageMetadata({
   title: "Privacy choices",
   description: "Review or change whether AgentNine may collect optional analytics.",
-  alternates: { canonical: "/privacy/choices" },
+  path: "/privacy/choices",
+  }),
+  robots: { index: false, follow: true },
 };
 
 export default function PrivacyChoicesPage() {

@@ -5,12 +5,12 @@ import { CatalogState } from "@/components/CatalogState";
 import { DirectoryPreview } from "@/components/DirectoryPreview";
 import { getAgents, getCategories, getRecentlyUpdatedAgents } from "@/lib/data";
 import { serializeJsonLd } from "@/lib/json-ld";
+import { SITE_URL } from "@/lib/site";
 
 export async function HomeCatalogSections() {
   const [agents, categories] = await Promise.all([getAgents(), getCategories()]);
   const featured = agents.data.slice(0, 3);
   const recentlyUpdated = getRecentlyUpdatedAgents(agents.data).slice(0, 4);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -20,7 +20,8 @@ export async function HomeCatalogSections() {
       "@type": "ListItem",
       position: index + 1,
       name: agent.name,
-      ...(siteUrl ? { url: `${siteUrl}/agents/${agent.slug}` } : {}),
+      url: `${SITE_URL}/agents/${agent.slug}`,
+      item: `${SITE_URL}/agents/${agent.slug}`,
     })),
   };
 

@@ -244,6 +244,7 @@ export function FeyCards() {
       <p className="eyebrow fey-hero-kicker">OPEN-SOURCE AI AGENT DIRECTORY</p>
       <h1 className="fey-hero-title">
         <span>Find Your</span>
+        {" "}
         <span>Next Agent</span>
       </h1>
       <div

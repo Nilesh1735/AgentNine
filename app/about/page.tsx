@@ -3,6 +3,9 @@ import Link from "next/link";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import { FounderPortraitMotion } from "@/components/FounderPortraitMotion";
 import { TeamRevealGrid, type TeamRevealMember } from "@/components/ui/team-reveal-grid";
+import { serializeJsonLd } from "@/lib/json-ld";
+import { createPublicPageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 const teamMembers = [
   {
@@ -14,6 +17,11 @@ const teamMembers = [
     imageAlt: "Illustrated black-and-white portrait of Nilesh",
     imagePosition: "center 18%",
     accent: "var(--blue)",
+    socialLinks: [
+      { platform: "GitHub", href: "https://github.com/Nilesh1735" },
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/nilesh-raj-ai" },
+      { platform: "X", href: "https://x.com/NileshR1735" },
+    ],
   },
   {
     id: "ali-sibtain",
@@ -24,18 +32,50 @@ const teamMembers = [
     imageAlt: "Illustrated portrait provided for Ali Sibtain",
     imagePosition: "center 18%",
     accent: "var(--blue)",
+    socialLinks: [
+      { platform: "GitHub", href: "https://github.com/alisibtain001-hub" },
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/mohd-ali-sibtain/" },
+    ],
+  },
+  {
+    id: "armaan-amba",
+    name: "Arman Amba",
+    role: "AI Developer",
+    expertise: "Contributes to AgentNine development.",
+    image: "/armaan-profile.jpeg",
+    imageAlt: "Illustrated black-and-white profile portrait of Arman Amba",
+    imagePosition: "center center",
+    profileSize: "compact",
+    accent: "var(--blue)",
+    socialLinks: [
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/armaan-amba-103451378" },
+    ],
   },
 ] satisfies readonly TeamRevealMember[];
 
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "About",
   description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    url: `${SITE_URL}/about`,
+    name: "About AgentNine",
+    about: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "AgentNine",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon.svg`,
+    },
+  };
   return (
     <main id="main-content" className="page-shell founder-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
       <div className="container">
         <section className="founder-hero" aria-labelledby="founder-title">
           <div className="founder-intro">
@@ -84,6 +124,7 @@ export default function AboutPage() {
           className="founder-team"
           aria-label="AgentNine team"
           title="The team"
+          description="AgentNine is growing as a community. We plan to welcome more project builders and contributors over time."
           members={teamMembers}
           defaultActiveMemberId={null}
           autoPlay={false}

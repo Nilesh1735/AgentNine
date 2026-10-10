@@ -21,6 +21,12 @@
 # production
 /build
 
+# local reference material, not needed to build or deploy the application
+/skills/
+/skills-lock.json
+/data/skills/
+/data/source-snapshots/
+
 # misc
 .DS_Store
 *.pem

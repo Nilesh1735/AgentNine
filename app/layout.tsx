@@ -5,6 +5,8 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
+import { SITE_URL } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +26,7 @@ const fraunces = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://agentnine.pro"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AgentNine | Compare AI agent projects",
     template: "%s | AgentNine",
@@ -55,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></body>
+      <body className="min-h-full flex flex-col"><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /><Analytics /></body>
     </html>
   );
 }

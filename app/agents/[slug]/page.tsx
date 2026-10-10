@@ -8,7 +8,7 @@ import { AgentPageNavigation } from "@/components/AgentPageNavigation";
 import { AgentCard } from "@/components/AgentCard";
 import { ReportBrokenLink } from "@/components/ReportBrokenLink";
 import { SourceLink } from "@/components/SourceLink";
-import { getAgent, getCategories, getRelatedAgents } from "@/lib/data";
+import { getAgent, getAgents, getCategories, getRelatedAgents } from "@/lib/data";
 import { SavedAgentButton } from "@/components/SavedAgentButton";
 import { CompareButton } from "@/components/CompareButton";
 import { serializeJsonLd } from "@/lib/json-ld";
@@ -16,21 +16,29 @@ import { VerificationSummary } from "@/components/VerificationSummary";
 import { getAgentTrustState } from "@/lib/trust";
 import { SetupGuidePanel } from "@/components/SetupGuidePanel";
 import { formatCatalogDate, getCompactVersionLabel, getReleaseRecord } from "@/lib/agent-metadata-display";
+import { createPublicPageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 export const dynamicParams = true;
+
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  const result = await getAgents();
+  return result.status === "ready"
+    ? result.data.map((agent) => ({ slug: agent.slug }))
+    : [];
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const agent = await getAgent((await params).slug);
   if (!agent) return { title: "Agent not found" };
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const reviewedDate = agent.last_verified_date && agent.last_verified_date !== "Not verified"
-    ? formatCatalogDate(agent.last_verified_date)
-    : null;
-  const socialImage = baseUrl
-    ? [{ url: `${baseUrl}/og-image.png`, width: 1200, height: 630, alt: "AgentNine | AI-agent directory with setup and access details" }]
-    : undefined;
-  return { title: `${agent.name} setup guide`, description: `Setup and access guide for ${agent.name}. Version ${agent.version_tag}${reviewedDate ? `, setup reviewed ${reviewedDate}` : ""}.`, alternates: { canonical: `/agents/${agent.slug}` }, openGraph: { title: `${agent.name} setup guide`, description: agent.short_description, type: "article", images: socialImage }, twitter: { card: "summary", title: `${agent.name} setup guide`, description: agent.short_description, images: socialImage?.map(({ url }) => url) } };
+  const description = `${agent.short_description} Review setup guidance, requirements, and documented system access before running it.`;
+  return createPublicPageMetadata({
+    title: `${agent.name} setup guide`,
+    description,
+    path: `/agents/${agent.slug}`,
+    type: "article",
+  });
 }
 
 export default async function AgentPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -44,9 +52,31 @@ export default async function AgentPage({ params }: { params: Promise<{ slug: st
     ? ""
     : formatCatalogDate(agent.last_verified_date);
   const operatingSystems = (["linux", "macos", "windows"] as const).filter((os) => agent.setup_guide.platforms?.[os]?.support === "supported").map((os) => os === "macos" ? "macOS" : os[0].toUpperCase() + os.slice(1));
-  const jsonLd = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: agent.name, description: agent.short_description, applicationCategory: "DeveloperApplication", ...(operatingSystems.length ? { operatingSystem: operatingSystems } : {}), softwareVersion: getCompactVersionLabel(agent.version_tag), ...(agent.github_url ? { codeRepository: agent.github_url } : {}), ...(agent.last_verified_date !== "Not verified" ? { dateModified: agent.last_verified_date } : {}) };
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const breadcrumbLd = category && baseUrl ? { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Categories", item: `${baseUrl}/categories` }, { "@type": "ListItem", position: 2, name: category.name, item: `${baseUrl}/categories/${category.slug}` }, { "@type": "ListItem", position: 3, name: agent.name, item: `${baseUrl}/agents/${agent.slug}` }] } : null;
+  const agentUrl = `${SITE_URL}/agents/${agent.slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": agentUrl,
+    url: agentUrl,
+    name: agent.name,
+    description: agent.short_description,
+    applicationCategory: "DeveloperApplication",
+    ...(operatingSystems.length ? { operatingSystem: operatingSystems } : {}),
+    softwareVersion: getCompactVersionLabel(agent.version_tag),
+    ...(agent.github_url ? { codeRepository: agent.github_url } : {}),
+  };
+  const breadcrumbLd = category
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Categories", item: `${SITE_URL}/categories` },
+          { "@type": "ListItem", position: 3, name: category.name, item: `${SITE_URL}/categories/${category.slug}` },
+          { "@type": "ListItem", position: 4, name: agent.name, item: agentUrl },
+        ],
+      }
+    : null;
   const permissionRows = [
     ["Network", agent.network_access || "Not documented in this listing"],
     ["Files", agent.file_access || "Not documented in this listing"],

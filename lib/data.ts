@@ -185,12 +185,15 @@ export async function getCategory(slug: string): Promise<Category | undefined> {
   }
 }
 
-export function getCategoryAgents(agents: Agent[], category: Category) {
-  return agents.filter((agent) => agent.category_id === category.id).slice(0, 5);
+export function getCategoryAgents<T extends Pick<Agent, "category_id">>(
+  agents: T[],
+  category: Pick<Category, "id">,
+): T[] {
+  return agents.filter((agent) => agent.category_id === category.id);
 }
 
 export function getCategoryAgentCount(agents: Agent[], category: Category) {
-  return agents.filter((agent) => agent.category_id === category.id).length;
+  return getCategoryAgents(agents, category).length;
 }
 
 export async function getRelatedAgents(agent: Agent, limit = 3): Promise<Agent[]> {

@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "Terms of service",
   description: "Terms for using AgentNine and reviewing listed AI-agent projects.",
-  alternates: { canonical: "/terms" },
-};
+  path: "/terms",
+});
 
 export default function TermsPage() {
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL;

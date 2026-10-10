@@ -27,6 +27,16 @@ function createSupabaseLookup(data: unknown, error: { message: string } | null) 
 }
 
 describe("catalog detail lookups", () => {
+  it("returns every agent in a category instead of truncating the listing", async () => {
+    const { getCategoryAgents } = await import("@/lib/data");
+    const agents = Array.from({ length: 8 }, (_, index) => ({
+      slug: `agent-${index}`,
+      category_id: index < 7 ? "coding" : "research",
+    }));
+
+    expect(getCategoryAgents(agents, { id: "coding" })).toHaveLength(7);
+  });
+
   it("rejects agent database errors instead of reporting a missing agent", async () => {
     const { getSupabasePublicServer } = await import("@/lib/supabase");
     const { client } = createSupabaseLookup(null, { message: "database unavailable" });

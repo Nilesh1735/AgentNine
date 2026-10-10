@@ -2,8 +2,13 @@ import Link from "next/link";
 import ArrowRight from "reicon-react/icons/ArrowRight";
 import { CatalogState } from "@/components/CatalogState";
 import { getCategories, getAgents, getCategoryAgentCount } from "@/lib/data";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "AI agent categories", description: "Browse AI-agent projects by coding, research, automation, and content.", alternates: { canonical: "/categories" } };
+export const metadata = createPublicPageMetadata({
+  title: "AI agent categories",
+  description: "Browse AI-agent projects by coding, research, automation, and content.",
+  path: "/categories",
+});
 
 export default async function CategoriesPage() {
   const [categories, agents] = await Promise.all([getCategories(), getAgents()]);
