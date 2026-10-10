@@ -15,6 +15,7 @@ export function ProfileAvatars({
       avatars={[
         { avatar: "/nilesh-profile.jpeg", name: "Nilesh", href: "/about" },
         { avatar: "/ali-sibtain-profile.webp", name: "Ali", href: "/about" },
+        { avatar: "/armaan-profile.jpeg", name: "Arman", href: "/about" },
         { avatar: emptyAvatar, name: "Join us", href: "/join" },
       ]}
       size={size}

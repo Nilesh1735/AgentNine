@@ -1,6 +1,15 @@
 import Link from "next/link";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import { BrandMark } from "@/components/BrandMark";
+import { SocialLinks } from "@/components/SocialLinks";
+
+const socialLinks = [
+  { platform: "GitHub", href: "https://github.com/Nilesh1735/AgentNine" },
+  { platform: "LinkedIn", href: "https://www.linkedin.com/company/agentnine/" },
+  { platform: "X", href: "https://x.com/agentninepro" },
+  { platform: "Instagram", href: "https://www.instagram.com/agentnine.pro" },
+  { platform: "Facebook", href: "https://www.facebook.com/share/1DeKsDQoQ7/" },
+] as const;
 
 export function Footer() {
   return (
@@ -9,6 +18,11 @@ export function Footer() {
         <div className="footer-brand-block">
           <Link href="/" className="brand"><BrandMark /><span>AgentNine</span></Link>
           <p className="footer-note">AI agent projects, with source links, setup steps, and access notes.</p>
+          <SocialLinks
+            links={socialLinks}
+            label="AgentNine social media"
+            className="footer-social-links"
+          />
           <Link href="/contact" className="footer-correction-link">Suggest a correction <ArrowUpRight size={14} aria-hidden="true" /></Link>
         </div>
         <div className="footer-links">
