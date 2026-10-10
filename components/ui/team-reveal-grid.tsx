@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { SocialLinks, type SocialLink } from "@/components/SocialLinks";
 import { cn } from "@/lib/utils";
 
 export interface TeamRevealMember {
@@ -18,6 +19,8 @@ export interface TeamRevealMember {
   imagePosition?: string;
 
   accent?: string;
+  profileSize?: "compact";
+  socialLinks?: readonly SocialLink[];
 }
 
 export interface TeamRevealGridProps
@@ -44,7 +47,7 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function Portrait({ member, active }: { member: TeamRevealMember; active: boolean }) {
+function Portrait({ member, active, compact }: { member: TeamRevealMember; active: boolean; compact: boolean }) {
   const style = {
     "--team-accent": member.accent ?? "var(--blue)",
   } as React.CSSProperties;
@@ -55,6 +58,7 @@ function Portrait({ member, active }: { member: TeamRevealMember; active: boolea
       className={cn(
         "relative overflow-hidden rounded-[1.05rem] bg-neutral-100 transition-colors duration-500 dark:bg-neutral-900",
         active && "bg-[color-mix(in_srgb,var(--team-accent)_10%,white)] dark:bg-[color-mix(in_srgb,var(--team-accent)_13%,#0a0a0a)]",
+        compact && "aspect-square",
       )}
     >
       <div
@@ -78,13 +82,14 @@ function Portrait({ member, active }: { member: TeamRevealMember; active: boolea
           loading="lazy"
           draggable={false}
           className={cn(
-            "relative block h-auto w-full object-contain grayscale transition-[filter,opacity] duration-500 ease-out motion-reduce:transition-none",
+            "relative block grayscale transition-[filter,opacity] duration-500 ease-out motion-reduce:transition-none",
+            compact ? "absolute inset-0 h-full w-full object-cover" : "h-auto w-full object-contain",
             active ? "grayscale-0" : "grayscale",
           )}
           style={{ objectPosition: member.imagePosition ?? "center top" }}
         />
       ) : (
-        <div className="relative aspect-[3/4] w-full overflow-hidden">
+        <div className={cn("relative w-full overflow-hidden", compact ? "aspect-square" : "aspect-[3/4]")}>
           <div
             aria-hidden="true"
             className={cn(
@@ -189,7 +194,10 @@ export function TeamRevealGrid({
             return (
               <li
                 key={member.id}
-                className="relative min-w-0"
+                className={cn(
+                  "relative min-w-0",
+                  member.profileSize === "compact" && "row-start-2 col-start-1 w-[clamp(124px,18vw,220px)] max-w-full justify-self-start",
+                )}
               >
                 <button
                   type="button"
@@ -231,7 +239,7 @@ export function TeamRevealGrid({
                         : "border-black/10 dark:border-white/10",
                     )}
                   >
-                    <Portrait member={member} active={active} />
+                    <Portrait member={member} active={active} compact={member.profileSize === "compact"} />
 
                     <div
                       id={detailsId}
@@ -263,6 +271,13 @@ export function TeamRevealGrid({
                     </p>
                   </div>
                 </button>
+                {member.socialLinks?.length ? (
+                  <SocialLinks
+                    links={member.socialLinks}
+                    label={`${member.name} social profiles`}
+                    className="team-social-links"
+                  />
+                ) : null}
               </li>
             );
           })}

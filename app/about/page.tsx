@@ -17,6 +17,11 @@ const teamMembers = [
     imageAlt: "Illustrated black-and-white portrait of Nilesh",
     imagePosition: "center 18%",
     accent: "var(--blue)",
+    socialLinks: [
+      { platform: "GitHub", href: "https://github.com/Nilesh1735" },
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/nilesh-raj-ai" },
+      { platform: "X", href: "https://x.com/NileshR1735" },
+    ],
   },
   {
     id: "ali-sibtain",
@@ -27,6 +32,24 @@ const teamMembers = [
     imageAlt: "Illustrated portrait provided for Ali Sibtain",
     imagePosition: "center 18%",
     accent: "var(--blue)",
+    socialLinks: [
+      { platform: "GitHub", href: "https://github.com/alisibtain001-hub" },
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/mohd-ali-sibtain/" },
+    ],
+  },
+  {
+    id: "armaan-amba",
+    name: "Arman Amba",
+    role: "AI Developer",
+    expertise: "Contributes to AgentNine development.",
+    image: "/armaan-profile.jpeg",
+    imageAlt: "Illustrated black-and-white profile portrait of Arman Amba",
+    imagePosition: "center center",
+    profileSize: "compact",
+    accent: "var(--blue)",
+    socialLinks: [
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/armaan-amba-103451378" },
+    ],
   },
 ] satisfies readonly TeamRevealMember[];
 
@@ -101,6 +124,7 @@ export default function AboutPage() {
           className="founder-team"
           aria-label="AgentNine team"
           title="The team"
+          description="AgentNine is growing as a community. We plan to welcome more project builders and contributors over time."
           members={teamMembers}
           defaultActiveMemberId={null}
           autoPlay={false}
