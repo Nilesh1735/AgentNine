@@ -13,6 +13,7 @@ import ArrowDown from "reicon-react/icons/ArrowDown";
 import { trackEvents } from "@/lib/analytics";
 import { updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
 import type { Agent, Category } from "@/lib/types";
+import { getAgentOperatingSystems } from "@/lib/search-platforms";
 
 type FilterOption = { value: string; label: string };
 const MAX_RECENT_AGENT_SEARCHES = 5;
@@ -288,7 +289,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
   }, [activeQuery, agents, categoryById, fuse]);
   const filtered = searched.filter(({ agent }) => {
     const categoryMatches = !category || categoryById[agent.category_id]?.slug === category;
-    const osMatches = !os || Boolean(agent.os_commands[os as keyof Agent["os_commands"]]);
+    const osMatches = !os || getAgentOperatingSystems(agent).some((supportedOs) => supportedOs === os);
     const apiMatches = !apiKey || (apiKey === "required"
       ? agent.requires_api_key === true
       : agent.requires_api_key === false);
@@ -403,7 +404,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
       {activeFilters.length > 0 && <div className="active-filters" aria-label="Active search filters"><span className="active-filters-label">Active filters</span>{activeFilters.map(([label, value, key]) => <button type="button" className="filter-chip" key={key} onClick={() => updateParam(key, "")} aria-label={`Remove ${label} filter${value ? `: ${value}` : ""}`}>{label}: {value} <Xmark size={12} aria-hidden="true" /></button>)}<button type="button" className="clear-filters" onClick={clearAll}>Clear all</button></div>}
       <div id="search-status" className="search-meta" role="status" aria-live="polite"><div><strong>{hasSearchCriteria ? `${results.length} agent${results.length === 1 ? "" : "s"}` : `${agents.length} agents`}</strong><span>{filterSummary.length ? filterSummary.join(", ") : "All published agents"}</span></div></div>
       <div className="results-list results-comfortable">
-        {visibleResults.map(({ agent }) => <div key={agent.id}><Link className="search-result" href={`/agents/${agent.slug}`} prefetch={false} onClick={() => saveRecentAgentSearch(agent.slug)}><span className="result-main"><strong>{agent.name}</strong><small>{agent.short_description}</small><span className="result-meta"><span>{categoryById[agent.category_id]?.name ?? "Uncategorized"}</span>{Object.keys(agent.os_commands ?? {}).filter((key) => agent.os_commands[key as keyof Agent["os_commands"]]).slice(0, 2).map((item) => <span key={item}>{item === "macos" ? "macOS" : item[0].toUpperCase() + item.slice(1)}</span>)}{agent.verification_score === 5 ? <span>5 checks recorded</span> : null}{formatUpdated(agent.last_commit_at) ? <span>{formatUpdated(agent.last_commit_at)}</span> : null}</span></span><span className="result-side"><span className="result-category">{agent.stars ? `${agent.stars.toLocaleString()} GitHub stars` : "No star count recorded"}</span><ArrowUpRight size={16} aria-hidden="true" className="result-arrow" /></span></Link></div>)}
+        {visibleResults.map(({ agent }) => <div key={agent.id}><Link className="search-result" href={`/agents/${agent.slug}`} prefetch={false} onClick={() => saveRecentAgentSearch(agent.slug)}><span className="result-main"><strong>{agent.name}</strong><small>{agent.short_description}</small><span className="result-meta"><span>{categoryById[agent.category_id]?.name ?? "Uncategorized"}</span>{getAgentOperatingSystems(agent).slice(0, 2).map((item) => <span key={item}>{item === "macos" ? "macOS" : item[0].toUpperCase() + item.slice(1)}</span>)}{agent.verification_score === 5 ? <span>5 checks recorded</span> : null}{formatUpdated(agent.last_commit_at) ? <span>{formatUpdated(agent.last_commit_at)}</span> : null}</span></span><span className="result-side"><span className="result-category">{agent.stars ? `${agent.stars.toLocaleString()} GitHub stars` : "No star count recorded"}</span><ArrowUpRight size={16} aria-hidden="true" className="result-arrow" /></span></Link></div>)}
         {!results.length && <div className="empty-state" role="status" aria-live="polite"><strong>No matching agents.</strong><p>{activeQuery ? "Try another search or remove a filter." : "Remove a filter to broaden the results."}</p><button type="button" className="button button-outline" onClick={clearAll}>{activeQuery ? "Reset search" : "Reset filters"}</button></div>}
         {visibleResults.length < results.length ? <button type="button" className="load-more-results" onClick={() => setVisibleLimit((limit) => limit + 24)}>Load more agents <ArrowDown size={14} aria-hidden="true" /></button> : null}
       </div>
