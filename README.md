@@ -69,11 +69,11 @@ We are starting small and making room for more community contributors. The profi
   </tr>
   <tr>
     <td align="center" valign="top" colspan="2">
-      <img src="public/armaan-profile.jpeg" width="96" height="96" alt="Illustrated black-and-white profile portrait of Arman Amba">
-      <br><strong>Arman Amba</strong>
+      <img src="public/armaan-profile.jpeg" width="96" height="96" alt="Illustrated black-and-white profile portrait of Armaan Amba">
+      <br><strong>Armaan Amba</strong>
       <br>AI Developer
       <br><br>
-      <a href="https://www.linkedin.com/in/armaan-amba-103451378"><img src="https://img.shields.io/badge/LinkedIn-profile-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="Arman Amba on LinkedIn"></a>
+      <a href="https://www.linkedin.com/in/armaan-amba-103451378"><img src="https://img.shields.io/badge/LinkedIn-profile-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="Armaan Amba on LinkedIn"></a>
     </td>
   </tr>
 </table>

@@ -39,11 +39,11 @@ const teamMembers = [
   },
   {
     id: "armaan-amba",
-    name: "Arman Amba",
+    name: "Armaan Amba",
     role: "AI Developer",
     expertise: "Contributes to AgentNine development.",
     image: "/armaan-profile.jpeg",
-    imageAlt: "Illustrated black-and-white profile portrait of Arman Amba",
+    imageAlt: "Illustrated black-and-white profile portrait of Armaan Amba",
     imagePosition: "center center",
     profileSize: "compact",
     accent: "var(--blue)",

@@ -15,13 +15,6 @@ export default function PrivacyPage() {
         <p className="eyebrow">Legal</p>
         <h1>Privacy policy</h1>
         <p>Last updated: September 28, 2026</p>
-        <p className="legal-notice">
-          <strong>Pre-launch review required.</strong> This policy is a factual draft based on the
-          current repository. Before publishing, confirm the operator&apos;s legal identity,
-          applicable jurisdictions, deployed providers, processing locations, and retention periods
-          with qualified counsel.
-        </p>
-
         <h2>What AgentNine does</h2>
         <p>
           AgentNine is a public directory of AI-agent projects. You can browse listings,
@@ -37,8 +30,9 @@ export default function PrivacyPage() {
         </p>
         <p>
           Contact and join forms send your name, email address, message, and any optional profile or
-          source links you provide. When configured, the application records submissions in
-          Supabase and forwards them to the configured contact service.
+          source links you provide. When the relevant services are configured, the application can
+          record submissions in Supabase and forward them to a configured contact service. A
+          submission may be stored even when email forwarding is unavailable.
         </p>
         <p>
           If you vote on a guide, the browser stores a random respondent identifier and the database
@@ -79,47 +73,46 @@ export default function PrivacyPage() {
 
         <h2>Service providers and external projects</h2>
         <p>
-          The application is designed to use Supabase for database and authentication services,
-          hosting and domain providers for site delivery, a configured external contact/report
-          service, and Upstash for shared rate limiting when enabled. The exact provider accounts,
-          subprocessors, locations, and enabled services must be confirmed from the production
-          deployment before publication. Agent pages link to independent third-party projects that
-          apply their own privacy practices.
+          The application uses Supabase integration points for database and authentication
+          features, and can use Upstash for shared rate limiting and Resend or a configured endpoint
+          for contact delivery. The providers actually processing data depend on the deployed
+          configuration. Hosting providers may also process request data to deliver and protect the
+          site. Agent pages link to independent third-party projects that apply their own privacy
+          practices.
         </p>
 
         <h2>Retention and deletion</h2>
         <p>
-          The repository does not currently define automatic deletion periods for contact
-          submissions, analytics events, feedback, or admin security logs. Their actual retention
-          depends on production database and provider settings; set and verify retention schedules
-          before launch and update this policy with those periods.
+          The application does not set automatic deletion periods for contact submissions, analytics
+          events, feedback, or admin security logs. How long those records remain available depends
+          on the database and service-provider retention settings.
         </p>
         <p>
-          The repository does not yet define automatic expiration for anonymous visitor preferences;
-          confirm and configure a retention period before launch. Removing the site&apos;s cookies
-          stops the browser from being associated with its existing anonymous preferences but does
-          not itself delete their database record. Signed-in users can request account deletion from the{" "}
-          <Link className="text-link" href="/account/delete">account deletion page</Link>. That
-          action removes the authentication record, saved agents, category follows, saved-agent
-          history, and contribution submissions associated with the account or its exact email
-          address in Supabase. The contact delivery provider may retain a copy under its own
-          retention settings. Anonymous analytics, feedback identifiers, visitor preferences, and
-          shared-key admin security logs are not linked to the account and are handled under their
-          separate retention settings. Contact the address below for separate privacy requests
+          The application does not set automatic expiration for anonymous visitor preferences.
+          Removing the site&apos;s cookies stops that browser from being associated with its existing
+          anonymous preferences but does not itself delete their database record. Signed-in users
+          can request account deletion from the{" "}
+          <Link className="text-link" href="/account/delete">account deletion page</Link>. The
+          application asks Supabase to remove contribution data for the account and, if that
+          succeeds, deletes the authentication record. The database function determines which
+          contribution records are removed. Records held by contact-delivery providers may remain
+          under their own retention settings. Anonymous analytics, feedback identifiers, visitor
+          preferences, and admin security logs are not part of that account-deletion request and
+          follow their separate retention settings. Contact the address below for privacy requests
           concerning those records.
         </p>
 
         <h2>Age and changes</h2>
         <p>
-          AgentNine is a general technology directory and is not directed to children. This policy
-          may change when the product, providers, or data practices change.
+          AgentNine is a general technology directory, not a service designed specifically for
+          children. This policy may change when the product, providers, or data practices change.
         </p>
 
         <h2>Contact</h2>
         <p>
           {contactEmail
             ? <>Privacy questions and requests can be sent to <a className="text-link" href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>
-            : "A privacy contact email has not been configured. Configure NEXT_PUBLIC_CONTACT_EMAIL before launch."}
+            : "A privacy contact email is not currently configured."}
         </p>
       </div>
     </main>
