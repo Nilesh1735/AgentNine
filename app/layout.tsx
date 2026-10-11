@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -6,22 +7,24 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
 import { SITE_URL } from "@/lib/site";
-import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 const fraunces = localFont({
   src: "../public/fonts/Fraunces-Variable.ttf",
   variable: "--font-fraunces",
   display: "swap",
+  preload: false,
   weight: "100 900",
 });
 
@@ -48,7 +51,7 @@ export const viewport: Viewport = {
   themeColor: [{ media: "(prefers-color-scheme: light)", color: "#ffffff" }, { media: "(prefers-color-scheme: dark)", color: "#090a0c" }],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
@@ -57,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /><Analytics /></body>
+      <body className="min-h-full flex flex-col"><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></body>
     </html>
   );
 }
