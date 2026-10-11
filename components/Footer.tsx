@@ -45,8 +45,7 @@ export function Footer() {
             <Link href="/cookies">Cookies</Link>
             <Link className="consent-preferences-button" href="/privacy/choices">Privacy choices</Link>
             <Link href="/terms">Terms</Link>
-            <Link href="/refunds">Refunds</Link>
-            <Link href="/privacy#retention-and-deletion">Data requests</Link>
+            <Link href="/privacy#retention-and-deletion">Privacy requests</Link>
           </nav>
         </div>
       </div>

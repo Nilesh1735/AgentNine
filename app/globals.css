@@ -138,6 +138,32 @@
 .desktop-nav.mobile-nav-open {
   box-shadow: none;
 }
+
+.legal-table-wrap {
+  max-width: 100%;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-body);
+}
+
+.legal-table th,
+.legal-table td {
+  min-width: 10rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.legal-table th {
+  background: var(--surface-soft);
+  font-weight: 600;
+}
 .agent-ring-card:hover,
 .agent-ring-card:focus-within {
   box-shadow: none;
@@ -1120,6 +1146,8 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 .auth-title { margin: 0; font-size: clamp(32px, 5vw, 40px); line-height: 1.05; letter-spacing: -.055em; }
 .auth-panel .auth-card { max-width: none; margin-top: 26px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .auth-panel .auth-card .auth-terms { margin: 0; color: var(--muted); font-size: var(--font-size-sm); line-height: 1.5; }
+.privacy-acknowledgement { display: flex; align-items: flex-start; gap: 9px; color: var(--muted); font-size: var(--font-size-sm); font-weight: 400; line-height: 1.55; }
+.privacy-acknowledgement input[type="checkbox"] { width: 16px; height: 16px; flex: none; margin: 2px 0 0; accent-color: var(--blue-text); }
 .auth-social-actions { display: grid; gap: 10px; }
 .auth-panel .auth-social-actions .button { position: relative; width: 100%; min-height: 50px; margin: 0; }
 .google-mark { position: absolute; left: 17px; width: 20px; height: 20px; }
