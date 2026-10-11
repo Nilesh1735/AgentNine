@@ -15,14 +15,6 @@ export default function TermsPage() {
         <p className="eyebrow">Legal</p>
         <h1>Terms of service</h1>
         <p>Last updated: September 28, 2026</p>
-        <p className="legal-notice">
-          <strong>Pre-launch review required.</strong> This is a product-specific draft, not legal
-          advice. The operator&apos;s legal identity, governing law, liability terms, required consumer
-          notices, and dispute process depend on facts not established in the repository. Have
-          qualified counsel review these terms for the business and locations where the service is
-          offered before publication.
-        </p>
-
         <h2>1. Acceptance of terms</h2>
         <p>
           By accessing or using AgentNine and its related features, you agree to these terms and the
@@ -49,7 +41,8 @@ export default function TermsPage() {
           Verification scores, dates, and evidence describe checks recorded at a point in time. They
           are not safety certifications, endorsements, security audits, warranties, or guarantees of
           compatibility or performance. Listings, instructions, prices, dependencies, and links may
-          be incomplete, outdated, or unavailable.
+          be incomplete, outdated, or unavailable. Check important details against the upstream
+          project before relying on them.
         </p>
 
         <h2>4. Intellectual property</h2>
@@ -89,17 +82,16 @@ export default function TermsPage() {
         <h2>8. Disclaimers and liability</h2>
         <p>
           AgentNine is an informational directory, not a guarantee that a listed project is safe,
-          supported, or suitable for your use. Any warranty exclusions, liability limits, governing
-          law, venue, or dispute-resolution terms depend on the operator and applicable law. They
-          have not been completed here because those facts have not been confirmed; qualified
-          counsel must review and finalize this section before launch.
+          supported, or suitable for your use. These terms do not specify a governing law, court
+          venue, or general liability limit. Nothing in these terms excludes rights or liability
+          that cannot be excluded under applicable law.
         </p>
 
         <h2>9. Contact</h2>
         <p>
           {contactEmail
             ? <>Questions about these terms can be sent to <a className="text-link" href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>
-            : "A legal contact email has not been configured. Configure NEXT_PUBLIC_CONTACT_EMAIL before launch."}
+            : "A legal contact email is not currently configured."}
         </p>
       </div>
     </main>
