@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       <div className="container prose-page">
         <p className="eyebrow">Legal</p>
         <h1>Privacy policy</h1>
-        <p>Last updated: September 28, 2026</p>
+        <p>Last updated: October 11, 2026</p>
         <h2>What AgentNine does</h2>
         <p>
           AgentNine is a public directory of AI-agent projects. You can browse listings,
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
           practices.
         </p>
 
-        <h2>Retention and deletion</h2>
+        <h2 id="retention-and-deletion">Retention and deletion</h2>
         <p>
           The application does not set automatic deletion periods for contact submissions, analytics
           events, feedback, or admin security logs. How long those records remain available depends

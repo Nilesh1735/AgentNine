@@ -43,17 +43,21 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         url: categoryUrl,
         name: categoryTitle,
         description: category.description,
-        mainEntity: {
-          "@type": "ItemList",
-          numberOfItems: categoryAgents.length,
-          itemListElement: categoryAgents.map((agent, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
-            name: agent.name,
-            url: `${SITE_URL}/agents/${agent.slug}`,
-            item: `${SITE_URL}/agents/${agent.slug}`,
-          })),
-        },
+        ...(agents.status === "ready"
+          ? {
+              mainEntity: {
+                "@type": "ItemList",
+                numberOfItems: categoryAgents.length,
+                itemListElement: categoryAgents.map((agent, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  name: agent.name,
+                  url: `${SITE_URL}/agents/${agent.slug}`,
+                  item: `${SITE_URL}/agents/${agent.slug}`,
+                })),
+              },
+            }
+          : {}),
       },
       {
         "@type": "BreadcrumbList",

@@ -5,11 +5,14 @@ import { Suspense } from "react";
 import { SearchContentSkeleton } from "@/components/SearchContentSkeleton";
 import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = createPublicPageMetadata({
-  title: "Search AI agent projects",
-  description: "Search listings by project name, category, description, or tags.",
-  path: "/search",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "Search AI agent projects",
+    description: "Search listings by project name, category, description, or tags.",
+    path: "/search",
+  }),
+  robots: { index: false, follow: true },
+};
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
