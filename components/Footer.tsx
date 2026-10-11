@@ -17,7 +17,7 @@ export function Footer() {
       <div className="container footer-grid">
         <div className="footer-brand-block">
           <Link href="/" className="brand"><BrandMark /><span>AgentNine</span></Link>
-          <p className="footer-note">AI agent projects, with source links, setup steps, and access notes.</p>
+          <p className="footer-note">Compare AI agent projects with clear setup guidance, source links, and practical access details.</p>
           <SocialLinks
             links={socialLinks}
             label="AgentNine social media"
@@ -26,8 +26,28 @@ export function Footer() {
           <Link href="/contact" className="footer-correction-link">Suggest a correction <ArrowUpRight size={14} aria-hidden="true" /></Link>
         </div>
         <div className="footer-links">
-          <nav aria-label="Explore"><strong>Explore</strong><Link href="/search">All agents</Link><Link href="/categories">Categories</Link><Link href="/faq">FAQ</Link></nav>
-          <nav aria-label="About"><strong>About</strong><Link href="/about">About AgentNine</Link><Link href="/methodology">Trust and methodology</Link><Link href="/join">Join us</Link><Link href="/contact">Contact</Link><Link href="/privacy">Privacy</Link><Link href="/cookies">Cookies</Link><Link className="consent-preferences-button" href="/privacy/choices">Privacy choices</Link><Link href="/terms">Terms</Link><Link href="/refunds">Refunds</Link><Link href="/privacy#deletion">Data requests</Link></nav>
+          <nav aria-label="Explore">
+            <strong>Explore</strong>
+            <Link href="/search">All agents</Link>
+            <Link href="/categories">Categories</Link>
+            <Link href="/faq">FAQ</Link>
+          </nav>
+          <nav aria-label="About">
+            <strong>About</strong>
+            <Link href="/about">About AgentNine</Link>
+            <Link href="/methodology">Trust and methodology</Link>
+            <Link href="/join">Join us</Link>
+            <Link href="/contact">Contact</Link>
+          </nav>
+          <nav aria-label="Legal">
+            <strong>Legal</strong>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/cookies">Cookies</Link>
+            <Link className="consent-preferences-button" href="/privacy/choices">Privacy choices</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/refunds">Refunds</Link>
+            <Link href="/privacy#retention-and-deletion">Data requests</Link>
+          </nav>
         </div>
       </div>
       <div className="container footer-bottom"><span>© {new Date().getFullYear()} AgentNine</span><span>Independent directory. Check details against the project itself.</span></div>

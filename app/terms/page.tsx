@@ -14,7 +14,7 @@ export default function TermsPage() {
       <div className="container prose-page">
         <p className="eyebrow">Legal</p>
         <h1>Terms of service</h1>
-        <p>Last updated: September 28, 2026</p>
+        <p>Last updated: October 11, 2026</p>
         <h2>1. Acceptance of terms</h2>
         <p>
           By accessing or using AgentNine and its related features, you agree to these terms and the
