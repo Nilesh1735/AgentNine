@@ -53,7 +53,7 @@ export function AnalyticsPrivacyChoices() {
     <section className="privacy-choice-controls" aria-labelledby="privacy-choice-heading">
       <h2 id="privacy-choice-heading">Optional analytics</h2>
       <p>
-        Analytics is {currentChoice === "accepted" ? "allowed" : "off"}.
+        Analytics is {currentChoice === "accepted" ? "on" : "off"}.
         {currentChoice
           ? " You can change this choice at any time."
           : " It stays off unless you choose to allow it."}

@@ -37,6 +37,7 @@ export default function ContactPage() {
         body: JSON.stringify({
           name: form.get("name"),
           email: form.get("email"),
+          privacyAcknowledged: form.get("privacyAcknowledged") === "on",
           message: form.get("message"),
           requestType,
           sourceUrl: form.get("sourceUrl"),
@@ -126,10 +127,13 @@ export default function ContactPage() {
               }
             />
           </label>
-          <p className="form-notice">
-            We use these details only to respond and review the submission. See the{" "}
-            <a className="text-link" href="/privacy">Privacy policy</a>.
-          </p>
+          <label className="privacy-acknowledgement">
+            <input type="checkbox" name="privacyAcknowledged" required />
+            <span>
+              I have read the <a className="text-link" href="/privacy">Privacy policy</a>. We use
+              these details to review and respond to your submission.
+            </span>
+          </label>
           <button className="button button-dark" type="submit" disabled={pending}>
             {pending ? "Sending..." : "Send contribution"}
           </button>

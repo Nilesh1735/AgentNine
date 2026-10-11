@@ -31,6 +31,7 @@ export function JoinForm() {
           requestType: "join-request",
           name: form.get("name"),
           email: form.get("email"),
+          privacyAcknowledged: form.get("privacyAcknowledged") === "on",
           message: form.get("message"),
           linkedinUrl: form.get("linkedinUrl"),
           githubUrl: form.get("githubUrl"),
@@ -88,9 +89,13 @@ export function JoinForm() {
         Website
         <input tabIndex={-1} name="website" autoComplete="off" />
       </label>
-      <p className="form-notice">
-        Your details are used to review and respond to this application. Read our <Link className="text-link" href="/privacy">Privacy policy</Link>.
-      </p>
+      <label className="privacy-acknowledgement">
+        <input type="checkbox" name="privacyAcknowledged" required />
+        <span>
+          I have read the <Link className="text-link" href="/privacy">Privacy policy</Link>. We use
+          your details to review and respond to this application.
+        </span>
+      </label>
       <button className="button button-dark" type="submit" disabled={pending}>
         {pending ? "Sending..." : "Send application"}
       </button>

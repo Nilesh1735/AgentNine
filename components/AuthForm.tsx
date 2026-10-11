@@ -13,6 +13,7 @@ export function AuthForm({ mode, initialOAuthError = false }: { mode: AuthMode; 
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState(
     initialOAuthError ? "Google sign-in could not be completed. Try again or use email and password." : "",
@@ -29,6 +30,10 @@ export function AuthForm({ mode, initialOAuthError = false }: { mode: AuthMode; 
   async function signInWithGoogle() {
     const provider: OAuthProvider = "google";
     setMessage("");
+    if (isSignup && !acceptedTerms) {
+      setMessage("Please agree to the Terms and acknowledge the Privacy policy before creating an account.");
+      return;
+    }
     const supabase = getSupabaseBrowser();
     if (!supabase) {
       setMessage("Account access is not configured on this deployment.");
@@ -65,6 +70,10 @@ export function AuthForm({ mode, initialOAuthError = false }: { mode: AuthMode; 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
+    if (isSignup && !acceptedTerms) {
+      setMessage("Please agree to the Terms and acknowledge the Privacy policy before creating an account.");
+      return;
+    }
     const supabase = getSupabaseBrowser();
     if (!supabase) {
       setMessage("Account access is not configured on this deployment.");
@@ -123,9 +132,22 @@ export function AuthForm({ mode, initialOAuthError = false }: { mode: AuthMode; 
         <button type="button" className="password-toggle" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? "Hide" : "Show"}</button>
       </div>
       {isSignup ? <p id="password-help" className="form-hint">Use at least 8 characters.</p> : null}
+      {isSignup ? (
+        <label className="privacy-acknowledgement">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            required
+          />
+          <span>
+            I agree to the <Link className="text-link" href="/terms">Terms</Link> and acknowledge the{" "}
+            <Link className="text-link" href="/privacy">Privacy policy</Link>.
+          </span>
+        </label>
+      ) : null}
       <button type="submit" className="button button-dark" disabled={isBusy}>{pending ? isSignup ? "Creating account..." : "Signing you in..." : isSignup ? "Create account" : "Sign in"}</button>
       {!isSignup ? <Link className="auth-recovery text-link" href="/forgot-password">Forgot your password?</Link> : null}
-      {isSignup ? <p className="auth-terms">By creating an account, you agree to the <Link className="text-link" href="/terms">Terms</Link> and acknowledge the <Link className="text-link" href="/privacy">Privacy policy</Link>.</p> : null}
       {message ? <p id="auth-message" className="auth-message" role={message.includes("could not") || message.includes("not accepted") ? "alert" : "status"} aria-live="polite">{message}</p> : null}
       <p className="auth-switch">{isSignup ? "Already have an account?" : "New to AgentNine?"}{" "}<Link className="text-link" href={isSignup ? "/login" : "/signup"}>{isSignup ? "Sign in" : "Create an account"}</Link></p>
     </form>

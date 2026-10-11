@@ -79,6 +79,9 @@ export async function POST(request: Request) {
   if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request", code: "invalid_request" }, { status: 400 });
   const input = body as Record<string, unknown>;
   if (text(input.website, 100)) return NextResponse.json({ ok: true });
+  if (input.privacyAcknowledged !== true) {
+    return NextResponse.json({ error: "Acknowledge the Privacy policy before submitting.", code: "privacy_acknowledgement_required" }, { status: 400 });
+  }
 
   const name = text(input.name, 120);
   const email = text(input.email, 254);
