@@ -9,6 +9,7 @@ export function JoinForm() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  const [savedAfterDeliveryFailure, setSavedAfterDeliveryFailure] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,10 +42,18 @@ export function JoinForm() {
       });
       const result = await response.json().catch(() => null);
       if (!response.ok) {
+        if (result?.stored === true) {
+          setError(`${result.error || "Email delivery could not be confirmed."} Your application is saved and queued for administrator review. Please do not submit it again.`);
+          setSavedAfterDeliveryFailure(true);
+          formElement.reset();
+          return;
+        }
         setError(result?.error || "Your application could not be sent. Please try again.");
         return;
       }
-      setStatus(result?.stored
+      setStatus(result?.queued
+        ? "Your application was saved and queued for administrator review. Email delivery may be delayed."
+        : result?.stored
         ? "Your application was saved for review. Thanks for wanting to help build AgentNine."
         : "Your application was sent to AgentNine. Thanks for wanting to help build it.");
       formElement.reset();
@@ -96,10 +105,11 @@ export function JoinForm() {
           your details to review and respond to this application.
         </span>
       </label>
-      <button className="button button-dark" type="submit" disabled={pending}>
-        {pending ? "Sending..." : "Send application"}
+      <button className="button button-dark" type="submit" disabled={pending || savedAfterDeliveryFailure}>
+        {pending ? "Sending..." : savedAfterDeliveryFailure ? "Application saved" : "Send application"}
       </button>
       {error ? <p className="form-error" role="alert">{error}</p> : null}
+      {savedAfterDeliveryFailure ? <p className="join-field-help">Use the <Link className="text-link" href="/contact">Contact page</Link> to find our direct email address.</p> : null}
       {status ? <p className="form-success" role="status" aria-live="polite">{status}</p> : null}
     </form>
   );
