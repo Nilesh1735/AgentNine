@@ -4,6 +4,7 @@ import { getSupabaseAdminServer } from "@/lib/supabase";
 import { jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { invalidateCatalogAgents } from "@/lib/catalog-cache";
 import { validateSetupGuide } from "@/lib/setup-guide";
+import { hasAuthorizedUseDescription } from "@/lib/security-testing";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const fields = ["name", "slug", "short_description", "category_id", "tags", "github_url", "version_tag", "os_commands", "setup_guide", "env_template", "common_errors", "hardware_requirements", "port_mapping", "memory_location", "network_access", "file_access", "uninstall_command", "first_launch_prompt", "cost_to_run", "requires_api_key", "is_flagship", "status", "last_verified_date", "stars", "last_commit_at", "is_archived", "setup_steps"];
@@ -14,6 +15,11 @@ function clean(input: Record<string, unknown>) {
   for (const field of fields) if (field in input) result[field] = input[field];
   if (typeof result.name !== "string" || result.name.length < 1 || result.name.length > 160) throw new Error("Invalid name");
   if (typeof result.slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(result.slug)) throw new Error("Invalid slug");
+  if ("tags" in result && (!Array.isArray(result.tags) || result.tags.some((tag) => typeof tag !== "string"))) throw new Error("Invalid tags");
+  if ("short_description" in result && typeof result.short_description !== "string") throw new Error("Invalid description");
+  const tags = Array.isArray(result.tags) ? result.tags.filter((tag): tag is string => typeof tag === "string") : [];
+  const description = typeof result.short_description === "string" ? result.short_description : "";
+  if (!hasAuthorizedUseDescription(tags, description)) throw new Error("Security-testing listings must mention authorized use in their description");
   if (typeof result.github_url !== "string") throw new Error("A GitHub source URL is required");
   try {
     const source = new URL(result.github_url);
@@ -56,7 +62,7 @@ export async function POST(request: NextRequest) {
   try {
     if (!parsed.value || typeof parsed.value !== "object" || Array.isArray(parsed.value)) throw new Error();
     row = clean(parsed.value as Record<string, unknown>);
-  } catch { return errorResponse("Invalid agent data", 400); }
+  } catch (error) { return errorResponse(error instanceof Error ? error.message : "Invalid agent data", 400); }
   const { data: result, error } = await db.rpc("admin_create_agent", { p_agent: row, p_changed_by: "admin" });
   if (error || !result || result.status !== "ok" || !result.agent) return errorResponse("Unable to save agent", 503);
   invalidateCatalogAgents();
@@ -75,7 +81,7 @@ export async function PATCH(request: NextRequest) {
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error();
     input = body as Record<string, unknown>;
   }
-  catch { return errorResponse("Invalid update", 400); }
+  catch (error) { return errorResponse(error instanceof Error ? error.message : "Invalid update", 400); }
   if (typeof input.id !== "string" || !uuid.test(input.id)) return errorResponse("Invalid id", 400);
   if (!Number.isInteger(input.revision) || (input.revision as number) < 1) return errorResponse("A valid revision is required", 400);
   const { data: previous, error: loadError } = await db.from("agents").select("*").eq("id", input.id).single();

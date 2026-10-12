@@ -24,7 +24,6 @@ const fraunces = localFont({
   src: "../public/fonts/Fraunces-Variable.ttf",
   variable: "--font-fraunces",
   display: "swap",
-  preload: false,
   weight: "100 900",
 });
 
