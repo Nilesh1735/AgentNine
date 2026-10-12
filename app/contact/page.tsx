@@ -16,6 +16,7 @@ export default function ContactPage() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
+  const [savedAfterDeliveryFailure, setSavedAfterDeliveryFailure] = useState(false);
   const [requestType, setRequestType] = useState("correction");
   const contactEmail = getContactEmail();
 
@@ -46,10 +47,18 @@ export default function ContactPage() {
       });
       const result = await response.json().catch(() => null);
       if (!response.ok) {
+        if (result?.stored === true) {
+          setError(`${result.error || "Email delivery could not be confirmed."} Your submission is saved and queued for administrator review. Please do not submit it again.`);
+          setSavedAfterDeliveryFailure(true);
+          formElement.reset();
+          return;
+        }
         setError(result?.error || "We could not send your message. Try again shortly.");
         return;
       }
-      setStatus("Your message was sent. We will reply using the address you provided.");
+      setStatus(result?.queued
+        ? "Your submission was saved and queued for administrator review. Email delivery may be delayed."
+        : "Your message was sent. We will reply using the address you provided.");
       formElement.reset();
     } catch (requestError) {
       console.error("Contact submission failed:", requestError);
@@ -134,8 +143,8 @@ export default function ContactPage() {
               these details to review and respond to your submission.
             </span>
           </label>
-          <button className="button button-dark" type="submit" disabled={pending}>
-            {pending ? "Sending..." : "Send contribution"}
+          <button className="button button-dark" type="submit" disabled={pending || savedAfterDeliveryFailure}>
+            {pending ? "Sending..." : savedAfterDeliveryFailure ? "Submission saved" : "Send contribution"}
           </button>
           {error ? <p className="form-error" role="alert">{error}</p> : null}
           {status ? <p className="form-success" role="status" aria-live="polite">{status}</p> : null}

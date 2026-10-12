@@ -38,6 +38,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Account data could not be fully removed. The account remains active; try again later." }, { status: 503 });
   }
   const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
-  if (deleteError) return NextResponse.json({ error: "Could not delete the account." }, { status: 500 });
+  if (deleteError) {
+    console.error("Account deletion failed after contribution cleanup:", deleteError.message);
+    return NextResponse.json({
+      error: "Your account is still active, but its contribution records may already have been removed. Retry account deletion or contact privacy requests.",
+      code: "account_deletion_incomplete",
+    }, { status: 503 });
+  }
   return NextResponse.json({ ok: true });
 }

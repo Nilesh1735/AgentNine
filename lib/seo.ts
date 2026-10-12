@@ -23,7 +23,6 @@ const SOCIAL_IMAGES_BY_PATH: Record<string, string> = {
   "/methodology": "/social-previews/og-methodology.png",
   "/privacy": "/social-previews/og-privacy.png",
   "/privacy/choices": "/social-previews/og-privacy-choices.png",
-  "/refunds": "/social-previews/og-refunds.png",
   "/search": "/social-previews/og-search.png",
   "/terms": "/social-previews/og-terms.png",
 };

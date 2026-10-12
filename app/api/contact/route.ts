@@ -4,7 +4,7 @@ import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
 import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
-import { getContactEmail } from "@/lib/config";
+import { isContactDeliveryConfigured, sendContactDelivery } from "@/lib/contact-delivery";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -28,40 +28,6 @@ function profileUrl(value: unknown, host: string) {
   } catch {
     return null;
   }
-}
-
-async function sendWithResend({
-  apiKey,
-  from,
-  to,
-  replyTo,
-  subject,
-  text,
-  signal,
-}: {
-  apiKey: string;
-  from: string;
-  to: string;
-  replyTo: string;
-  subject: string;
-  text: string;
-  signal: AbortSignal;
-}) {
-  return fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      reply_to: replyTo,
-      subject,
-      text,
-    }),
-    signal,
-  });
 }
 
 export async function POST(request: Request) {
@@ -132,6 +98,7 @@ export async function POST(request: Request) {
     : message;
   const supabase = getSupabaseAdminServer();
   let storedInDatabase = false;
+  let submissionId = crypto.randomUUID();
   if (supabase) {
     if (sourceUrl) {
       const { data: duplicate, error: duplicateError } = await supabase
@@ -146,88 +113,100 @@ export async function POST(request: Request) {
       }
       if (duplicate?.length) return NextResponse.json({ error: "A submission for this source is already in review.", code: "duplicate" }, { status: 409 });
     }
-    const { error } = await supabase.from("contribution_submissions").insert({
-      request_type: normalizedType,
-      name,
-      email: email.toLowerCase(),
-      source_url: sourceUrl || null,
-      message: normalizedMessage,
-      submitted_by: submittedBy,
+    const { data: createdId, error } = await supabase.rpc("create_contribution_submission_with_delivery", {
+      p_request_type: normalizedType,
+      p_name: name,
+      p_email: email.toLowerCase(),
+      p_source_url: sourceUrl || null,
+      p_message: normalizedMessage,
+      p_submitted_by: submittedBy,
     });
     if (error?.code === "23505") {
       return NextResponse.json({ error: "A submission for this source is already in review.", code: "duplicate" }, { status: 409 });
     }
-    if (error && error.code !== "42P01") {
-      console.error("Contribution submission failed:", error.message);
+    if (error || typeof createdId !== "string") {
+      console.error("Contribution submission failed:", error?.message ?? "The database returned no submission id.");
       return NextResponse.json({ error: "The contribution could not be recorded. Try again shortly.", code: "storage_failure" }, { status: 503 });
     }
-    storedInDatabase = !error;
+    submissionId = createdId;
+    storedInDatabase = true;
   }
 
-  const endpoint = process.env.CONTACT_LAMBDA_URL?.trim();
-  const resendApiKey = process.env.RESEND_API_KEY?.trim();
-  const contactFromEmail = process.env.CONTACT_FROM_EMAIL?.trim()
-    || (resendApiKey && process.env.NODE_ENV === "development" ? "onboarding@resend.dev" : "");
-  const contactEmail = getContactEmail();
-  if (!endpoint && !resendApiKey && !contactFromEmail) {
-    if (normalizedType === "join-request" && storedInDatabase) {
-      return NextResponse.json({ ok: true, stored: true });
+  if (!isContactDeliveryConfigured()) {
+    if (storedInDatabase) {
+      return NextResponse.json({ ok: true, stored: true, queued: true, deliveryStatus: "pending" }, { status: 202 });
     }
-    if (normalizedType === "join-request") {
-      return NextResponse.json({ error: "Join applications are not configured yet. Please try again later.", code: "not_configured" }, { status: 503 });
+    return NextResponse.json({
+      error: normalizedType === "join-request"
+        ? "Join applications are not configured yet. Please try again later."
+        : "Contact delivery is not configured. Email the address shown below instead.",
+      code: "not_configured",
+      stored: false,
+    }, { status: 503 });
+  }
+
+  let delivery = {
+    requestType: normalizedType,
+    sourceUrl,
+    name,
+    email: email.toLowerCase(),
+    message: normalizedMessage,
+  };
+  if (storedInDatabase && supabase) {
+    const { data, error } = await supabase.rpc("claim_contact_delivery", { p_submission_id: submissionId });
+    if (error || !Array.isArray(data) || !data[0]) {
+      console.error("Contact notification could not be claimed:", error?.message ?? "No queue row was available.");
+      return NextResponse.json({
+        error: "Your submission was saved, but its email notification could not be started. It remains in the admin queue.",
+        code: "delivery_queue_failure",
+        stored: true,
+        queued: true,
+      }, { status: 503 });
     }
-    return NextResponse.json({ error: "Contact delivery is not configured. Email the address shown below instead.", code: "not_configured" }, { status: 503 });
+    delivery = {
+      requestType: data[0].request_type,
+      sourceUrl: data[0].source_url ?? "",
+      name: data[0].name,
+      email: data[0].email,
+      message: data[0].message,
+    };
   }
 
-  if (!endpoint && (!resendApiKey || !contactFromEmail || !contactEmail)) {
-    console.error("Contact delivery configuration is incomplete: configure CONTACT_LAMBDA_URL or RESEND_API_KEY, CONTACT_FROM_EMAIL, and NEXT_PUBLIC_CONTACT_EMAIL.");
-    return NextResponse.json({ error: "Contact delivery is not fully configured. Please email the address shown below instead.", code: "delivery_misconfigured" }, { status: 503 });
+  const result = await sendContactDelivery(delivery);
+  if (!result.ok) {
+    if (storedInDatabase && supabase) {
+      const { error } = await supabase
+        .from("contact_delivery_outbox")
+        .update({ status: "failed", last_error: result.error, updated_at: new Date().toISOString() })
+        .eq("submission_id", submissionId);
+      if (error) console.error("Failed contact delivery could not be recorded:", error.message);
+    }
+    const status = result.code === "rate_limited" ? 429 : result.code === "timeout" ? 504 : 502;
+    return NextResponse.json({
+      error: storedInDatabase
+        ? "Your submission was saved, but email delivery could not be confirmed. It is queued for administrator review; please do not submit it again."
+        : "The contact service could not accept your message. Try again shortly.",
+      code: result.code,
+      stored: storedInDatabase,
+      queued: storedInDatabase,
+    }, { status });
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8_000);
-  try {
-    let upstream: Response;
-    if (endpoint) {
-      upstream = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "contact", requestType: normalizedType, sourceUrl, name, email, message: normalizedMessage }),
-        signal: controller.signal,
+  if (storedInDatabase && supabase) {
+    const { error } = await supabase
+      .from("contact_delivery_outbox")
+      .update({ status: "delivered", last_error: null, delivered_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .eq("submission_id", submissionId);
+    if (error) {
+      console.error("Successful contact delivery status could not be recorded:", error.message);
+      return NextResponse.json({
+        ok: true,
+        stored: true,
+        queued: true,
+        deliveryStatus: "sending",
+        message: "Your submission was saved and notification sent, but its delivery status could not be recorded.",
       });
-    } else if (resendApiKey && contactFromEmail && contactEmail) {
-      upstream = await sendWithResend({
-        apiKey: resendApiKey,
-        from: contactFromEmail,
-        to: contactEmail,
-        replyTo: email,
-        subject: `AgentNine ${normalizedType.replaceAll("-", " ")}`,
-        text: [
-          `Request type: ${normalizedType}`,
-          `Name: ${name}`,
-          `Email: ${email}`,
-          `Repository or listing URL: ${sourceUrl || "Not provided"}`,
-          "",
-          "Message:",
-          normalizedMessage,
-        ].join("\n"),
-        signal: controller.signal,
-      });
-    } else {
-      return NextResponse.json({ error: "Contact delivery is not fully configured. Please email the address shown below instead.", code: "delivery_misconfigured" }, { status: 503 });
     }
-    if (upstream.status === 429) return NextResponse.json({ error: "Contact delivery is rate limited. Try again shortly.", code: "rate_limited" }, { status: 429 });
-    if (!upstream.ok) {
-      console.error(`Contact provider rejected a submission with HTTP ${upstream.status}.`);
-      return NextResponse.json({ error: "The contact service could not accept your message.", code: "upstream_failure" }, { status: 502 });
-    }
-    return NextResponse.json({ ok: true, stored: storedInDatabase });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return NextResponse.json({ error: "The contact service took too long to respond. Try again shortly.", code: "timeout" }, { status: 504 });
-    }
-    return NextResponse.json({ error: "The contact service is unavailable. Try again shortly.", code: "unavailable" }, { status: 503 });
-  } finally {
-    clearTimeout(timeout);
   }
+  return NextResponse.json({ ok: true, stored: storedInDatabase, deliveryStatus: "delivered" });
 }

@@ -9,6 +9,7 @@
   --ink: #17181a;
   --muted: #62666d;
   --line: #e2e4e7;
+  --line-strong: #c8ccd1;
   --paper: #ffffff;
   --panel: #ffffff;
   --nav-pill-surface: color-mix(in srgb, var(--panel) 82%, transparent);
@@ -31,6 +32,7 @@
   --track: #d1d5db;
   --error: #ff6d1f;
   --error-text: #a60000;
+  --danger: #a60000;
   --on-error: #17181a;
   --notice: rgba(221, 2, 0, 0.1);
   --feedback-selected: #fff0ef;
@@ -173,6 +175,7 @@
   --ink: #f1f2f4;
   --muted: #a5a8af;
   --line: rgba(255, 255, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.32);
   --paper: #000000;
   --panel: #181818;
   --nav-pill-surface: color-mix(in srgb, var(--panel) 82%, transparent);
@@ -196,6 +199,7 @@
   --track: #4a5260;
   --error: #ff6d1f;
   --error-text: #ff7772;
+  --danger: #ff7772;
   --notice: rgba(221, 2, 0, 0.12);
   --feedback-selected: #351b1b;
   --cta-surface: #241515;
@@ -979,7 +983,6 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
   .route-skeleton-account-inline .route-skeleton-account-summary > div:first-child { width: 100%; }
   .route-skeleton-profile-actions { flex-direction: column; }
   .verification-summary-heading { align-items: flex-start; flex-wrap: wrap; }
-  .verification-summary ul { grid-template-columns: 1fr; }
 }
 .agent-hero { padding: 44px 0 34px; background: var(--warm); border-bottom: 1px solid var(--line); }
 .breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--muted); font-size: var(--font-size-sm); }
@@ -1046,7 +1049,6 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 }
 .agent-detail-page .agent-overview { padding-top: 0; padding-bottom: 18px; }
 .agent-detail-page .verification-summary { padding: 14px 16px; }
-.agent-detail-page .verification-summary ul { margin-top: 18px; }
 .agent-detail-page .verification-summary-heading strong {
   color: var(--blue-text);
   font: 700 var(--font-size-body)/1.2 var(--font-geist-sans), "Segoe UI", sans-serif;
@@ -1101,11 +1103,7 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 .verification-summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .verification-summary h2 { margin: 0; font-size: var(--font-size-lead); letter-spacing: -.03em; }
 .verification-summary-heading strong { color: var(--blue-text); font: 700 17px var(--font-geist-mono), monospace; letter-spacing: -.02em; white-space: nowrap; }
-.verification-summary ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; list-style: none; margin: 0; padding: 0; }
-.verification-summary li { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: var(--font-size-sm); }
-.verification-summary li span:first-child { color: var(--muted); font: 700 13px var(--font-geist-mono), monospace; }
-.verification-summary li.is-complete { color: var(--ink); }
-.verification-summary li.is-complete span:first-child { color: var(--blue-text); }
+.verification-summary-note { margin: 12px 0 0; color: var(--muted); font-size: var(--font-size-sm); line-height: 1.55; }
 .stepper { list-style: none; padding: 0; margin: 0; }
 .stepper li { display: flex; gap: 18px; padding: 15px 0; border-bottom: 1px solid var(--line); }
 .step-number { color: var(--blue-text); font: 700 12px var(--font-geist-mono), monospace; padding-top: 2px; }
@@ -1182,6 +1180,7 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 .admin-operation-row-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; color: var(--ink); font-size: var(--font-size-md); font-weight: 700; }
 .admin-operation-row-heading time { flex: 0 0 auto; color: var(--muted); font-size: var(--font-size-xs); font-weight: 400; }
 .admin-operation-list p, .admin-operation-list small { margin: 0; color: var(--muted); font-size: var(--font-size-sm); line-height: 1.5; }
+.admin-operation-list .admin-contact-message { color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
 .admin-operation-actions { display: flex; flex-wrap: wrap; gap: 14px; }
 .admin-operation-empty { margin: 0; padding: 22px 0; color: var(--muted); font-size: var(--font-size-md); }
 .admin-operations-footnote { margin: 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--font-size-xs); line-height: 1.5; }
