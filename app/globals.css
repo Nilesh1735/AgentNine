@@ -1104,6 +1104,11 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 .verification-summary h2 { margin: 0; font-size: var(--font-size-lead); letter-spacing: -.03em; }
 .verification-summary-heading strong { color: var(--blue-text); font: 700 17px var(--font-geist-mono), monospace; letter-spacing: -.02em; white-space: nowrap; }
 .verification-summary-note { margin: 12px 0 0; color: var(--muted); font-size: var(--font-size-sm); line-height: 1.55; }
+.verification-checklist { display: grid; gap: 0; margin: 10px 0 0; padding: 0; list-style: none; }
+.agent-detail-page .verification-checklist li { display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 5px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: var(--font-size-sm); line-height: 1.4; }
+.verification-checklist li:last-child { border-bottom: 0; }
+.verification-check-indicator { display: grid; flex: 0 0 18px; width: 18px; height: 18px; place-items: center; border: 1px solid var(--line-strong); border-radius: var(--radius-xxs); color: var(--blue-text); font-size: 12px; font-weight: 800; line-height: 1; }
+.verification-checklist .is-complete .verification-check-indicator { border-color: var(--blue); background: var(--accent-soft); }
 .stepper { list-style: none; padding: 0; margin: 0; }
 .stepper li { display: flex; gap: 18px; padding: 15px 0; border-bottom: 1px solid var(--line); }
 .step-number { color: var(--blue-text); font: 700 12px var(--font-geist-mono), monospace; padding-top: 2px; }
