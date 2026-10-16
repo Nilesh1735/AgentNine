@@ -28,13 +28,14 @@ export function Footer() {
         <div className="footer-links">
           <nav aria-label="Explore">
             <strong>Explore</strong>
-            <Link href="/search">All agents</Link>
+            <Link href="/agents">All agents</Link>
             <Link href="/categories">Categories</Link>
             <Link href="/faq">FAQ</Link>
           </nav>
           <nav aria-label="About">
             <strong>About</strong>
             <Link href="/about">About AgentNine</Link>
+            <Link href="/news">News</Link>
             <Link href="/methodology">Trust and methodology</Link>
             <Link href="/join">Join us</Link>
             <Link href="/contact">Contact</Link>

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAgents, getCategories } from "@/lib/data";
+import { getPublishedNewsPosts } from "@/lib/news";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -16,9 +17,10 @@ async function withTimeout<T>(operation: Promise<T>, ms = 1500): Promise<T> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [agentsResult, categoriesResult] = await Promise.all([
+  const [agentsResult, categoriesResult, newsPosts] = await Promise.all([
     withTimeout(getAgents()),
     withTimeout(getCategories()),
+    withTimeout(getPublishedNewsPosts()),
   ]);
   if (agentsResult.status === "unavailable" || categoriesResult.status === "unavailable") {
     throw new Error("Cannot generate a complete sitemap while catalog data is unavailable");
@@ -39,6 +41,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: base, changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/agents`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/news`, changeFrequency: "daily", priority: 0.7 },
     { url: `${base}/categories`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/methodology`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/join`, changeFrequency: "monthly", priority: 0.4 },
@@ -49,6 +53,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/cookies`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.2 },
     ...categories.map((category) => ({ url: `${base}/categories/${category.slug}`, changeFrequency: "weekly" as const, priority: 0.7 })),
+    ...newsPosts.map((post) => {
+      const parsedDate = post.updated_at ? new Date(post.updated_at) : null;
+      const lastModified = parsedDate && Number.isFinite(parsedDate.getTime()) ? parsedDate : undefined;
+      return {
+        url: `${base}/news/${post.slug}`,
+        ...(lastModified ? { lastModified } : {}),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      };
+    }),
     ...agents.map((agent) => {
       const lastModified = agentLastModified(agent);
       return {

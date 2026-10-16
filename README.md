@@ -51,7 +51,7 @@ We are starting small and making room for more community contributors. The profi
   <tr>
     <td align="center" valign="top" width="50%">
       <img src="public/nilesh-profile.jpeg" width="120" alt="Illustrated portrait of Nilesh">
-      <br><strong>Nilesh</strong>
+      <br><strong>Nilesh Raj</strong>
       <br>Founder &amp; Tech Lead
       <br><br>
       <a href="https://github.com/Nilesh1735"><img src="https://img.shields.io/badge/GitHub-profile-181717?style=flat-square&logo=github&logoColor=white" alt="Nilesh on GitHub"></a>
@@ -71,7 +71,7 @@ We are starting small and making room for more community contributors. The profi
     <td align="center" valign="top" colspan="2">
       <img src="public/armaan-profile.jpeg" width="96" height="96" alt="Illustrated black-and-white profile portrait of Armaan Amba">
       <br><strong>Armaan Amba</strong>
-      <br>AI Developer
+      <br>AI Intern
       <br><br>
       <a href="https://www.linkedin.com/in/armaan-amba-103451378"><img src="https://img.shields.io/badge/LinkedIn-profile-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="Armaan Amba on LinkedIn"></a>
     </td>

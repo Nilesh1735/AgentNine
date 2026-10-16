@@ -15,6 +15,8 @@ export function createLlmIndex({ agents, categories, siteUrl }: LlmCatalog): str
     "",
     "## Public pages",
     `- [Home](${siteUrl}/): recently updated AI agent listings`,
+    `- [All agents](${siteUrl}/agents): a flat list of published agent setup guides`,
+    `- [News](${siteUrl}/news): AI news and analysis`,
     `- [Categories](${siteUrl}/categories): browse listings by category`,
     `- [About](${siteUrl}/about): curation and removal policy`,
     `- [FAQ](${siteUrl}/faq): usage and verification FAQ`,

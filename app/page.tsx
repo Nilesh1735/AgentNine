@@ -86,7 +86,7 @@ export default function Home() {
 }
 
 export const metadata = createPublicPageMetadata({
-  title: "Open-Source AI Agents: Setup & Access",
-  description: "Find open-source AI agent projects. Compare source repositories, setup guidance, requirements, and documented access before you run them.",
+  title: "Open-Source AI Agent Directory",
+  description: "Browse an open-source AI agent directory with project sources, setup guides, requirements, and documented access details.",
   path: "/",
 });
