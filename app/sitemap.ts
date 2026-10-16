@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAgents, getCategories } from "@/lib/data";
 import { getPublishedNewsPosts } from "@/lib/news";
+import { getSitemapLastModified } from "@/lib/sitemap";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -29,15 +30,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE_URL;
   const agents = agentsResult.data;
   const categories = categoriesResult.data;
-  const agentLastModified = (agent: (typeof agents)[number]) => {
-    const dates = [agent.last_verified_date, agent.metadata_last_checked_at]
-      .filter((value): value is string => Boolean(value) && value !== "Not verified")
-      .map((value) => new Date(value))
-      .filter((date) => !Number.isNaN(date.getTime()));
-    return dates.length
-      ? new Date(Math.max(...dates.map((date) => date.getTime())))
-      : undefined;
-  };
 
   return [
     { url: base, changeFrequency: "weekly", priority: 1 },
@@ -64,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     }),
     ...agents.map((agent) => {
-      const lastModified = agentLastModified(agent);
+      const lastModified = getSitemapLastModified(agent.updated_at);
       return {
         url: `${base}/agents/${agent.slug}`,
         ...(lastModified ? { lastModified } : {}),

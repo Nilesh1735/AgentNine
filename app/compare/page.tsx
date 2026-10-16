@@ -3,7 +3,7 @@ import { CompareButton } from "@/components/CompareButton";
 import { getAgent } from "@/lib/data";
 import { getAgentTrustState, getFreshnessNote } from "@/lib/trust";
 import type { Agent } from "@/lib/types";
-import { getComparisonFit } from "@/lib/compare";
+import { getComparisonFit, getSetupCommandPlatforms } from "@/lib/compare";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -23,7 +23,7 @@ const rows: Array<[string, (agent: Agent) => string]> = [
     : agent.requires_api_key === false
       ? "Not required for documented local or default setup"
       : "Not confirmed"],
-  ["Platforms with setup commands", (agent) => Object.entries(agent.os_commands).filter(([, commands]) => commands?.length).map(([os]) => os).join(", ") || "None recorded"],
+  ["Platforms with setup commands", (agent) => getSetupCommandPlatforms(agent).map((os) => os === "macos" ? "macOS" : os[0].toUpperCase() + os.slice(1)).join(", ") || "None recorded"],
   ["Network access", (agent) => agent.network_access || "Not recorded"],
   ["File access", (agent) => agent.file_access || "Not recorded"],
   ["Hardware", (agent) => agent.hardware_requirements || "Not recorded"],

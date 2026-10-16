@@ -19,7 +19,7 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
-      - name: Check types
-        run: npm run typecheck
       - name: Build production application
         run: npm run build
+      - name: Check types
+        run: npm run typecheck

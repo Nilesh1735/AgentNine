@@ -5,8 +5,8 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata = createPublicPageMetadata({
-  title: "Listings, setup, and verification",
-  description: "Answers about agent submissions, recorded checks, setup details, and what a verification mark means.",
+  title: "AI agent directory FAQ: setup and verification",
+  description: "Answers about AI-agent listings, setup guides, source details, recorded checks, and what AgentNine verification marks mean.",
   path: "/faq",
 });
 

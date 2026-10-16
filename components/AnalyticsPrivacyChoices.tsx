@@ -6,6 +6,10 @@ import {
   loadVisitorPreferences,
   useVisitorPreferences,
 } from "@/lib/visitor-preferences";
+import {
+  GOOGLE_ANALYTICS_CONSENT_VERSION,
+  hasGoogleAnalyticsConsent,
+} from "@/lib/google-analytics";
 
 export function AnalyticsPrivacyChoices() {
   const { preferences, ready } = useVisitorPreferences();
@@ -28,7 +32,6 @@ export function AnalyticsPrivacyChoices() {
     try {
       await saveAnalyticsConsent(value);
       setSavedMessage("Your privacy choice has been saved.");
-      window.dispatchEvent(new CustomEvent("agentnine-consent-change"));
     } catch (error) {
       console.error("Privacy choice could not be saved", error);
       setSaveError("Your privacy choice could not be saved. Please try again.");
@@ -47,13 +50,16 @@ export function AnalyticsPrivacyChoices() {
     }
   }
 
-  const currentChoice = preferences.analyticsConsent;
+  const isAllowed = hasGoogleAnalyticsConsent(preferences);
+  const currentChoice = preferences.analyticsConsentVersion === GOOGLE_ANALYTICS_CONSENT_VERSION
+    ? preferences.analyticsConsent
+    : undefined;
 
   return (
     <section className="privacy-choice-controls" aria-labelledby="privacy-choice-heading">
       <h2 id="privacy-choice-heading">Optional analytics</h2>
       <p>
-        Analytics is {currentChoice === "accepted" ? "on" : "off"}.
+        Google Analytics is {isAllowed ? "on" : "off"}.
         {currentChoice
           ? " You can change this choice at any time."
           : " It stays off unless you choose to allow it."}

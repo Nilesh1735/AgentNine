@@ -51,7 +51,6 @@ export function SavedAgentButton({ agentId, slug }: { agentId: string; slug?: st
       ? await supabase.from("saved_agents").delete().eq("user_id", userId).eq("agent_id", agentId)
       : await supabase.from("saved_agents").insert({ user_id: userId, agent_id: agentId });
     if (result.error) {
-      trackEvent("api_error", { endpoint: "saved_agents", status: result.error.code === "42P01" ? 503 : 500 });
       setMessage(result.error.code === "42P01" ? "Saved agents need the account migration enabled." : "Could not update your saved agents.");
     } else {
       setSaved(!saved);

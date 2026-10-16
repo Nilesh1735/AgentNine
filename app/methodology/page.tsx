@@ -27,7 +27,7 @@ export default function MethodologyPage() {
           <article className="trust-methodology-card">
             <h2>Freshness signals</h2>
             <p>A repository metadata check date is used when available. Otherwise, freshness uses the latest recorded upstream commit. A stale flag or a date older than 180 days marks the record <strong>Needs review</strong>, including records with all five checklist items complete.</p>
-            <p>The setup-review date describes when checklist evidence was recorded; it does not determine repository freshness.</p>
+            <p>If neither a metadata check date nor an upstream commit date is available, freshness is unknown and the record is not labeled <strong>Verified</strong>. The setup-review date describes when checklist evidence was recorded; it does not determine repository freshness.</p>
           </article>
           <article className="trust-methodology-card">
             <h2>What this is not</h2>

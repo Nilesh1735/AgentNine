@@ -6,11 +6,25 @@ import { DirectoryPreview } from "@/components/DirectoryPreview";
 import { getAgents, getCategories, getRecentlyUpdatedAgents } from "@/lib/data";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { SITE_URL } from "@/lib/site";
+import { getAgentTrustState } from "@/lib/trust";
 
 export async function HomeCatalogSections() {
   const [agents, categories] = await Promise.all([getAgents(), getCategories()]);
   const featured = agents.data.slice(0, 3);
   const recentlyUpdated = getRecentlyUpdatedAgents(agents.data).slice(0, 4);
+  const previewAgents = agents.data.slice(0, 40).map((agent) => {
+    const trust = getAgentTrustState(agent);
+    return {
+      id: agent.id,
+      name: agent.name,
+      slug: agent.slug,
+      category_id: agent.category_id,
+      short_description: agent.short_description,
+      version_tag: agent.version_tag,
+      trust: { key: trust.key, label: trust.label, className: trust.className },
+    };
+  });
+  const previewCategories = categories.data.map(({ id, name, slug }) => ({ id, name, slug }));
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -31,7 +45,7 @@ export async function HomeCatalogSections() {
       <section className="container">
         {agents.status === "unavailable" || categories.status === "unavailable"
           ? <CatalogState result={agents.status === "unavailable" ? agents : categories} itemLabel="directory records" emptyDescription="No published agent listings are available yet." />
-          : <DirectoryPreview agents={agents.data} categories={categories.data} />}
+          : <DirectoryPreview agents={previewAgents} categories={previewCategories} />}
       </section>
       <section className="category-band">
         <div className="container">

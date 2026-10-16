@@ -5,13 +5,12 @@ import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security
 import { attachVisitorCookie, getVisitorId } from "@/lib/visitor-state-server";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
+import { GOOGLE_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
 
 export const runtime = "nodejs";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const attributionKeys = new Set(["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"]);
-const preferenceKeys = new Set(["theme", "analyticsConsent", "analyticsSessionId", "attribution", "recentAgentSlugs", "compareSlugs", "setupProgress"]);
+const preferenceKeys = new Set(["theme", "analyticsConsent", "analyticsConsentVersion", "analyticsSessionId", "attribution", "recentAgentSlugs", "compareSlugs", "setupProgress"]);
 
 function responseWithCookie(body: object, status: number, visitorId: string) {
   const response = NextResponse.json(body, {
@@ -27,13 +26,11 @@ function validPatch(value: unknown): value is Record<string, unknown> {
   if (!Object.keys(input).length || Object.keys(input).some((key) => !preferenceKeys.has(key))) return false;
   if ("theme" in input && input.theme !== null && input.theme !== "light" && input.theme !== "dark") return false;
   if ("analyticsConsent" in input && input.analyticsConsent !== null && input.analyticsConsent !== "accepted" && input.analyticsConsent !== "declined") return false;
-  if ("analyticsSessionId" in input && input.analyticsSessionId !== null && (typeof input.analyticsSessionId !== "string" || !uuidPattern.test(input.analyticsSessionId))) return false;
-  if ("attribution" in input && input.attribution !== null) {
-    const attribution = input.attribution;
-    if (!attribution || typeof attribution !== "object" || Array.isArray(attribution)) return false;
-    const entries = Object.entries(attribution as Record<string, unknown>);
-    if (entries.length > attributionKeys.size || entries.some(([key, item]) => !attributionKeys.has(key) || typeof item !== "string" || item.length > 120)) return false;
-  }
+  if ("analyticsConsentVersion" in input
+    && input.analyticsConsentVersion !== null
+    && input.analyticsConsentVersion !== GOOGLE_ANALYTICS_CONSENT_VERSION) return false;
+  if ("analyticsSessionId" in input && input.analyticsSessionId !== null) return false;
+  if ("attribution" in input && input.attribution !== null) return false;
   for (const key of ["recentAgentSlugs", "compareSlugs"] as const) {
     if (!(key in input) || input[key] === null) continue;
     const items = input[key];

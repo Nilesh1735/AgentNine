@@ -87,6 +87,7 @@ function normalizeAgent(raw: Partial<Agent>): Agent {
     verification_notes: stringValue(raw.verification_notes),
     upstream_changed_since_verification: raw.upstream_changed_since_verification === true,
     last_release_at: raw.last_release_at ?? null,
+    updated_at: raw.updated_at ?? null,
   } as Agent;
 }
 

@@ -6,8 +6,14 @@ import { useCallback, useEffect, useRef } from "react";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import type { Agent, Category } from "@/lib/types";
 import { AgentArtwork } from "@/components/AgentArtwork";
+import type { TrustState } from "@/lib/trust";
 
-export function DirectoryPreview({ agents, categories }: { agents: Agent[]; categories: Category[] }) {
+type PreviewAgent = Pick<Agent, "id" | "name" | "slug" | "category_id" | "short_description" | "version_tag">
+  & { trust: Pick<TrustState, "key" | "label" | "className"> };
+
+type PreviewCategory = Pick<Category, "id" | "name" | "slug">;
+
+export function DirectoryPreview({ agents, categories }: { agents: PreviewAgent[]; categories: PreviewCategory[] }) {
   const categoryById = new Map(categories.map((category) => [category.id, category]));
   const collection = agents.slice(0, 40);
   const ringCollection = [...collection, ...collection];
@@ -90,6 +96,7 @@ export function DirectoryPreview({ agents, categories }: { agents: Agent[]; cate
             const category = categoryById.get(agent.category_id);
             const displayIndex = index % collection.length;
             const isDuplicate = index >= collection.length;
+            const { trust } = agent;
             return (
               <motion.article
                 className="agent-ring-card"
@@ -117,8 +124,8 @@ export function DirectoryPreview({ agents, categories }: { agents: Agent[]; cate
                 <p>{agent.short_description}</p>
                 <div className="agent-ring-card-bottom">
                   <span>{agent.version_tag || "Version pending"}</span>
-                  <span className={agent.verification_score === 5 ? "is-verified" : ""}>
-                    {agent.verification_score === 5 ? "Verified" : "Indexed"}
+                  <span className={trust.key === "verified" ? "is-verified" : ""}>
+                    {trust.key === "unverified" || trust.key === "unknown" ? "Indexed" : trust.label}
                   </span>
                 </div>
               </motion.article>

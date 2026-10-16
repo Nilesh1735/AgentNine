@@ -87,6 +87,6 @@ export default function Home() {
 
 export const metadata = createPublicPageMetadata({
   title: "Open-Source AI Agent Directory",
-  description: "Browse an open-source AI agent directory with project sources, setup guides, requirements, and documented access details.",
+  description: "Browse an open-source AI agent directory with project sources, setup guides, system requirements, and documented access details.",
   path: "/",
 });

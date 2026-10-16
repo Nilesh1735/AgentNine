@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { saveAnalyticsConsent } from "@/lib/analytics-consent";
 import { useVisitorPreferences } from "@/lib/visitor-preferences";
+import { hasCurrentGoogleAnalyticsChoice } from "@/lib/google-analytics";
 
 export function ConsentBanner() {
   const [saving, setSaving] = useState(false);
@@ -16,7 +17,6 @@ export function ConsentBanner() {
     setError("");
     try {
       await saveAnalyticsConsent(value);
-      window.dispatchEvent(new CustomEvent("agentnine-consent-change"));
     } catch (saveError) {
       console.error("Analytics preference could not be saved", saveError);
       setError("Your privacy choice could not be saved. Please try again.");
@@ -25,13 +25,13 @@ export function ConsentBanner() {
     }
   }
 
-  const visible = pathname !== "/privacy/choices" && ready && !preferences.analyticsConsent;
+  const visible = pathname !== "/privacy/choices" && ready && !hasCurrentGoogleAnalyticsChoice(preferences);
   if (!visible || !ready) return null;
   return (
     <aside className="consent-banner" aria-label="Analytics preferences">
       <div>
         <strong>Privacy choices</strong>
-        <p>Optional analytics helps us understand which pages are useful. It is off until you allow it, and the directory works without it.</p>
+        <p>Optional Google Analytics measures page views and selected directory interactions only if you allow it. The directory works without analytics.</p>
       </div>
       <div className="consent-actions">
         <button type="button" className="button button-outline" aria-label="Decline optional analytics" disabled={saving} onClick={() => void choose("declined")}>Decline</button>

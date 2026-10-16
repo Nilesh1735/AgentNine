@@ -10,6 +10,7 @@ export type AnalyticsAttribution = Partial<Record<
 export type VisitorPreferences = {
   theme?: "light" | "dark";
   analyticsConsent?: "accepted" | "declined";
+  analyticsConsentVersion?: string;
   analyticsSessionId?: string;
   attribution?: AnalyticsAttribution;
   recentAgentSlugs?: string[];

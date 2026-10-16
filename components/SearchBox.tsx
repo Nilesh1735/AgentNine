@@ -12,8 +12,10 @@ import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import ArrowDown from "reicon-react/icons/ArrowDown";
 import { trackEvents } from "@/lib/analytics";
 import { updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
-import type { Agent, Category } from "@/lib/types";
+import type { Category } from "@/lib/types";
 import { getAgentOperatingSystems } from "@/lib/search-platforms";
+import { getDirectSearchScore } from "@/lib/search-ranking";
+import type { SearchAgent } from "@/lib/search-agent";
 
 type FilterOption = { value: string; label: string };
 const MAX_RECENT_AGENT_SEARCHES = 5;
@@ -184,7 +186,7 @@ function FilterPopover({
   );
 }
 
-export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Agent[]; categories: Category[]; freshnessCutoff: number }) {
+export function SearchBox({ agents, categories, freshnessCutoff }: { agents: SearchAgent[]; categories: Category[]; freshnessCutoff: number }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -248,7 +250,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
   const agentBySlug = useMemo(() => new Map(agents.map((agent) => [agent.slug, agent])), [agents]);
   const recentAgents = recentAgentSlugs
     .map((slug) => agentBySlug.get(slug))
-    .filter((agent): agent is Agent => Boolean(agent));
+    .filter((agent): agent is SearchAgent => Boolean(agent));
   const fuse = useMemo(() => new Fuse(agents.map((agent) => ({
     ...agent,
     searchCategory: categoryById[agent.category_id]?.name ?? "",
@@ -271,13 +273,10 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
           agent.cost_to_run,
         ].join(" ").toLowerCase();
 
-        const nameMatch = agent.name.toLowerCase().includes(normalizedQuery) ? 100 : 0;
-        const textMatch = searchableText.includes(normalizedQuery) ? 40 : 0;
-        const score = nameMatch + textMatch;
-
-        return score > 0 ? { agent, score } : null;
+        const score = getDirectSearchScore(agent.name, searchableText, normalizedQuery);
+        return score === null ? null : { agent, score };
       })
-      .filter((entry): entry is { agent: Agent; score: number } => Boolean(entry));
+      .filter((entry): entry is { agent: SearchAgent; score: number } => Boolean(entry));
 
     if (directMatches.length) {
       return directMatches.sort((a, b) => b.score - a.score || a.agent.name.localeCompare(b.agent.name));
@@ -310,7 +309,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
     const timer = window.setTimeout(() => {
       const filterCount = [category, os, apiKey, verification, recentlyUpdated ? "updated" : ""].filter(Boolean).length;
       trackEvents([
-        { eventName: "search", properties: { queryLength: activeQuery.length, filterCount } },
+        { eventName: "directory_search", properties: { queryLength: activeQuery.length, filterCount } },
         results.length
           ? { eventName: "search_success", properties: { resultCount: results.length } }
           : { eventName: "search_zero_results", properties: { filterCount } },
@@ -366,7 +365,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Age
     <div className="search-shell" role="search" aria-label="Search agent directory">
       <label className="search-input-wrap" htmlFor="agent-directory-search">
         <span className="search-icon" aria-hidden><Search size={16} /></span>
-        <input id="agent-directory-search" ref={inputRef} value={inputQuery} onChange={(event) => setInputQuery(event.target.value)} onFocus={() => setSearchFocused(true)} onBlur={(event) => { if (!recentAgentSearchesRef.current?.contains(event.relatedTarget as Node | null)) setSearchFocused(false); }} placeholder="Search agents by name, description, or tag" aria-label="Search agents by name, description, or tag" aria-describedby="search-scope search-status" />
+        <input id="agent-directory-search" ref={inputRef} value={inputQuery} onChange={(event) => setInputQuery(event.target.value)} onFocus={() => setSearchFocused(true)} onBlur={(event) => { if (!recentAgentSearchesRef.current?.contains(event.relatedTarget as Node | null)) setSearchFocused(false); }} placeholder="Search agents by name, description, or tag" aria-label="Search agents by name, description, or tag" aria-describedby="search-status" />
         {inputQuery && <button type="button" className="clear-query" onClick={() => { setInputQuery(""); updateQuery(""); }} aria-label="Clear search query"><Xmark size={15} aria-hidden="true" /></button>}
         <kbd aria-label="Keyboard shortcut slash">/</kbd>
       </label>

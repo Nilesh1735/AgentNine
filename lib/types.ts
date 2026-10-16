@@ -76,6 +76,7 @@ export type Agent = {
   verification_notes: string;
   upstream_changed_since_verification: boolean;
   last_release_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type HelpfulnessSummary = {
