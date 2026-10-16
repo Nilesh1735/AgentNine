@@ -4,12 +4,13 @@ import { legalConfig } from "@/lib/legal-config";
 
 export const metadata = createPublicPageMetadata({
   title: "Privacy policy",
-  description: "How AgentNine handles account, feedback, analytics, and contact information.",
+  description: "How AgentNine handles account, contact, preference, and opt-in Google Analytics information.",
   path: "/privacy",
 });
 
 const processorRows = [
-  { provider: "Supabase", purpose: "Database, authentication, and optional analytics storage" },
+  { provider: "Supabase", purpose: "Database, authentication, preferences, feedback, and account data" },
+  { provider: "Google Analytics", purpose: "Optional website measurement, only after you allow it" },
   { provider: "Google", purpose: "Sign-in provider, when you choose Google sign-in" },
   { provider: "Vercel", purpose: "Website hosting and request delivery" },
   ...(legalConfig.upstashEnabled ? [{ provider: "Upstash", purpose: "Shared rate limiting" }] : []),
@@ -69,10 +70,20 @@ export default function PrivacyPage() {
 
         <h2>Information collected automatically</h2>
         <p>
-          Optional analytics is off until you allow it. If enabled, the application may send event
-          names, page paths without query strings, a random session identifier, allowlisted event
-          details, and campaign attribution. Raw search text is not intentionally included in
-          analytics events or page paths.
+          Google Analytics 4 is off until you make a new choice to allow it. If enabled, it receives
+          page views and selected directory interactions, such as agent-guide views, searches and
+          filter counts, source-link clicks, saved-agent and comparison actions, and guide feedback
+          choices. Page paths and referring paths are sent without query strings; campaign
+          parameters are limited to <code>utm_source</code>, <code>utm_medium</code>, and{" "}
+          <code>utm_campaign</code>. Same-site referrer paths are sent without query strings;
+          external referrers are limited to their origin. Search text, form contents, passwords,
+          account details, and private/admin page views are not sent as analytics events. Google may process
+          browser/device information, page and event data, cookies or similar identifiers, and
+          information used to estimate general location. Google may process information outside
+          India under its own terms and privacy documentation. If you withdraw consent after
+          enabling the tag, AgentNine sends Google a consent-state update so it can stop analytics
+          storage. Google may process that signal, including a limited cookieless request; AgentNine
+          then stops sending page views and selected interaction events.
         </p>
         <p>
           Hosting and rate-limit infrastructure may process request IP addresses. Admin sign-in
@@ -81,7 +92,7 @@ export default function PrivacyPage() {
           rather than the raw IP address or email address.
         </p>
         <p>
-          Theme choice, analytics consent and related identifiers, comparison selection, setup
+          Theme choice, Google Analytics consent, comparison selection, setup
           progress, and recent agent names are stored in Supabase against a random visitor identifier.
           The identifier is held in an HttpOnly cookie. Supabase authentication may also use cookies
           to maintain signed-in sessions. AgentNine does not use localStorage or sessionStorage for
@@ -94,7 +105,7 @@ export default function PrivacyPage() {
           <li>To respond to contact messages and review contributions;</li>
           <li>To protect accounts and the service and prevent abuse;</li>
           <li>To show aggregate guide feedback and improve directory information; and</li>
-          <li>To understand directory usage through optional analytics, if you allow it.</li>
+          <li>To understand directory usage through Google Analytics, only if you allow it.</li>
         </ul>
 
         <h2>Service providers</h2>
@@ -120,8 +131,20 @@ export default function PrivacyPage() {
           </table>
         </div>
         <p>
-          Some providers may process information outside India.
+          Google Analytics data-retention settings are managed in the Google Analytics property and
+          are not controlled by this application. Existing first-party analytics event rows
+          collected before Google Analytics was enabled remain in Supabase; this application no
+          longer adds new rows to that table. The application does not currently configure an
+          automatic deletion period for those historical rows.
         </p>
+        <p>
+          Older visitor-preference records may also contain an anonymous analytics session
+          identifier or campaign attribution values collected before this change. AgentNine no
+          longer creates or uses those values, and saving a new analytics choice clears them.
+          Until that happens, they remain subject to the visitor-preference retention described
+          below.
+        </p>
+        <p>Some providers may process information outside India.</p>
         <p>
           Agent pages link to independent third-party projects. Those projects have their own
           privacy practices.
@@ -129,9 +152,11 @@ export default function PrivacyPage() {
 
         <h2 id="retention-and-deletion">Retention and deletion</h2>
         <p>
-          The application does not set automatic deletion periods for contact submissions, analytics
-          events, feedback, or admin security logs. How long those records remain available depends
-          on the database and service-provider retention settings.
+          The application does not set automatic deletion periods for contact submissions, feedback,
+          admin security logs, or first-party analytics events collected before Google Analytics
+          was enabled. Those historical analytics rows remain in Supabase and are no longer
+          collected by this application. How long those records remain available depends on the
+          database and service-provider retention settings.
         </p>
         <p>
           The application does not set automatic expiration for anonymous visitor preferences.
@@ -150,7 +175,7 @@ export default function PrivacyPage() {
 
         <h2>Your privacy choices and rights</h2>
         <p>
-          You can withdraw analytics consent at any time on the{" "}
+          You can withdraw Google Analytics consent at any time on the{" "}
           <Link className="text-link" href="/privacy/choices">privacy choices page</Link>. Depending
           on applicable law and your location, you may also have rights to request access to,
           correction of, or deletion of personal information, object to or restrict certain

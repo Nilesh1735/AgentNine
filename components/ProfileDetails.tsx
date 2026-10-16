@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { ProfileCardSkeleton } from "@/components/ProfileCardSkeleton";
 
@@ -9,18 +9,35 @@ export function ProfileDetails() {
   const [email, setEmail] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [loading, setLoading] = useState(() => getSupabaseBrowser() !== null);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
+  const loadProfile = useCallback(async () => {
     const supabase = getSupabaseBrowser();
-    if (!supabase) return;
-    void supabase.auth.getUser().then(({ data }) => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const { data, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
       setEmail(data.user?.email ?? "");
       setCreatedAt(data.user?.created_at ?? "");
+    } catch (cause) {
+      console.error("Profile could not be loaded:", cause);
+      setError("Check your connection and try again.");
+    } finally {
       setLoading(false);
-    });
+    }
   }, []);
 
+  useEffect(() => {
+    void loadProfile();
+  }, [loadProfile]);
+
   if (loading) return <ProfileCardSkeleton />;
+  if (error) return <div className="account-empty" role="alert"><h2>Could not load your profile.</h2><p>{error}</p><button className="button button-dark" type="button" onClick={() => void loadProfile()}>Try again</button></div>;
   if (!email) return <div className="account-empty"><h2>Sign in to view your profile.</h2><Link className="button button-dark" href="/login">Sign in</Link></div>;
 
   const initials = email.slice(0, 2).toUpperCase();

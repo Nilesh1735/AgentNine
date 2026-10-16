@@ -1,9 +1,9 @@
-import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { adminCookieOptions, createAdminSession, isTrustedOrigin, rateLimit, revokeAdminSession } from "@/lib/admin";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
+import { timingSafeStringEqual } from "@/lib/timing-safe";
 
 async function auditLogin(success: boolean, request: NextRequest) {
   const db = getSupabaseAdminServer();
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   const body = parsed.value;
   const supplied = body && typeof body === "object" && typeof (body as Record<string, unknown>).key === "string" ? (body as Record<string, string>).key : "";
   const expected = process.env.ADMIN_DASHBOARD_KEY ?? "";
-  const valid = Boolean(expected && supplied && expected.length === supplied.length && crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(supplied)));
+  const valid = Boolean(expected && supplied && timingSafeStringEqual(expected, supplied));
   await auditLogin(valid, request);
   if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let session: string;

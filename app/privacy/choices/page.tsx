@@ -17,8 +17,13 @@ export default function PrivacyChoicesPage() {
         <p className="eyebrow">Privacy</p>
         <h1>Privacy choices</h1>
         <p>
-          Optional analytics helps us understand which pages are useful. The directory works
-          without it, and declining does not affect your other preferences.
+          Optional Google Analytics measures page views and selected directory interactions only
+          after you allow it. The directory works without it, and declining does not affect your
+          other preferences. Withdrawing consent sends Google an updated consent state, which may
+          involve a limited cookieless request; AgentNine then stops sending page views and selected
+          interactions. Existing first-party analytics records collected before this change remain
+          in Supabase; no new first-party event records are being collected. Saving a new choice
+          also clears older anonymous analytics session and campaign values from visitor preferences.
         </p>
         <AnalyticsPrivacyChoices />
       </div>

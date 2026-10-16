@@ -32,7 +32,6 @@ export function AgentFeedback({ slug }: { slug: string }) {
         body: JSON.stringify({ slug, helpful }),
       });
       if (!response.ok) {
-        trackEvent("api_error", { endpoint: "feedback", status: response.status });
         setState(response.status === 409 ? "saved" : "error");
         return;
       }
@@ -41,7 +40,6 @@ export function AgentFeedback({ slug }: { slug: string }) {
       setState("saved");
       trackEvent("feedback_submitted", { helpful });
     } catch {
-      trackEvent("api_error", { endpoint: "feedback", status: 503 });
       setState("error");
     }
   }

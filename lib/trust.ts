@@ -10,7 +10,7 @@ function validDate(value: string | null | undefined) {
 }
 
 export type TrustState = {
-  key: "verified" | "partial" | "unverified" | "stale" | "changed" | "archived" | "unknown";
+  key: "verified" | "partial" | "unverified" | "stale" | "changed" | "archived" | "unknown" | "freshness-unknown";
   label: string;
   detail: string;
   className: string;
@@ -39,11 +39,16 @@ export function getAgentTrustState(agent: Agent, now = Date.now()): TrustState {
   }
   if (agent.verification_score === 5) {
     const changed = agent.upstream_changed_since_verification;
+    const freshnessUnknown = metadataAt === null && commitAt === null;
     return {
-      key: changed ? "changed" : "verified",
-      label: changed ? "Changed upstream" : "Verified",
-      detail: changed ? "The upstream repository changed after the recorded verification." : "All five AgentNine checklist items have recorded evidence.",
-      className: "trust-state trust-state-verified",
+      key: changed ? "changed" : freshnessUnknown ? "freshness-unknown" : "verified",
+      label: changed ? "Changed upstream" : freshnessUnknown ? "Freshness unknown" : "Verified",
+      detail: changed
+        ? "The upstream repository changed after the recorded verification."
+        : freshnessUnknown
+          ? "All five checklist items have recorded evidence, but no repository freshness signal is available."
+          : "All five AgentNine checklist items have recorded evidence.",
+      className: freshnessUnknown ? "trust-state trust-state-unknown" : "trust-state trust-state-verified",
       isStale: false,
     };
   }

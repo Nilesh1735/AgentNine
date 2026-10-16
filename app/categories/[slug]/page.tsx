@@ -20,10 +20,12 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = await getCategory(slug);
-  const title = category?.name ? `${category.name}: setup and access` : "AI agent category";
+  const title = category?.name
+    ? `Open-source ${category.name.toLowerCase()}: setup guides`
+    : "Open-source AI agent category";
   const description = category?.description
-    ? `${category.description} Browse source links, setup guidance, and documented system access.`
-    : "Browse AI agent projects by category and review their source and setup details.";
+    ? `Explore ${category.name.toLowerCase()} by source, setup requirements, and documented access. ${category.description}`
+    : "Explore open-source AI agents by category, with source repositories, setup guidance, and documented system access.";
   return createPublicPageMetadata({ title, description, path: `/categories/${slug}` });
 }
 

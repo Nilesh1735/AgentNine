@@ -9,6 +9,7 @@ import Xmark from "reicon-react/icons/Xmark";
 import { BrandMark } from "@/components/BrandMark";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
+import { getPreferredScrollBehavior } from "@/lib/reduced-motion";
 
 function ProfileMenu({ email, onSignedOut }: { email: string; onSignedOut: () => void }) {
   const [open, setOpen] = useState(false);
@@ -154,7 +155,7 @@ export function Header() {
 
     event.preventDefault();
     if (window.scrollY > 0) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: getPreferredScrollBehavior() });
     }
   };
   return (

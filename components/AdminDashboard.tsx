@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { AdminOperations } from "@/components/AdminOperations";
 import type { Category } from "@/lib/types";
-import { trackEvent } from "@/lib/analytics";
 
 type AdminAgent = {
   id: string;
@@ -102,6 +102,7 @@ function toForm(agent: AdminAgent): AgentForm {
 }
 
 export function AdminDashboard({ categories }: { categories: Category[] }) {
+  const router = useRouter();
   const [key, setKey] = useState("");
   const [agents, setAgents] = useState<AdminAgent[]>([]);
   const [selected, setSelected] = useState<AdminAgent | null>(null);
@@ -209,9 +210,13 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
     setSigningIn(true);
     try {
       const response = await fetch("/api/admin/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key }) });
-      if (response.ok) { setKey(""); setMessage(""); await load(); }
+      if (response.ok) {
+        setKey("");
+        setMessage("");
+        await load();
+        router.refresh();
+      }
       else {
-        trackEvent("admin_error", { endpoint: "auth", status: response.status });
         setMessage(response.status === 429
           ? "Too many attempts. Try again later."
           : response.status === 401
@@ -222,7 +227,6 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
       }
     } catch (error) {
       console.error("Admin sign-in failed:", error);
-      trackEvent("admin_error", { endpoint: "auth", status: 503 });
       setMessage("The dashboard service could not be reached. Try again.");
     } finally {
       setSigningIn(false);

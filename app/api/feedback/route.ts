@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAgent } from "@/lib/data";
-import { getSupabasePublicServer } from "@/lib/supabase";
+import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
 import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
@@ -60,9 +60,10 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Feedback is temporarily unavailable" }, { status: 503 });
   }
-  const supabase = getSupabasePublicServer();
-  if (!agent || !supabase) return NextResponse.json({ error: "Feedback is unavailable" }, { status: 503 });
-  const { error } = await supabase.from("agent_helpfulness").insert({ agent_id: agent.id, respondent_id: respondentId, helpful: input.helpful });
+  const publicClient = getSupabasePublicServer();
+  const adminClient = getSupabaseAdminServer();
+  if (!agent || !publicClient || !adminClient) return NextResponse.json({ error: "Feedback is unavailable" }, { status: 503 });
+  const { error } = await adminClient.from("agent_helpfulness").insert({ agent_id: agent.id, respondent_id: respondentId, helpful: input.helpful });
   if (error?.code === "23505") {
     const result = await summary(agent.id);
     const response = "error" in result ? NextResponse.json(result, { status: 503 }) : NextResponse.json(result, { status: 409 });

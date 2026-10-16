@@ -19,8 +19,8 @@ export default function TermsPage() {
         <p className="eyebrow">Legal</p>
         <h1>Terms of service</h1>
         <p>
-          Last updated: {legalConfig.lastUpdated}. Changes: added liability, governing law and
-          regional terms.
+          Last updated: {legalConfig.lastUpdated}. Changes: clarified opt-in Google Analytics and
+          related privacy choices.
         </p>
 
         <h2>1. Acceptance and eligibility</h2>
@@ -36,6 +36,13 @@ export default function TermsPage() {
           AgentNine is a public directory of AI-agent projects. It provides listings, editorial
           context, setup notes, recorded verification information, search and comparison tools, and
           links to upstream sources. Public browsing does not require an account.
+        </p>
+        <p>
+          Google Analytics is optional and is enabled only if you allow it. You can change your
+          choice on the <Link className="text-link" href="/privacy/choices">privacy choices page</Link>.
+          Details about information Google may receive are in the{" "}
+          <Link className="text-link" href="/privacy">Privacy policy</Link> and{" "}
+          <Link className="text-link" href="/cookies">Cookies and preferences</Link>.
         </p>
         <p>
           AgentNine is not offered to people in the European Economic Area, the United Kingdom, or
