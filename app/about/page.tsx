@@ -10,7 +10,7 @@ import { SITE_URL } from "@/lib/site";
 const teamMembers = [
   {
     id: "nilesh",
-    name: "Nilesh",
+    name: "Nilesh Raj",
     role: "Founder & Tech Lead",
     expertise: "AI engineer and founder of AgentNine.",
     image: "/nilesh-profile.jpeg",
@@ -40,7 +40,7 @@ const teamMembers = [
   {
     id: "armaan-amba",
     name: "Armaan Amba",
-    role: "AI Developer",
+    role: "AI Intern",
     expertise: "Contributes to AgentNine development.",
     image: "/armaan-profile.jpeg",
     imageAlt: "Illustrated black-and-white profile portrait of Armaan Amba",

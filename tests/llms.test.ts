@@ -25,6 +25,8 @@ describe("llms.txt index", () => {
       siteUrl: "https://agentnine.pro",
     });
 
+    expect(index).toContain("[All agents](https://agentnine.pro/agents)");
+    expect(index).toContain("[News](https://agentnine.pro/news)");
     expect(index).toContain("[Research](https://agentnine.pro/categories/research)");
     expect(index).toContain("[Research Agent](https://agentnine.pro/agents/research-agent)");
     expect(index).toContain("AgentNine checklist evidence: 3/5");
