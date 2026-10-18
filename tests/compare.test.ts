@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSetupCommandPlatforms, hasSetupCommands } from "../lib/compare";
+import { getSetupCommandPlatforms, hasSetupCommands, normalizeCompareSlugs, toggleCompareSlug } from "../lib/compare";
 
 describe("comparison setup command signal", () => {
   it("does not treat empty platform command arrays as available commands", () => {
@@ -33,5 +33,34 @@ describe("comparison setup command signal", () => {
     };
     expect(hasSetupCommands(agent)).toBe(true);
     expect(getSetupCommandPlatforms(agent)).toEqual(["windows", "macos"]);
+  });
+
+  it("does not report commands for an explicitly unsupported operating system", () => {
+    const agent = {
+      os_commands: { linux: [], macos: [], windows: ["install example"] },
+      setup_guide: {
+        platforms: {
+          windows: { support: "unsupported" as const },
+        },
+      },
+    };
+    expect(getSetupCommandPlatforms(agent)).toEqual([]);
+  });
+});
+
+describe("comparison selection", () => {
+  it("removes invalid and duplicate slugs and caps the selection at three", () => {
+    expect(normalizeCompareSlugs(["agent-one", "agent-one", "Invalid", "agent-two", "agent-three", "agent-four"]))
+      .toEqual(["agent-one", "agent-two", "agent-three"]);
+  });
+
+  it("removes a selected agent while preserving the remaining order", () => {
+    expect(toggleCompareSlug(["agent-one", "agent-two", "agent-three"], "agent-two"))
+      .toEqual(["agent-one", "agent-three"]);
+  });
+
+  it("does not add a fourth selected agent", () => {
+    const selected = ["agent-one", "agent-two", "agent-three"];
+    expect(toggleCompareSlug(selected, "agent-four")).toEqual(selected);
   });
 });

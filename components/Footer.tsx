@@ -31,6 +31,7 @@ export function Footer() {
             <Link href="/agents">All agents</Link>
             <Link href="/categories">Categories</Link>
             <Link href="/faq">FAQ</Link>
+            <Link href="/compare">Compare agents</Link>
           </nav>
           <nav aria-label="About">
             <strong>About</strong>

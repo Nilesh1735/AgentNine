@@ -4,13 +4,15 @@ import { legalConfig } from "@/lib/legal-config";
 
 export const metadata = createPublicPageMetadata({
   title: "Privacy policy",
-  description: "How AgentNine handles account, contact, preference, and opt-in Google Analytics information.",
+  description: "How AgentNine handles account, contact, preference, analytics, and session replay information.",
   path: "/privacy",
 });
 
 const processorRows = [
   { provider: "Supabase", purpose: "Database, authentication, preferences, feedback, and account data" },
   { provider: "Google Analytics", purpose: "Optional website measurement, only after you allow it" },
+  { provider: "Meta", purpose: "Optional Meta Pixel PageView measurement, only after you allow it" },
+  { provider: "Cortality", purpose: "Optional session replay on allowlisted public pages, only after optional analytics consent" },
   { provider: "Google", purpose: "Sign-in provider, when you choose Google sign-in" },
   { provider: "Vercel", purpose: "Website hosting and request delivery" },
   ...(legalConfig.upstashEnabled ? [{ provider: "Upstash", purpose: "Shared rate limiting" }] : []),
@@ -70,7 +72,8 @@ export default function PrivacyPage() {
 
         <h2>Information collected automatically</h2>
         <p>
-          Google Analytics 4 is off until you make a new choice to allow it. If enabled, it receives
+          Google Analytics 4 and Meta Pixel are off until you make a new choice to allow optional
+          analytics. Google Analytics receives
           page views and selected directory interactions, such as agent-guide views, searches and
           filter counts, source-link clicks, saved-agent and comparison actions, and guide feedback
           choices. Page paths and referring paths are sent without query strings; campaign
@@ -86,13 +89,48 @@ export default function PrivacyPage() {
           then stops sending page views and selected interaction events.
         </p>
         <p>
+          If you allow optional analytics, Meta Pixel (ID <code>927600866897675</code>) also
+          receives PageView events on eligible public pages. It is not activated on private or
+          authentication pages, the search page, URLs with non-campaign query parameters, or URLs
+          with fragments. The Pixel may receive the page URL with limited campaign parameters,
+          browser/device information, network information such as an IP address, and cookie or
+          similar identifier data. Meta processes this information under its own privacy terms and
+          may process it outside India. Declining or withdrawing consent stops AgentNine from
+          sending further PageView events and requests consent revocation from the Pixel; cookies
+          already stored by Meta are not automatically deleted.
+        </p>
+        <p>
+          Cortality session replay is included in the same optional consent as Google Analytics and
+          Meta Pixel. When enabled, AgentNine loads it only for signed-out visitors
+          on these public content pages: the home page; agent listings and individual agent pages;
+          categories and individual category pages; FAQ; About; methodology; news and published news
+          articles; Terms; Privacy; and Cookies on <code>agentnine.pro</code> and{" "}
+          <code>www.agentnine.pro</code> only, plus Search, Compare, Contact, and Join. It does not
+          load on admin, account, profile, API, authentication, news editor, or privacy-choice
+          pages. Query strings are allowed on Search, Compare, Contact, and Join and may be visible
+          to Cortality, including search text in the Search URL. The script does not load on other
+          pages with query strings or any URL with a fragment. Navigating
+          from a tracked page to any other page uses a full page load, and excluded pages also have
+          a Content Security Policy that blocks Cortality&apos;s script and data endpoint.
+        </p>
+        <p>
+          Cortality says its replay records mouse, scroll, and click positions, page-layout images,
+          and page HTML, while blanking typed text and form values. This includes activity on
+          Contact and Join pages. AgentNine has not independently verified the vendor&apos;s capture
+          behavior. This includes activity on Contact and Join pages. Do not submit confidential
+          information on these pages while session replay is enabled. Cortality may receive the captured session data and process
+          it under its own terms. The replay tag is not activated for signed-in visitors, and
+          declining or withdrawing permission
+          prevents it from being loaded on subsequent eligible pages.
+        </p>
+        <p>
           Hosting and rate-limit infrastructure may process request IP addresses. Admin sign-in
           outcomes and the available client IP are written to a restricted Supabase security log.
           The configured shared rate limiter stores a cryptographic hash of its rate-limit key
           rather than the raw IP address or email address.
         </p>
         <p>
-          Theme choice, Google Analytics consent, comparison selection, setup
+          Theme choice, optional analytics and session replay consent, comparison selection, setup
           progress, and recent agent names are stored in Supabase against a random visitor identifier.
           The identifier is held in an HttpOnly cookie. Supabase authentication may also use cookies
           to maintain signed-in sessions. AgentNine does not use localStorage or sessionStorage for
@@ -105,7 +143,7 @@ export default function PrivacyPage() {
           <li>To respond to contact messages and review contributions;</li>
           <li>To protect accounts and the service and prevent abuse;</li>
           <li>To show aggregate guide feedback and improve directory information; and</li>
-          <li>To understand directory usage through Google Analytics, only if you allow it.</li>
+          <li>To understand directory usage through Google Analytics, Meta Pixel, and Cortality session replay, only if you allow them.</li>
         </ul>
 
         <h2>Service providers</h2>
@@ -175,7 +213,7 @@ export default function PrivacyPage() {
 
         <h2>Your privacy choices and rights</h2>
         <p>
-          You can withdraw Google Analytics consent at any time on the{" "}
+          You can change your optional analytics and session replay choice at any time on the{" "}
           <Link className="text-link" href="/privacy/choices">privacy choices page</Link>. Depending
           on applicable law and your location, you may also have rights to request access to,
           correction of, or deletion of personal information, object to or restrict certain

@@ -20,6 +20,7 @@ export interface TeamRevealMember {
 
   accent?: string;
   profileSize?: "compact";
+  profilePosition?: "left" | "right";
   socialLinks?: readonly SocialLink[];
 }
 
@@ -196,7 +197,10 @@ export function TeamRevealGrid({
                 key={member.id}
                 className={cn(
                   "relative min-w-0",
-                  member.profileSize === "compact" && "row-start-2 col-start-1 w-[clamp(124px,18vw,220px)] max-w-full justify-self-start",
+                  member.profileSize === "compact" && cn(
+                    "row-start-2 w-[clamp(124px,18vw,220px)] max-w-full justify-self-start",
+                    member.profilePosition === "right" ? "col-start-2" : "col-start-1",
+                  ),
                 )}
               >
                 <button
@@ -263,7 +267,8 @@ export function TeamRevealGrid({
                     </h3>
                     <p
                       className={cn(
-                        "mt-0.5 truncate text-xs text-neutral-500 transition-colors duration-300 dark:text-neutral-400",
+                        "mt-0.5 text-xs text-neutral-500 transition-colors duration-300 dark:text-neutral-400",
+                        member.profileSize === "compact" ? "whitespace-normal" : "truncate",
                         active && "text-[var(--team-accent)] dark:text-[var(--team-accent)]",
                       )}
                     >

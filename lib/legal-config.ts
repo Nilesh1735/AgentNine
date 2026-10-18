@@ -5,7 +5,7 @@ export const legalConfig = {
   visitorCookieName: "agentnine_visitor",
   authCookieLifetime: "up to about 400 days",
   liabilityCap: "INR 10,000",
-  lastUpdated: "October 17, 2026",
+  lastUpdated: "October 19, 2026",
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "info@agentnine.pro",
   upstashEnabled: true,
   resendEnabled: true,

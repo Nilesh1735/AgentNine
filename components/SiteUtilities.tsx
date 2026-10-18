@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { MetaPixel } from "@/components/MetaPixel";
+import { CortalityReplay } from "@/components/CortalityReplay";
 import ArrowUp from "reicon-react/icons/ArrowUp";
 import { getPreferredScrollBehavior } from "@/lib/reduced-motion";
 
@@ -37,6 +39,8 @@ export function SiteUtilities() {
   return <>
     <div className="scroll-progress" style={{ transform: `scaleX(${progress / 100})` }} aria-hidden="true" />
     <GoogleAnalytics />
+    <MetaPixel />
+    <CortalityReplay />
     <ConsentBanner />
     <div className="site-utilities">
       {showFloatingContact ? <Link className="floating-contact" href="/contact" aria-label="Contact AgentNine">Contact</Link> : null}

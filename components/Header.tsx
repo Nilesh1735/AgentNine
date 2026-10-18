@@ -168,6 +168,7 @@ export function Header() {
         <nav ref={navigationRef} id="main-navigation" className={`desktop-nav${open ? " mobile-nav-open" : ""}`} aria-label="Main navigation">
           <div className="nav-primary-links">
             <Link ref={firstLinkRef} href="/search" onClick={closeMenu} aria-current={pathname.startsWith("/search") ? "page" : undefined}>Browse agents</Link>
+            <Link href="/compare" onClick={closeMenu} aria-current={pathname === "/compare" ? "page" : undefined}>Compare agents</Link>
             <Link href="/categories" onClick={closeMenu} aria-current={pathname.startsWith("/categories") ? "page" : undefined}>Categories</Link>
             <Link href="/faq" onClick={closeMenu} aria-current={pathname.startsWith("/faq") ? "page" : undefined}>FAQ</Link>
             <Link href="/about" onClick={closeMenu} aria-current={pathname.startsWith("/about") ? "page" : undefined}>About</Link>

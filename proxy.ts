@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isRestrictedCountry } from "./lib/region-access";
+import { getContentSecurityPolicy } from "./lib/content-security-policy";
+import { canUseCortalityForRequest } from "./lib/cortality";
 
 const restrictedRegionPage = `<!doctype html>
 <html lang="en">
@@ -20,7 +22,13 @@ const restrictedRegionPage = `<!doctype html>
 
 export function proxy(request: NextRequest) {
   const countryCode = request.headers.get("x-vercel-ip-country");
-  if (!isRestrictedCountry(countryCode)) return NextResponse.next();
+  if (!isRestrictedCountry(countryCode)) {
+    const response = NextResponse.next();
+    if (!canUseCortalityForRequest(request.nextUrl.pathname, request.nextUrl.search, request.nextUrl.origin)) {
+      response.headers.append("Content-Security-Policy", getContentSecurityPolicy(false));
+    }
+    return response;
+  }
 
   if (request.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.json(

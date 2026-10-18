@@ -30,18 +30,15 @@ export function CompareLoadingSkeleton() {
           <Block className="route-skeleton-eyebrow" />
           <Block className="route-skeleton-title" />
         </header>
-        {agentCount >= 2 ? (
-          <>
-            <div className="route-skeleton-compare-fit"><Block /><Block /></div>
-            <div className="route-skeleton-compare-table">
-              {Array.from({ length: 8 }, (_, index) => (
-                <div key={index}>
-                  <Block />
-                  {Array.from({ length: agentCount }, (_, item) => <Block key={item} />)}
-                </div>
-              ))}
-            </div>
-          </>
+        {agentCount > 0 ? (
+          <div className="route-skeleton-compare-table">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div key={index}>
+                <Block />
+                {Array.from({ length: agentCount }, (_, item) => <Block key={item} />)}
+              </div>
+            ))}
+          </div>
         ) : (
           <section className="compare-empty route-skeleton-compare-empty" aria-hidden="true">
             <Block className="route-skeleton-compare-empty-heading" />

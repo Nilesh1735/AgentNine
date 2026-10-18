@@ -51,6 +51,21 @@ const teamMembers = [
       { platform: "LinkedIn", href: "https://www.linkedin.com/in/armaan-amba-103451378" },
     ],
   },
+  {
+    id: "ronit-jaiswal",
+    name: "Ronit Jaiswal",
+    role: "Performance Marketing Executive",
+    expertise: "Works on performance marketing at AgentNine.",
+    image: "/ronit-profile.jpeg",
+    imageAlt: "Black-and-white illustrated portrait of Ronit Jaiswal",
+    imagePosition: "center center",
+    profileSize: "compact",
+    profilePosition: "right",
+    accent: "var(--blue)",
+    socialLinks: [
+      { platform: "LinkedIn", href: "https://www.linkedin.com/in/ronitjaiswal/" },
+    ],
+  },
 ] satisfies readonly TeamRevealMember[];
 
 export const metadata = createPublicPageMetadata({

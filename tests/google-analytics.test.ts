@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  GOOGLE_ANALYTICS_CONSENT_VERSION,
+  OPTIONAL_ANALYTICS_CONSENT_VERSION,
   getSafePageLocation,
   getSafePageReferrer,
-  hasCurrentGoogleAnalyticsChoice,
+  hasCurrentOptionalAnalyticsChoice,
   hasGoogleAnalyticsConsent,
   shouldTrackPageView,
 } from "@/lib/google-analytics";
@@ -11,23 +11,27 @@ import {
 describe("Google Analytics consent", () => {
   it("does not treat first-party analytics consent as consent to Google Analytics", () => {
     expect(hasGoogleAnalyticsConsent({ analyticsConsent: "accepted" })).toBe(false);
-    expect(hasCurrentGoogleAnalyticsChoice({ analyticsConsent: "declined" })).toBe(false);
+    expect(hasCurrentOptionalAnalyticsChoice({ analyticsConsent: "declined" })).toBe(false);
+    expect(hasGoogleAnalyticsConsent({
+      analyticsConsent: "accepted",
+      analyticsConsentVersion: "ga4-v1",
+    })).toBe(false);
   });
 
   it("enables measurement only after the current consent version is accepted", () => {
     const accepted = {
       analyticsConsent: "accepted" as const,
-      analyticsConsentVersion: GOOGLE_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
     };
     const declined = {
       analyticsConsent: "declined" as const,
-      analyticsConsentVersion: GOOGLE_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
     };
 
     expect(hasGoogleAnalyticsConsent(accepted)).toBe(true);
-    expect(hasCurrentGoogleAnalyticsChoice(accepted)).toBe(true);
+    expect(hasCurrentOptionalAnalyticsChoice(accepted)).toBe(true);
     expect(hasGoogleAnalyticsConsent(declined)).toBe(false);
-    expect(hasCurrentGoogleAnalyticsChoice(declined)).toBe(true);
+    expect(hasCurrentOptionalAnalyticsChoice(declined)).toBe(true);
   });
 });
 
