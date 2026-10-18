@@ -4,7 +4,8 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { saveAnalyticsConsent } from "@/lib/analytics-consent";
 import { useVisitorPreferences } from "@/lib/visitor-preferences";
-import { hasCurrentGoogleAnalyticsChoice } from "@/lib/google-analytics";
+import { hasCurrentOptionalAnalyticsChoice } from "@/lib/google-analytics";
+import Link from "next/link";
 
 export function ConsentBanner() {
   const [saving, setSaving] = useState(false);
@@ -25,17 +26,17 @@ export function ConsentBanner() {
     }
   }
 
-  const visible = pathname !== "/privacy/choices" && ready && !hasCurrentGoogleAnalyticsChoice(preferences);
+  const visible = pathname !== "/privacy/choices" && ready && !hasCurrentOptionalAnalyticsChoice(preferences);
   if (!visible || !ready) return null;
   return (
-    <aside className="consent-banner" aria-label="Analytics preferences">
+    <aside className="consent-banner" aria-label="Optional analytics and session replay preferences">
       <div>
         <strong>Privacy choices</strong>
-        <p>Optional Google Analytics measures page views and selected directory interactions only if you allow it. The directory works without analytics.</p>
+        <p>Allow optional Google Analytics, Meta Pixel, and Cortality session replay on the public pages described in our <Link href="/privacy">Privacy policy</Link>. They stay off unless allowed.</p>
       </div>
       <div className="consent-actions">
-        <button type="button" className="button button-outline" aria-label="Decline optional analytics" disabled={saving} onClick={() => void choose("declined")}>Decline</button>
-        <button type="button" className="button button-dark" aria-label="Allow optional analytics" disabled={saving} onClick={() => void choose("accepted")}>Allow</button>
+        <button type="button" className="button button-outline" aria-label="Decline optional analytics and session replay" disabled={saving} onClick={() => void choose("declined")}>Decline</button>
+        <button type="button" className="button button-dark" aria-label="Allow optional analytics and session replay" disabled={saving} onClick={() => void choose("accepted")}>Allow</button>
       </div>
       {error ? <p className="form-error" role="alert">{error}</p> : null}
     </aside>

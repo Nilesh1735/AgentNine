@@ -3,7 +3,7 @@ import { CompareButton } from "@/components/CompareButton";
 import { getAgent } from "@/lib/data";
 import { getAgentTrustState, getFreshnessNote } from "@/lib/trust";
 import type { Agent } from "@/lib/types";
-import { getComparisonFit, getSetupCommandPlatforms } from "@/lib/compare";
+import { MAX_COMPARE_AGENTS, getSetupCommandPlatforms, normalizeCompareSlugs } from "@/lib/compare";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -32,23 +32,31 @@ const rows: Array<[string, (agent: Agent) => string]> = [
 
 export default async function ComparePage({ searchParams }: { searchParams: Promise<{ agents?: string }> }) {
   const raw = (await searchParams).agents ?? "";
-  const slugs = [...new Set(raw.split(",").filter((slug) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)))].slice(0, 3);
+  const requestedSlugs = [...new Set(raw.split(",").filter(Boolean))];
+  const slugs = normalizeCompareSlugs(requestedSlugs);
   const agents = (await Promise.all(slugs.map((slug) => getAgent(slug)))).filter((agent): agent is NonNullable<typeof agent> => Boolean(agent));
-  const comparisonFit = agents.length >= 2 ? getComparisonFit(agents) : null;
+  const unavailableSelection = requestedSlugs.length > MAX_COMPARE_AGENTS
+    || requestedSlugs.length !== slugs.length
+    || slugs.length !== agents.length;
 
   return (
     <main id="main-content" className="page-shell">
       <div className="container compare-page">
         <div className="page-heading"><p className="eyebrow">Comparison</p><h1>Compare AI agent projects.</h1></div>
+        {unavailableSelection ? <p className="compare-selection-notice" role="status">One or more selected agents could not be loaded. Choose from the available listings below.</p> : null}
         {agents.length < 2 ? (
-          <section className="compare-empty"><h2>Select at least two agents.</h2><p>Use Compare on agent cards or guides, then open the comparison view.</p><Link className="button button-dark" href="/search">Browse agents</Link></section>
-        ) : (
+          <section className="compare-empty">
+            <h2>{agents.length === 1 ? "Add one more agent to compare." : "Select at least two agents."}</h2>
+            <p>Choose agents from the directory, then compare their recorded details side by side.</p>
+            <Link className="button button-dark" href="/search">Browse agents</Link>
+          </section>
+        ) : null}
+        {agents.length > 0 ? (
           <>
-            <div className="compare-fit"><strong>Recorded comparison signals</strong><div><span className="compare-fit-agent">{comparisonFit?.label}</span><p>{comparisonFit?.reasons.length ? `Signals recorded: ${comparisonFit.reasons.join("; ")}.` : "No qualifying comparison signals are recorded for this project."} Use the fields below to decide whether it fits your needs.</p></div></div>
             <div className="compare-table-wrap"><table className="compare-table"><thead><tr><th scope="col">Field</th>{agents.map((agent) => <th scope="col" key={agent.id}><Link href={`/agents/${agent.slug}`}>{agent.name}</Link><CompareButton slug={agent.slug} /></th>)}</tr></thead><tbody><tr><th scope="row">Description</th>{agents.map((agent) => <td key={agent.id}>{agent.short_description}</td>)}</tr>{rows.map(([label, value]) => <tr key={label}><th scope="row">{label}</th>{agents.map((agent) => <td key={agent.id}>{value(agent)}</td>)}</tr>)}</tbody></table></div>
-            <p className="compare-note">This comparison is saved with your AgentNine preferences.</p>
+            <p className="compare-note">The agents shown here come from this URL. Use “In compare” to remove an agent, or browse the directory to add another.</p>
           </>
-        )}
+        ) : null}
       </div>
     </main>
   );

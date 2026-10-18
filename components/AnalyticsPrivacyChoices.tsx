@@ -7,7 +7,7 @@ import {
   useVisitorPreferences,
 } from "@/lib/visitor-preferences";
 import {
-  GOOGLE_ANALYTICS_CONSENT_VERSION,
+  OPTIONAL_ANALYTICS_CONSENT_VERSION,
   hasGoogleAnalyticsConsent,
 } from "@/lib/google-analytics";
 
@@ -51,18 +51,18 @@ export function AnalyticsPrivacyChoices() {
   }
 
   const isAllowed = hasGoogleAnalyticsConsent(preferences);
-  const currentChoice = preferences.analyticsConsentVersion === GOOGLE_ANALYTICS_CONSENT_VERSION
+  const currentChoice = preferences.analyticsConsentVersion === OPTIONAL_ANALYTICS_CONSENT_VERSION
     ? preferences.analyticsConsent
     : undefined;
 
   return (
     <section className="privacy-choice-controls" aria-labelledby="privacy-choice-heading">
-      <h2 id="privacy-choice-heading">Optional analytics</h2>
+      <h2 id="privacy-choice-heading">Optional analytics and session replay</h2>
       <p>
-        Google Analytics is {isAllowed ? "on" : "off"}.
+        Optional Google Analytics, Meta Pixel, and Cortality session replay are {isAllowed ? "on" : "off"}.
         {currentChoice
           ? " You can change this choice at any time."
-          : " It stays off unless you choose to allow it."}
+          : " They stay off unless you choose to allow them."}
       </p>
       {loadError ? (
         <div role="alert">
@@ -81,7 +81,7 @@ export function AnalyticsPrivacyChoices() {
               disabled={!ready || saving}
               onClick={() => void choose("declined")}
             >
-              Decline
+              Decline all
             </button>
             <button
               className="button button-dark"
@@ -90,7 +90,7 @@ export function AnalyticsPrivacyChoices() {
               disabled={!ready || saving}
               onClick={() => void choose("accepted")}
             >
-              Allow
+              Allow all
             </button>
           </div>
           {!ready ? <p role="status">Loading your current choice…</p> : null}

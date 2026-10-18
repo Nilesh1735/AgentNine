@@ -6,6 +6,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
+import { CortalityRouteBoundary } from "@/components/CortalityReplay";
 import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
@@ -59,7 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></body>
+      <body className="min-h-full flex flex-col"><CortalityRouteBoundary><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></CortalityRouteBoundary></body>
     </html>
   );
 }

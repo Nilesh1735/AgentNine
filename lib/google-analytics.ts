@@ -1,7 +1,7 @@
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
 
 export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-FG116C7C4W";
-export const GOOGLE_ANALYTICS_CONSENT_VERSION = "ga4-v1";
+export const OPTIONAL_ANALYTICS_CONSENT_VERSION = "analytics-ga4-meta-pixel-cortality-v3";
 
 type GtagCommand = [command: string, ...parameters: unknown[]];
 
@@ -14,12 +14,12 @@ declare global {
 
 export function hasGoogleAnalyticsConsent(preferences: VisitorPreferences): boolean {
   return preferences.analyticsConsent === "accepted"
-    && preferences.analyticsConsentVersion === GOOGLE_ANALYTICS_CONSENT_VERSION;
+    && preferences.analyticsConsentVersion === OPTIONAL_ANALYTICS_CONSENT_VERSION;
 }
 
-export function hasCurrentGoogleAnalyticsChoice(preferences: VisitorPreferences): boolean {
+export function hasCurrentOptionalAnalyticsChoice(preferences: VisitorPreferences): boolean {
   return (preferences.analyticsConsent === "accepted" || preferences.analyticsConsent === "declined")
-    && preferences.analyticsConsentVersion === GOOGLE_ANALYTICS_CONSENT_VERSION;
+    && preferences.analyticsConsentVersion === OPTIONAL_ANALYTICS_CONSENT_VERSION;
 }
 
 export function getSafePageLocation(

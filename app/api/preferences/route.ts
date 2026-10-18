@@ -5,7 +5,7 @@ import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security
 import { attachVisitorCookie, getVisitorId } from "@/lib/visitor-state-server";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
-import { GOOGLE_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
+import { OPTIONAL_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
 
 export const runtime = "nodejs";
 
@@ -28,7 +28,7 @@ function validPatch(value: unknown): value is Record<string, unknown> {
   if ("analyticsConsent" in input && input.analyticsConsent !== null && input.analyticsConsent !== "accepted" && input.analyticsConsent !== "declined") return false;
   if ("analyticsConsentVersion" in input
     && input.analyticsConsentVersion !== null
-    && input.analyticsConsentVersion !== GOOGLE_ANALYTICS_CONSENT_VERSION) return false;
+    && input.analyticsConsentVersion !== OPTIONAL_ANALYTICS_CONSENT_VERSION) return false;
   if ("analyticsSessionId" in input && input.analyticsSessionId !== null) return false;
   if ("attribution" in input && input.attribution !== null) return false;
   for (const key of ["recentAgentSlugs", "compareSlugs"] as const) {

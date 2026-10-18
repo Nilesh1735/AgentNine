@@ -19,8 +19,8 @@ export default function TermsPage() {
         <p className="eyebrow">Legal</p>
         <h1>Terms of service</h1>
         <p>
-          Last updated: {legalConfig.lastUpdated}. Changes: clarified opt-in Google Analytics and
-          related privacy choices.
+          Last updated: {legalConfig.lastUpdated}. Changes: clarified optional analytics and Meta
+          Pixel privacy choices.
         </p>
 
         <h2>1. Acceptance and eligibility</h2>
@@ -38,9 +38,10 @@ export default function TermsPage() {
           links to upstream sources. Public browsing does not require an account.
         </p>
         <p>
-          Google Analytics is optional and is enabled only if you allow it. You can change your
-          choice on the <Link className="text-link" href="/privacy/choices">privacy choices page</Link>.
-          Details about information Google may receive are in the{" "}
+          Google Analytics and Meta Pixel are optional and are enabled only if you allow them. You
+          can change your choice on the{" "}
+          <Link className="text-link" href="/privacy/choices">privacy choices page</Link>. Details
+          about information these providers may receive are in the{" "}
           <Link className="text-link" href="/privacy">Privacy policy</Link> and{" "}
           <Link className="text-link" href="/cookies">Cookies and preferences</Link>.
         </p>
