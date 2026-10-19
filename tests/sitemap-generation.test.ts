@@ -74,4 +74,18 @@ describe("sitemap generation", () => {
       expect(entries.find((entry) => entry.url.endsWith(path))?.lastModified).toEqual(expected);
     }
   });
+
+  it("includes the last content edit date for the remaining static pages", async () => {
+    const entries = await sitemap();
+    const expectedDates = {
+      "/about": "2026-10-19",
+      "/faq": "2026-10-17",
+      "/join": "2026-10-09",
+      "/contact": "2026-10-12",
+      "/methodology": "2026-10-17",
+    };
+    for (const [path, date] of Object.entries(expectedDates)) {
+      expect(entries.find((entry) => entry.url.endsWith(path))?.lastModified).toEqual(new Date(date));
+    }
+  });
 });

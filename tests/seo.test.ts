@@ -22,6 +22,7 @@ describe("public page SEO metadata", () => {
 
   it.each([
     ["/about", "/social-previews/og-about.png"],
+    ["/agents", "/social-previews/og-agents.png"],
     ["/categories", "/social-previews/og-categories.png"],
     ["/categories/automation", "/social-previews/og-categories-automation.png"],
     ["/categories/coding", "/social-previews/og-categories-coding.png"],
@@ -30,8 +31,11 @@ describe("public page SEO metadata", () => {
     ["/contact", "/social-previews/og-contact.png"],
     ["/cookies", "/social-previews/og-cookies.png"],
     ["/faq", "/social-previews/og-faq.png"],
+    ["/feedback", "/social-previews/og-feedback.png"],
     ["/join", "/social-previews/og-join.png"],
     ["/methodology", "/social-previews/og-methodology.png"],
+    ["/news", "/social-previews/og-news.png"],
+    ["/news/agentnine-news-article", "/social-previews/og-news.png"],
     ["/privacy", "/social-previews/og-privacy.png"],
     ["/privacy/choices", "/social-previews/og-privacy-choices.png"],
     ["/search", "/social-previews/og-search.png"],

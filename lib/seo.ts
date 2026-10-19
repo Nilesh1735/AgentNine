@@ -11,6 +11,7 @@ type PublicPageMetadata = {
 const DEFAULT_SOCIAL_IMAGE = "/og-image.png";
 const SOCIAL_IMAGES_BY_PATH: Record<string, string> = {
   "/about": "/social-previews/og-about.png",
+  "/agents": "/social-previews/og-agents.png",
   "/categories": "/social-previews/og-categories.png",
   "/categories/automation": "/social-previews/og-categories-automation.png",
   "/categories/coding": "/social-previews/og-categories-coding.png",
@@ -19,8 +20,10 @@ const SOCIAL_IMAGES_BY_PATH: Record<string, string> = {
   "/contact": "/social-previews/og-contact.png",
   "/cookies": "/social-previews/og-cookies.png",
   "/faq": "/social-previews/og-faq.png",
+  "/feedback": "/social-previews/og-feedback.png",
   "/join": "/social-previews/og-join.png",
   "/methodology": "/social-previews/og-methodology.png",
+  "/news": "/social-previews/og-news.png",
   "/privacy": "/social-previews/og-privacy.png",
   "/privacy/choices": "/social-previews/og-privacy-choices.png",
   "/search": "/social-previews/og-search.png",
@@ -45,7 +48,8 @@ export function createPublicPageMetadata({
   const canonicalUrl = new URL(path, SITE_URL).toString();
   const metaDescription = normalizeDescription(description);
   const socialTitle = `${title} | AgentNine`;
-  const imagePath = SOCIAL_IMAGES_BY_PATH[path] ?? DEFAULT_SOCIAL_IMAGE;
+  const imagePath = SOCIAL_IMAGES_BY_PATH[path]
+    ?? (path.startsWith("/news/") ? SOCIAL_IMAGES_BY_PATH["/news"] : DEFAULT_SOCIAL_IMAGE);
   const imageUrl = new URL(imagePath, SITE_URL).toString();
   const imageDimensions = imagePath === DEFAULT_SOCIAL_IMAGE
     ? { width: 1200, height: 630 }

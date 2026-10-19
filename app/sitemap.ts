@@ -5,6 +5,7 @@ import {
   FEEDBACK_PAGE_LAST_MODIFIED,
   getLatestSitemapLastModified,
   getSitemapLastModified,
+  STATIC_PAGE_LAST_MODIFIED,
 } from "@/lib/sitemap";
 import { getLatestPublishedSiteFeedbackUpdate } from "@/lib/site-feedback-data";
 import { legalConfig } from "@/lib/legal-config";
@@ -47,18 +48,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
   const legalLastModified = getSitemapLastModified(legalConfig.lastUpdated);
   const feedbackPageLastModified = getSitemapLastModified(FEEDBACK_PAGE_LAST_MODIFIED);
+  const staticPageLastModified = {
+    about: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.about),
+    faq: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.faq),
+    join: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.join),
+    contact: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.contact),
+    methodology: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.methodology),
+  };
 
   return [
     { url: base, ...(latestHomeUpdate ? { lastModified: latestHomeUpdate } : {}), changeFrequency: "weekly", priority: 1 },
     { url: `${base}/agents`, ...(latestAgentUpdate ? { lastModified: latestAgentUpdate } : {}), changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/news`, ...(latestNewsUpdate ? { lastModified: latestNewsUpdate } : {}), changeFrequency: "daily", priority: 0.7 },
     { url: `${base}/categories`, ...(latestAgentUpdate ? { lastModified: latestAgentUpdate } : {}), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/methodology`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/join`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/faq`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/methodology`, ...(staticPageLastModified.methodology ? { lastModified: staticPageLastModified.methodology } : {}), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/join`, ...(staticPageLastModified.join ? { lastModified: staticPageLastModified.join } : {}), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/about`, ...(staticPageLastModified.about ? { lastModified: staticPageLastModified.about } : {}), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/faq`, ...(staticPageLastModified.faq ? { lastModified: staticPageLastModified.faq } : {}), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/feedback`, ...(feedbackPageLastModified ? { lastModified: feedbackPageLastModified } : {}), changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${base}/contact`, ...(staticPageLastModified.contact ? { lastModified: staticPageLastModified.contact } : {}), changeFrequency: "monthly", priority: 0.3 },
     { url: `${base}/privacy`, ...(legalLastModified ? { lastModified: legalLastModified } : {}), changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/cookies`, ...(legalLastModified ? { lastModified: legalLastModified } : {}), changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/terms`, ...(legalLastModified ? { lastModified: legalLastModified } : {}), changeFrequency: "yearly", priority: 0.2 },
