@@ -102,6 +102,12 @@ export default function TermsPage() {
           AgentNine to use it to review, respond to, and display the resulting directory correction
           or contribution.
         </p>
+        <p>
+          Feedback submitted through the feedback page remains private unless you explicitly permit
+          public display. AgentNine may publish permitted feedback on its homepage only after
+          administrator review. You retain ownership of your feedback and may contact AgentNine to
+          request that published feedback be removed.
+        </p>
 
         <h2>6. Acceptable use</h2>
         <p>You agree not to use the service to:</p>

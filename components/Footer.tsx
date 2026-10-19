@@ -32,6 +32,7 @@ export function Footer() {
             <Link href="/categories">Categories</Link>
             <Link href="/faq">FAQ</Link>
             <Link href="/compare">Compare agents</Link>
+            <Link href="/feedback">Share feedback</Link>
           </nav>
           <nav aria-label="About">
             <strong>About</strong>

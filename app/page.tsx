@@ -4,6 +4,7 @@ import { CatalogBackground } from "@/components/CatalogBackground";
 import { HomeCatalogSections } from "@/components/HomeCatalogSections";
 import { HomeCatalogLoadingSkeleton } from "@/components/HomeLoadingSkeleton";
 import { HomeFaqAccordion } from "@/components/HomeFaqAccordion";
+import { CommunityFeedback } from "@/components/CommunityFeedback";
 import { ProfileAvatars } from "@/components/ProfileAvatars";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
@@ -65,6 +66,7 @@ export default function Home() {
             <HomeFaqAccordion />
           </div>
         </section>
+        <CommunityFeedback />
         <section className="section founder-invite" aria-labelledby="founder-invite-title">
           <div className="container founder-invite-layout">
             <div>
