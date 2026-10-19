@@ -4,7 +4,7 @@ import { legalConfig } from "@/lib/legal-config";
 
 export const metadata = createPublicPageMetadata({
   title: "Privacy policy",
-  description: "How AgentNine handles account, contact, preference, analytics, and session replay information.",
+  description: "How AgentNine handles account, contact, feedback, preference, analytics, and session replay information.",
   path: "/privacy",
 });
 
@@ -63,6 +63,12 @@ export default function PrivacyPage() {
           or source links. The application can store submissions in Supabase and forward them to a
           contact-delivery provider. A submission may be stored even if email
           forwarding is unavailable.
+        </p>
+        <p>
+          The feedback form collects your message and an optional display name. You may submit it
+          without permission for public display, in which case it stays private to the AgentNine
+          team. If you separately give permission, it can appear on the homepage only after an
+          administrator approves it. A display name is shown only when you provide one.
         </p>
         <p>
           If you vote on a guide, the database stores the vote against a random respondent identifier
@@ -140,7 +146,7 @@ export default function PrivacyPage() {
         <h2>Why we use information</h2>
         <ul>
           <li>To create and maintain accounts and provide requested account features;</li>
-          <li>To respond to contact messages and review contributions;</li>
+          <li>To respond to contact messages, review contributions, and consider feedback about AgentNine;</li>
           <li>To protect accounts and the service and prevent abuse;</li>
           <li>To show aggregate guide feedback and improve directory information; and</li>
           <li>To understand directory usage through Google Analytics, Meta Pixel, and Cortality session replay, only if you allow them.</li>
@@ -205,10 +211,11 @@ export default function PrivacyPage() {
           application asks Supabase to remove contribution data for the account and, if that
           succeeds, deletes the authentication record. A database function determines which
           contribution records are removed. Contact-delivery
-          providers may retain their own copies under their own policies. Anonymous analytics, feedback identifiers, visitor preferences,
-          and admin security logs are not part of that account-deletion request. To request access
-          to, correction of, or deletion of other information, contact us using the details in the
-          contact section.
+          providers may retain their own copies under their own policies. Anonymous analytics,
+          guide-feedback identifiers, platform feedback, visitor preferences, and admin security
+          logs are not part of that account-deletion request. To request access to, correction of,
+          or deletion of other information, including removal of published feedback, contact us
+          using the details in the contact section.
         </p>
 
         <h2>Your privacy choices and rights</h2>
