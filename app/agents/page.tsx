@@ -8,8 +8,8 @@ import { serializeJsonLd } from "@/lib/json-ld";
 export const dynamic = "force-dynamic";
 
 export const metadata = createPublicPageMetadata({
-  title: "All open-source AI agents",
-  description: "Browse every published open-source AI agent and open its setup guide.",
+  title: "Open-Source AI Agent Listings",
+  description: "Browse open-source AI agent listings, then check each project's repository, setup guide, system requirements, and documented access.",
   path: "/agents",
 });
 

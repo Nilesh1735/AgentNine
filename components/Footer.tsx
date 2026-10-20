@@ -17,7 +17,7 @@ export function Footer() {
       <div className="container footer-grid">
         <div className="footer-brand-block">
           <Link href="/" className="brand"><BrandMark /><span>AgentNine</span></Link>
-          <p className="footer-note">Compare AI agent projects with clear setup guidance, source links, and practical access details.</p>
+          <p className="footer-note">Find open-source AI agents on AgentNine. Browse by category, compare listings, and review setup and access details.</p>
           <SocialLinks
             links={socialLinks}
             label="AgentNine social media"
