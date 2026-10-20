@@ -19,7 +19,7 @@ export default function Home() {
         "@id": `${SITE_URL}/#website`,
         url: SITE_URL,
         name: "AgentNine",
-        description: "Compare AI agent projects by source, setup requirements, and documented access.",
+        description: "Find open-source AI agents in AgentNine's directory. Browse by category, compare listings, and review setup, source, and access details.",
         publisher: { "@id": `${SITE_URL}/#organization` },
       },
       {
@@ -50,7 +50,7 @@ export default function Home() {
               <p>Each listing keeps those details separate so you can review them before a first run.</p>
             </div>
             <div className="standards-list">
-              <div className="feature-item"><span className="feature-number">A</span><h3>Source</h3><p>Open the upstream repository and review the release or commit behind the record.</p></div>
+              <div className="feature-item"><span className="feature-number">A</span><h3>Source</h3><p>Open the project repository and review the release or commit behind the record.</p></div>
               <div className="feature-item"><span className="feature-number">B</span><h3>Setup</h3><p>Check installation commands, environment requirements, and first-run guidance.</p></div>
               <div className="feature-item"><span className="feature-number">C</span><h3>Access</h3><p>Review network, file, memory, port, and provider details before local execution.</p></div>
             </div>
@@ -89,6 +89,6 @@ export default function Home() {
 
 export const metadata = createPublicPageMetadata({
   title: "Open-Source AI Agent Directory",
-  description: "Browse an open-source AI agent directory with project sources, setup guides, system requirements, and documented access details.",
+  description: "Find open-source AI agents in AgentNine's directory. Browse by category, compare listings, and review setup guides, source links, and access details.",
   path: "/",
 });

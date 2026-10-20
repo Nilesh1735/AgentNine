@@ -42,9 +42,9 @@ export function getAgentTrustState(agent: Agent, now = Date.now()): TrustState {
     const freshnessUnknown = metadataAt === null && commitAt === null;
     return {
       key: changed ? "changed" : freshnessUnknown ? "freshness-unknown" : "verified",
-      label: changed ? "Changed upstream" : freshnessUnknown ? "Freshness unknown" : "Verified",
+      label: changed ? "Project changed" : freshnessUnknown ? "Freshness unknown" : "Verified",
       detail: changed
-        ? "The upstream repository changed after the recorded verification."
+        ? "The project repository changed after the recorded verification."
         : freshnessUnknown
           ? "All five checklist items have recorded evidence, but no repository freshness signal is available."
           : "All five AgentNine checklist items have recorded evidence.",
@@ -84,7 +84,7 @@ export function getFreshnessNote(agent: Agent, includeUpstreamActivity = true): 
   if (metadataDate) return `Repository metadata checked ${metadataDate}.`;
   if (includeUpstreamActivity) {
     const commitDate = formatCatalogDate(agent.last_commit_at);
-    if (commitDate) return `Latest upstream commit recorded ${commitDate}.`;
+    if (commitDate) return `Latest project commit recorded ${commitDate}.`;
   }
   return "";
 }

@@ -97,7 +97,7 @@ export default function AboutPage() {
             <p className="eyebrow">About AgentNine</p>
             <h1 id="founder-title">What an AgentNine listing tells you.</h1>
             <p className="founder-lede">
-              Each listing links to its upstream source and records available setup and system-access details.
+              Each listing links to the original project and records available setup and system-access details.
             </p>
             <div className="founder-actions">
               <Link
@@ -147,11 +147,11 @@ export default function AboutPage() {
 
         <section className="about-editorial prose-page" aria-labelledby="about-agentnine-title">
           <h2 id="about-agentnine-title">What a listing covers</h2>
-          <p>Listings record setup steps, version details, hardware requirements, system access, and removal instructions when those details are available from the upstream project.</p>
+          <p>Listings record setup steps, version details, hardware requirements, system access, and removal instructions when those details are available from the original project.</p>
           <h2>How listing details are checked</h2>
           <p>We use the linked repository and project documentation. Read <Link className="text-link" href="/methodology">how verification and freshness are recorded</Link> to see what those checks do and do not establish.</p>
           <h2>Selection and removal</h2>
-          <p>Projects need a clear upstream source and a documented first-run path. We may mark or remove a listing if its source breaks, setup details become misleading, or a serious issue makes continued listing inappropriate. We do not audit upstream security, licensing, or legal compliance.</p>
+          <p>Projects need a clearly identified original source and documented first-run instructions. We may mark or remove a listing if its source breaks, setup details become misleading, or a serious issue makes continued listing inappropriate. We do not audit the project’s security, licensing, or legal compliance.</p>
           <h2>Independent by design</h2>
           <p>We are not affiliated with the creators or repositories listed here. A listing is not a partnership, endorsement, or security certification. If you spot a broken detail, <Link className="text-link" href="/contact">tell us</Link>.</p>
         </section>

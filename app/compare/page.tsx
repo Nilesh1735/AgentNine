@@ -27,7 +27,7 @@ const rows: Array<[string, (agent: Agent) => string]> = [
   ["Network access", (agent) => agent.network_access || "Not recorded"],
   ["File access", (agent) => agent.file_access || "Not recorded"],
   ["Hardware", (agent) => agent.hardware_requirements || "Not recorded"],
-  ["Upstream changes since verification", (agent) => agent.upstream_changed_since_verification ? "Changed since verification" : "No change recorded"],
+  ["Project changes since verification", (agent) => agent.upstream_changed_since_verification ? "Changed since verification" : "No change recorded"],
 ];
 
 export default async function ComparePage({ searchParams }: { searchParams: Promise<{ agents?: string }> }) {

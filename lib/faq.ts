@@ -43,13 +43,13 @@ export const faqGroups: FaqGroup[] = [
         id: "ollama",
         question: "Why do some agents mention Ollama?",
         answer:
-          "A locally run model can keep inference prompts from going to a hosted model provider. An agent may still contact other services through tools or its configuration, so check the listing's access details and the upstream documentation.",
+          "A locally run model can keep inference prompts from going to a hosted model provider. An agent may still contact other services through tools or its configuration, so check the listing's access details and the project documentation.",
       },
       {
         id: "verified-meaning",
         question: "What does verified mean?",
         answer:
-          "It means we completed the checklist shown on the listing at the displayed date. Projects change, so check the upstream repository before you run anything.",
+          "It means we completed the checklist shown on the listing at the displayed date. Projects change, so check the project repository before you run anything.",
       },
     ],
   },

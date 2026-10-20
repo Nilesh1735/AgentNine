@@ -34,7 +34,7 @@ export function createLlmIndex({ agents, categories, siteUrl }: LlmCatalog): str
     }),
     "",
     "## Trust boundary",
-    "Checklist evidence records information available to AgentNine; it is not an independent security, legal, licensing, or operational certification. Listings can be incomplete or out of date. Review the upstream project, its license, and current setup instructions; pin a version before running it.",
+    "Checklist evidence records information available to AgentNine; it is not an independent security, legal, licensing, or operational certification. Listings can be incomplete or out of date. Review the project, its license, and current setup instructions; pin a version before running it.",
   ];
   return lines.join("\n");
 }
