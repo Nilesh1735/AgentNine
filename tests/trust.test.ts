@@ -65,13 +65,13 @@ describe("agent trust state freshness", () => {
     expect(state.label).toBe("Verified");
   });
 
-  it("keeps changed upstream as the stronger signal when freshness is unknown", () => {
+  it("keeps project changes as the stronger signal when freshness is unknown", () => {
     const state = getAgentTrustState(createAgent({
       verification_score: 5,
       upstream_changed_since_verification: true,
     }), now);
 
     expect(state.key).toBe("changed");
-    expect(state.label).toBe("Changed upstream");
+    expect(state.label).toBe("Project changed");
   });
 });

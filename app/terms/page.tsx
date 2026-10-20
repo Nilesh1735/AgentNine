@@ -35,7 +35,7 @@ export default function TermsPage() {
         <p>
           AgentNine is a public directory of AI-agent projects. It provides listings, editorial
           context, setup notes, recorded verification information, search and comparison tools, and
-          links to upstream sources. Public browsing does not require an account.
+          links to the original project sources. Public browsing does not require an account.
         </p>
         <p>
           Google Analytics and Meta Pixel are optional and are enabled only if you allow them. You
@@ -55,15 +55,15 @@ export default function TermsPage() {
           AgentNine does not grant a license to third-party projects listed in the directory.
           Software, names, logos, documentation, and other materials remain subject to their
           respective owners&apos; terms and licenses. Before downloading or running a project, review
-          its upstream license, security posture, dependencies, permissions, and applicable
+          its license, security posture, dependencies, permissions, and applicable
           provider terms. You are responsible for your use of external software.
         </p>
         <p>
           Verification scores, dates, and evidence describe checks recorded at a point in time. They
           are not safety certifications, endorsements, security audits, warranties, or guarantees of
           compatibility or performance. Listings, instructions, prices, dependencies, and links may
-          be incomplete, outdated, or unavailable. Check important details against the upstream
-          project before relying on them.
+          be incomplete, outdated, or unavailable. Check important details against the project’s
+          own documentation before relying on them.
         </p>
         <p>
           Some listed projects may be dual-use, including tools that can be used for security

@@ -16,22 +16,22 @@ export default function MethodologyPage() {
         <div className="page-heading">
           <p className="eyebrow">Trust and methodology</p>
           <h1>Evidence, freshness, and clear limits.</h1>
-          <p>AgentNine separates what was checked from what is only visible in the upstream repository. Missing data stays missing.</p>
+          <p>AgentNine separates what was checked from what is only visible in the project repository. Missing data stays missing.</p>
         </div>
         <section className="trust-methodology-grid" aria-label="AgentNine methodology">
           <article className="trust-methodology-card">
             <h2>Verification states</h2>
-            <p><strong>Verified</strong> means all five checklist items have recorded evidence, repository freshness is current, and no later upstream change is recorded.</p>
+            <p><strong>Verified</strong> means all five checklist items have recorded evidence, repository freshness is current, and no later project change is recorded.</p>
             <p><strong>Partially verified</strong> means only some of those items are recorded. A record without evidence is left as unverified rather than treated as tested.</p>
           </article>
           <article className="trust-methodology-card">
             <h2>Freshness signals</h2>
-            <p>A repository metadata check date is used when available. Otherwise, freshness uses the latest recorded upstream commit. A stale flag or a date older than 180 days marks the record <strong>Needs review</strong>, including records with all five checklist items complete.</p>
-            <p>If neither a metadata check date nor an upstream commit date is available, freshness is unknown and the record is not labeled <strong>Verified</strong>. The setup-review date describes when checklist evidence was recorded; it does not determine repository freshness.</p>
+            <p>A repository metadata check date is used when available. Otherwise, freshness uses the latest recorded commit to the project repository. A stale flag or a date older than 180 days marks the record <strong>Needs review</strong>, including records with all five checklist items complete.</p>
+            <p>If neither a metadata check date nor a project commit date is available, freshness is unknown and the record is not labeled <strong>Verified</strong>. The setup-review date describes when checklist evidence was recorded; it does not determine repository freshness.</p>
           </article>
           <article className="trust-methodology-card">
             <h2>What this is not</h2>
-            <p>A score is not a safety certification, security audit, endorsement, or guarantee that upstream behavior has stayed unchanged.</p>
+            <p>A score is not a safety certification, security audit, endorsement, or guarantee that the project has stayed unchanged.</p>
             <p>Read the source repository, license, permissions, provider terms, and current issues before running an agent.</p>
           </article>
         </section>

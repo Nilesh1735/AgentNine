@@ -11,12 +11,12 @@ const questions = [
   {
     question: "What does “verified” mean?",
     answer:
-      "All five checklist items have recorded evidence, the listing is not marked stale, and no later upstream change is recorded. A review date appears only when one has been recorded. This is not a safety certification.",
+      "All five checklist items have recorded evidence, the listing is not marked stale, and no later project change is recorded. A review date appears only when one has been recorded. This is not a safety certification.",
   },
   {
     question: "Where does a listing’s information come from?",
     answer:
-      "Each published listing links to its upstream repository. Open that source to check the current code, setup instructions, and license.",
+      "Each published listing links to its project repository. Open that source to check the current code, setup instructions, and license.",
   },
 ];
 

@@ -30,7 +30,7 @@ export function SetupGuidePanel({ guide }: {
       return <details className="setup-platform" key={os}>
         <summary>{label}</summary>
         {platform?.install_route ? <p className="setup-platform-route">{platform.install_route}</p> : null}
-        {unsupported ? <p className="setup-platform-empty">The upstream project does not support this OS.</p> : <>
+        {unsupported ? <p className="setup-platform-empty">The project does not support this OS.</p> : <>
           {/* If there's no platform data or no commands, show a clear message so the panel has visible content and users know why it may be empty. */}
           {/* If there is no platform entry for this OS: show either a reviewed-empty message or the unreviewed placeholders depending on whether the source was checked. */}
           {(!platform) && (sourceChecked
