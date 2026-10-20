@@ -1,17 +1,27 @@
 import Link from "next/link";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
-import { AgentCard } from "@/components/AgentCard";
 import { CatalogState } from "@/components/CatalogState";
 import { DirectoryPreview } from "@/components/DirectoryPreview";
-import { getAgents, getCategories, getRecentlyUpdatedAgents } from "@/lib/data";
+import { getAgents, getCategories } from "@/lib/data";
+import { getPublishedNewsPosts } from "@/lib/news";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { SITE_URL } from "@/lib/site";
 import { getAgentTrustState } from "@/lib/trust";
 
 export async function HomeCatalogSections() {
-  const [agents, categories] = await Promise.all([getAgents(), getCategories()]);
+  const [agents, categories, news] = await Promise.all([
+    getAgents(),
+    getCategories(),
+    getPublishedNewsPosts().then(
+      (posts) => ({ status: "ready" as const, posts }),
+      (error: unknown) => {
+        console.error("Homepage news section could not load published posts:", error);
+        return { status: "unavailable" as const, posts: [] };
+      },
+    ),
+  ]);
   const featured = agents.data.slice(0, 3);
-  const recentlyUpdated = getRecentlyUpdatedAgents(agents.data).slice(0, 4);
+  const latestNews = news.posts.slice(0, 3);
   const previewAgents = agents.data.slice(0, 40).map((agent) => {
     const trust = getAgentTrustState(agent);
     return {
@@ -53,7 +63,37 @@ export async function HomeCatalogSections() {
           <div className="category-links">{categories.data.map((category) => <Link key={category.id} href={`/categories/${category.slug}`}><span>{category.name}</span>{category.description ? <small>{category.description}</small> : null}<ArrowUpRight size={15} aria-hidden="true" /></Link>)}</div>
         </div>
       </section>
-      {recentlyUpdated.length ? <section className="section recent-section"><div className="container"><div className="new-section-heading"><h2>Recently updated</h2></div><div className="recent-grid">{recentlyUpdated.map((agent) => <AgentCard key={agent.id} agent={agent} category={categories.data.find((category) => category.id === agent.category_id)} showUpstreamActivity={false} />)}</div></div></section> : null}
+      <section className="section home-news-section" aria-labelledby="home-news-heading">
+        <div className="container">
+          <div className="home-news-heading">
+            <h2 id="home-news-heading">News and updates.</h2>
+            <Link href="/news" className="home-news-all-link">
+              All news <ArrowUpRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
+          {news.status === "unavailable" ? (
+            <p className="news-empty">News is temporarily unavailable. Please try again later.</p>
+          ) : latestNews.length ? (
+            <ol className="news-list home-news-list">
+              {latestNews.map((post) => (
+                <li key={post.id}>
+                  <article>
+                    {post.published_at ? (
+                      <time dateTime={post.published_at}>
+                        {new Intl.DateTimeFormat("en", { dateStyle: "long", timeZone: "UTC" }).format(new Date(post.published_at))}
+                      </time>
+                    ) : null}
+                    <h3><Link href={`/news/${post.slug}`}>{post.title}</Link></h3>
+                    <p className="news-summary">{post.summary}</p>
+                  </article>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="news-empty">No news articles have been published yet.</p>
+          )}
+        </div>
+      </section>
     </>
   );
 }

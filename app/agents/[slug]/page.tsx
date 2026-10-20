@@ -32,9 +32,9 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const agent = await getAgent((await params).slug);
   if (!agent) return { title: "Agent not found" };
-  const description = `Review ${agent.name}'s setup guide, source repository, system requirements, and documented access. ${agent.short_description}`;
+  const description = `Review ${agent.name}, an open-source AI agent. Check its setup guide, source repository, system requirements, and documented access. ${agent.short_description}`;
   return createPublicPageMetadata({
-    title: `${agent.name} setup guide and requirements`,
+    title: `${agent.name} AI Agent Setup Guide`,
     description,
     path: `/agents/${agent.slug}`,
     type: "article",

@@ -72,9 +72,9 @@ const emptyForm: AgentForm = {
 };
 
 const checks = [
-  ["pinned_checkout_passed", "Pinned checkout/version"],
+  ["pinned_checkout_passed", "Exact source version reviewed"],
   ["dependency_install_passed", "Dependencies installed"],
-  ["provider_setup_passed", "Provider setup understood"],
+  ["provider_setup_passed", "AI model provider connection confirmed"],
   ["first_prompt_passed", "First prompt completed"],
   ["normal_machine_run_passed", "Normal-machine run passed"],
 ] as const;

@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const category = await getCategory(slug);
   const title = category?.name
-    ? `Open-source ${category.name.toLowerCase()}: setup guides`
+    ? `Open-source ${category.name.toLowerCase()} AI agents: setup guides`
     : "Open-source AI agent category";
   const description = category?.description
-    ? `Explore ${category.name.toLowerCase()} by source, setup requirements, and documented access. ${category.description}`
+    ? `Find open-source ${category.name.toLowerCase()} AI agents. Review project sources, setup requirements, and documented access. ${category.description}`
     : "Explore open-source AI agents by category, with source repositories, setup guidance, and documented system access.";
   return createPublicPageMetadata({ title, description, path: `/categories/${slug}` });
 }

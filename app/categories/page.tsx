@@ -5,8 +5,8 @@ import { getCategories, getAgents, getCategoryAgentCount } from "@/lib/data";
 import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata = createPublicPageMetadata({
-  title: "Open-source AI agents by category",
-  description: "Browse open-source AI agents for coding, research, automation, and content, with setup guides and documented system-access details.",
+  title: "Open-Source AI Agents by Category",
+  description: "Find open-source AI tools for coding, research, automation, and content. Browse agent categories and review project sources, setup, and access details.",
   path: "/categories",
 });
 

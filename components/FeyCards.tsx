@@ -183,7 +183,7 @@ function PreviewArtwork({ story }: { story: (typeof CARD_STORIES)[number] }) {
         <h2 className="fey-artifact-title">Check source and version</h2>
         <ArtifactMark story={story} />
         <div className="fey-source-slip">
-          <span>Source repository</span>
+          <span>Original project repository</span>
           <i />
           <span>Version</span>
           <i />
@@ -199,9 +199,9 @@ function PreviewArtwork({ story }: { story: (typeof CARD_STORIES)[number] }) {
         <h2 className="fey-artifact-title">See what was checked</h2>
         <ArtifactMark story={story} />
         <div className="fey-proof-list">
-          <span>Pinned source checkout</span>
+          <span>The exact source version reviewed</span>
           <span>Dependency installation</span>
-          <span>Provider setup</span>
+          <span>Connect an AI model provider</span>
           <span>First prompt</span>
           <span>Successful run on a typical machine</span>
         </div>

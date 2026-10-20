@@ -224,7 +224,7 @@ export function AdminOperations() {
                 <a href={`/agents/${row.slug}`}>{row.name}</a>
                 <time dateTime={row.metadata_last_checked_at ?? undefined}>{formatDate(row.metadata_last_checked_at)}</time>
               </div>
-              <p>{row.metadata_is_stale ? "Marked stale" : "Metadata has not been checked"} · <a href={row.github_url} target="_blank" rel="noreferrer">Upstream repository</a></p>
+              <p>{row.metadata_is_stale ? "Marked stale" : "Metadata has not been checked"} · <a href={row.github_url} target="_blank" rel="noreferrer">Original project repository</a></p>
             </li>
           ))}
         </ol>
