@@ -1651,7 +1651,7 @@ kbd { color: var(--muted); border: 1px solid var(--line); border-radius: var(--r
 .fey-artifact-title { position: relative; z-index: 1; max-width: 12ch; margin: 0; font-family: var(--font-fraunces), serif; font-size: clamp(17px, 1.45vw, 22px); font-weight: 500; letter-spacing: -.035em; line-height: 1.05; }
 .fey-artifact-title-access { max-width: none; line-height: 1.3; }
 .fey-meteor-shower { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
-.fey-meteor-shower i { position: absolute; width: 52px; height: 2px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fey-red) 80%, transparent) 72%, var(--fey-red)); box-shadow: 0 0 3px color-mix(in srgb, var(--fey-red) 45%, transparent); opacity: 0; animation: fey-meteor 9s linear infinite; animation-delay: calc(var(--card-position, 0) * -1s); }
+.fey-meteor-shower i { position: absolute; width: 52px; height: 2px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fey-red) 80%, transparent) 72%, var(--fey-red)); box-shadow: 0 0 3px color-mix(in srgb, var(--fey-red) 45%, transparent); opacity: 0; animation: fey-meteor 9s linear infinite; animation-delay: calc(var(--card-position, 0) * 1s); }
 .fey-meteor-shower i:nth-child(1) { top: 18%; left: 10%; --meteor-x: 32px; --meteor-angle: 45deg; }
 .fey-meteor-shower i:nth-child(2) { top: 39%; left: 53%; --meteor-x: 32px; --meteor-angle: 45deg; }
 .fey-meteor-shower i:nth-child(3) { top: 57%; left: 24%; --meteor-x: 32px; --meteor-angle: 45deg; }

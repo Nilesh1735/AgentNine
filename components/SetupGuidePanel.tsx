@@ -41,14 +41,16 @@ export function SetupGuidePanel({ guide }: {
             </>
           )}
 
-          {/* If a platform exists but has no commands, and the source was checked, show the reviewed-empty message. */}
-          {(platform && installCommands.length === 0 && uninstallCommands.length === 0 && sourceChecked) ? <p className="setup-platform-empty">No shell commands are recorded for this OS.</p> : null}
+          {/* A download link already gives users an install route, so only show this when none is recorded. */}
+          {(platform && installCommands.length === 0 && uninstallCommands.length === 0 && sourceChecked && !platform.download_url)
+            ? <p className="setup-platform-empty">No shell commands are recorded for this OS.</p>
+            : null}
 
           {installCommands.length
             ? <CodeRow label="Install code" commands={installCommands} />
-            : (platform && !sourceChecked) ? <p className="setup-platform-empty">{platform.download_url
-              ? "No shell install command is listed. Use the official download."
-              : "Install instructions have not been reviewed."}</p> : null}
+            : (platform && !sourceChecked && !platform.download_url)
+              ? <p className="setup-platform-empty">Install instructions have not been reviewed.</p>
+              : null}
           {platform?.download_url
             ? <a className="setup-platform-download" href={platform.download_url} target="_blank" rel="noreferrer">Official download</a>
             : null}
