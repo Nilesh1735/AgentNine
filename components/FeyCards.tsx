@@ -241,12 +241,12 @@ export function FeyCards() {
 
   return (
     <div className="fey-hero">
-      <p className="eyebrow fey-hero-kicker">OPEN-SOURCE AI AGENT DIRECTORY</p>
-      <h1 className="fey-hero-title">
+      <h1 className="eyebrow fey-hero-kicker">OPEN-SOURCE AI AGENT DIRECTORY</h1>
+      <p className="fey-hero-title">
         <span>Find Your</span>
         {" "}
         <span>Next Agent</span>
-      </h1>
+      </p>
       <div
         className="fey-deck-scroll"
         role="region"

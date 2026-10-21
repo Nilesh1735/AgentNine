@@ -1,8 +1,5 @@
 import { MaskedAvatars } from "@/components/ui/masked-avatars";
 
-const emptyAvatar =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3C/svg%3E";
-
 export function ProfileAvatars({
   size = 88,
   className,
@@ -13,11 +10,10 @@ export function ProfileAvatars({
   return (
     <MaskedAvatars
       avatars={[
-        { avatar: "/nilesh-profile.jpeg", name: "Nilesh", href: "/about" },
-        { avatar: "/ali-sibtain-profile.webp", name: "Ali", href: "/about" },
-        { avatar: "/armaan-profile.jpeg", name: "Armaan", href: "/about" },
-        { avatar: "/ronit-profile.jpeg", name: "Ronit", href: "/about" },
-        { avatar: emptyAvatar, name: "Join us", href: "/join" },
+        { avatar: "/nilesh-profile.jpeg", name: "Nilesh Raj", href: "/about" },
+        { avatar: "/ali-sibtain-profile.webp", name: "Ali Sibtain", href: "/about" },
+        { avatar: "/armaan-profile.jpeg", name: "Armaan Amba", href: "/about" },
+        { avatar: "/ronit-profile.jpeg", name: "Ronit Jaiswal", href: "/about" },
       ]}
       size={size}
       column={Math.round(size * 0.68)}

@@ -10,6 +10,9 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
+const homepageDescription =
+  "Explore open-source AI agents. Compare setup requirements, source repositories, and documented access across coding, research, content, and automation projects.";
+
 export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -19,7 +22,7 @@ export default function Home() {
         "@id": `${SITE_URL}/#website`,
         url: SITE_URL,
         name: "AgentNine",
-        description: "Find open-source AI agents in AgentNine's directory. Browse by category, compare listings, and review setup, source, and access details.",
+        description: homepageDescription,
         publisher: { "@id": `${SITE_URL}/#organization` },
       },
       {
@@ -28,6 +31,12 @@ export default function Home() {
         url: SITE_URL,
         name: "AgentNine",
         logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+        sameAs: [
+          "https://github.com/Nilesh1735/AgentNine",
+          "https://www.linkedin.com/company/agentnine/",
+          "https://x.com/agentninepro",
+          "https://www.instagram.com/agentnine.pro",
+        ],
       },
     ],
   };
@@ -89,6 +98,6 @@ export default function Home() {
 
 export const metadata = createPublicPageMetadata({
   title: "Open-Source AI Agent Directory",
-  description: "Find open-source AI agents in AgentNine's directory. Browse by category, compare listings, and review setup guides, source links, and access details.",
+  description: homepageDescription,
   path: "/",
 });

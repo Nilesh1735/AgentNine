@@ -15,8 +15,11 @@ export default function FeedbackPage() {
   );
 }
 
-export const metadata = createPublicPageMetadata({
-  title: "Share feedback",
-  description: "Send feedback about using AgentNine. Public display requires your permission and team approval.",
-  path: "/feedback",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "Share feedback",
+    description: "Send feedback about using AgentNine. Public display requires your permission and team approval.",
+    path: "/feedback",
+  }),
+  robots: { index: false, follow: true },
+};

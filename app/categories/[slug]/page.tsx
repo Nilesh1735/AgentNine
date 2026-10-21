@@ -3,6 +3,7 @@ import { AgentCard } from "@/components/AgentCard";
 import { CategoryNav } from "@/components/CategoryNav";
 import { CatalogState } from "@/components/CatalogState";
 import { getAgents, getCategories, getCategory, getCategoryAgents } from "@/lib/data";
+import { getCategoryMetadata } from "@/lib/category-metadata";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -20,13 +21,7 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = await getCategory(slug);
-  const title = category?.name
-    ? `Open-source ${category.name.toLowerCase()} AI agents: setup guides`
-    : "Open-source AI agent category";
-  const description = category?.description
-    ? `Find open-source ${category.name.toLowerCase()} AI agents. Review project sources, setup requirements, and documented access. ${category.description}`
-    : "Explore open-source AI agents by category, with source repositories, setup guidance, and documented system access.";
-  return createPublicPageMetadata({ title, description, path: `/categories/${slug}` });
+  return createPublicPageMetadata({ ...getCategoryMetadata(category), path: `/categories/${slug}` });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {

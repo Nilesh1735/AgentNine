@@ -46,13 +46,9 @@ describe("sitemap generation", () => {
     mocks.getLatestPublishedSiteFeedbackUpdate.mockResolvedValue(new Date("2026-10-19T09:00:00.000Z"));
   });
 
-  it("sets the requested feedback priority", async () => {
+  it("does not include the noindex feedback form", async () => {
     const entries = await sitemap();
-    expect(entries.find((entry) => entry.url.endsWith("/feedback"))).toMatchObject({
-      changeFrequency: "monthly",
-      priority: 0.7,
-      lastModified: new Date("2026-10-19T00:00:00.000Z"),
-    });
+    expect(entries.find((entry) => entry.url.endsWith("/feedback"))).toBeUndefined();
   });
 
   it("uses the newest underlying content date for collection pages", async () => {
