@@ -1,5 +1,3 @@
-export const FEEDBACK_PAGE_LAST_MODIFIED = "2026-10-19";
-
 export const STATIC_PAGE_LAST_MODIFIED = {
   about: "2026-10-19",
   faq: "2026-10-17",

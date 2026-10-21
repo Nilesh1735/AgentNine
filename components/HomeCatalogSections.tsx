@@ -7,6 +7,7 @@ import { getPublishedNewsPosts } from "@/lib/news";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { SITE_URL } from "@/lib/site";
 import { getAgentTrustState } from "@/lib/trust";
+import { selectHomepagePreviewAgents } from "@/lib/homepage-preview";
 
 export async function HomeCatalogSections() {
   const [agents, categories, news] = await Promise.all([
@@ -22,7 +23,7 @@ export async function HomeCatalogSections() {
   ]);
   const featured = agents.data.slice(0, 3);
   const latestNews = news.posts.slice(0, 3);
-  const previewAgents = agents.data.slice(0, 40).map((agent) => {
+  const previewAgents = selectHomepagePreviewAgents(agents.data, categories.data).map((agent) => {
     const trust = getAgentTrustState(agent);
     return {
       id: agent.id,

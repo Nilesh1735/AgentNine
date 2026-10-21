@@ -15,7 +15,7 @@ type PreviewCategory = Pick<Category, "id" | "name" | "slug">;
 
 export function DirectoryPreview({ agents, categories }: { agents: PreviewAgent[]; categories: PreviewCategory[] }) {
   const categoryById = new Map(categories.map((category) => [category.id, category]));
-  const collection = agents.slice(0, 40);
+  const collection = agents;
   const ringCollection = [...collection, ...collection];
   const loopDuration = Math.max(120, collection.length * 2);
   const controls = useAnimationControls();

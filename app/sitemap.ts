@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { getAgents, getCategories } from "@/lib/data";
 import { getPublishedNewsPosts } from "@/lib/news";
 import {
-  FEEDBACK_PAGE_LAST_MODIFIED,
   getLatestSitemapLastModified,
   getSitemapLastModified,
   STATIC_PAGE_LAST_MODIFIED,
@@ -47,7 +46,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     newsPosts.map((post) => post.updated_at ?? post.published_at ?? post.created_at),
   );
   const legalLastModified = getSitemapLastModified(legalConfig.lastUpdated);
-  const feedbackPageLastModified = getSitemapLastModified(FEEDBACK_PAGE_LAST_MODIFIED);
   const staticPageLastModified = {
     about: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.about),
     faq: getSitemapLastModified(STATIC_PAGE_LAST_MODIFIED.faq),
@@ -65,7 +63,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/join`, ...(staticPageLastModified.join ? { lastModified: staticPageLastModified.join } : {}), changeFrequency: "monthly", priority: 0.4 },
     { url: `${base}/about`, ...(staticPageLastModified.about ? { lastModified: staticPageLastModified.about } : {}), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/faq`, ...(staticPageLastModified.faq ? { lastModified: staticPageLastModified.faq } : {}), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/feedback`, ...(feedbackPageLastModified ? { lastModified: feedbackPageLastModified } : {}), changeFrequency: "monthly", priority: 0.7 },
     { url: `${base}/contact`, ...(staticPageLastModified.contact ? { lastModified: staticPageLastModified.contact } : {}), changeFrequency: "monthly", priority: 0.3 },
     { url: `${base}/privacy`, ...(legalLastModified ? { lastModified: legalLastModified } : {}), changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/cookies`, ...(legalLastModified ? { lastModified: legalLastModified } : {}), changeFrequency: "yearly", priority: 0.2 },
