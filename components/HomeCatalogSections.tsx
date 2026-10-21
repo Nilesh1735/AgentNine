@@ -21,7 +21,6 @@ export async function HomeCatalogSections() {
       },
     ),
   ]);
-  const featured = agents.data.slice(0, 3);
   const latestNews = news.posts.slice(0, 3);
   const previewAgents = selectHomepagePreviewAgents(agents.data, categories.data).map((agent) => {
     const trust = getAgentTrustState(agent);
@@ -39,9 +38,9 @@ export async function HomeCatalogSections() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Featured AI agents",
-    numberOfItems: featured.length,
-    itemListElement: featured.map((agent, index) => ({
+    name: "AI agents by category",
+    numberOfItems: previewAgents.length,
+    itemListElement: previewAgents.map((agent, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: agent.name,
