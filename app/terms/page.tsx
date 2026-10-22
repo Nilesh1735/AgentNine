@@ -2,11 +2,14 @@ import Link from "next/link";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { legalConfig } from "@/lib/legal-config";
 
-export const metadata = createPublicPageMetadata({
-  title: "Terms of service",
-  description: "Terms for using AgentNine and reviewing listed AI-agent projects.",
-  path: "/terms",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "Terms of service",
+    description: "Terms for using AgentNine and reviewing listed AI-agent projects.",
+    path: "/terms",
+  }),
+  robots: { index: false, follow: true },
+};
 
 export default function TermsPage() {
   const contact = legalConfig.contactEmail

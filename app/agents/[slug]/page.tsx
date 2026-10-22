@@ -31,13 +31,14 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const agent = await getAgent((await params).slug);
-  if (!agent) return { title: "Agent not found" };
+  if (!agent) return { title: "Agent not found", robots: { index: false, follow: false } };
   const description = `Review ${agent.name}, an open-source AI agent. Check its setup guide, source repository, system requirements, and documented access. ${agent.short_description}`;
   return createPublicPageMetadata({
     title: `${agent.name} AI Agent Setup Guide`,
     description,
     path: `/agents/${agent.slug}`,
     type: "article",
+    robots: { index: true, follow: true },
   });
 }
 

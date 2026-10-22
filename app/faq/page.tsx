@@ -4,11 +4,14 @@ import { faqGroups } from "@/lib/faq";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = createPublicPageMetadata({
-  title: "AI agent directory FAQ: setup and verification",
-  description: "Answers about AI-agent listings, setup guides, source details, recorded checks, and what AgentNine verification marks mean.",
-  path: "/faq",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "AI agent directory FAQ: setup and verification",
+    description: "Answers about AI-agent listings, setup guides, source details, recorded checks, and what AgentNine verification marks mean.",
+    path: "/faq",
+  }),
+  robots: { index: false, follow: true },
+};
 
 export default function FaqPage() {
   const jsonLd = {

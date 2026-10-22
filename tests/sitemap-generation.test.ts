@@ -63,25 +63,30 @@ describe("sitemap generation", () => {
     expect(entries.find((entry) => entry.url.endsWith("/news/second-story"))?.lastModified).toEqual(lastAgentUpdate);
   });
 
-  it("includes last-modified dates for legal pages from the legal revision date", async () => {
+  it("excludes pages marked noindex from the sitemap", async () => {
     const entries = await sitemap();
-    const expected = new Date("October 19, 2026");
-    for (const path of ["/privacy", "/cookies", "/terms"]) {
-      expect(entries.find((entry) => entry.url.endsWith(path))?.lastModified).toEqual(expected);
+    for (const path of [
+      "/about",
+      "/methodology",
+      "/join",
+      "/faq",
+      "/contact",
+      "/privacy",
+      "/cookies",
+      "/terms",
+    ]) {
+      expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeUndefined();
     }
   });
 
-  it("includes the last content edit date for the remaining static pages", async () => {
+  it("keeps published agents, categories, and news articles in the sitemap", async () => {
     const entries = await sitemap();
-    const expectedDates = {
-      "/about": "2026-10-19",
-      "/faq": "2026-10-17",
-      "/join": "2026-10-09",
-      "/contact": "2026-10-12",
-      "/methodology": "2026-10-17",
-    };
-    for (const [path, date] of Object.entries(expectedDates)) {
-      expect(entries.find((entry) => entry.url.endsWith(path))?.lastModified).toEqual(new Date(date));
+    for (const path of [
+      "/agents/first-agent",
+      "/categories/first-category",
+      "/news/first-story",
+    ]) {
+      expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeDefined();
     }
   });
 });

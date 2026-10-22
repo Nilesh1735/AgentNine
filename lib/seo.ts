@@ -6,6 +6,7 @@ type PublicPageMetadata = {
   description: string;
   path: string;
   type?: "website" | "article";
+  robots?: Metadata["robots"];
 };
 
 const DEFAULT_SOCIAL_IMAGE = "/og-image.png";
@@ -44,6 +45,7 @@ export function createPublicPageMetadata({
   description,
   path,
   type = "website",
+  robots,
 }: PublicPageMetadata): Metadata {
   const canonicalUrl = new URL(path, SITE_URL).toString();
   const metaDescription = normalizeDescription(description);
@@ -58,6 +60,7 @@ export function createPublicPageMetadata({
   return {
     title,
     description: metaDescription,
+    ...(robots ? { robots } : {}),
     alternates: { canonical: canonicalUrl },
     openGraph: {
       title: socialTitle,

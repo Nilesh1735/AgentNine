@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { JoinForm } from "@/components/JoinForm";
 import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPublicPageMetadata({
-  title: "Join AgentNine",
-  description: "Propose a contribution to AgentNine’s AI agent directory.",
-  path: "/join",
-});
+export const metadata: Metadata = {
+  ...createPublicPageMetadata({
+    title: "Join AgentNine",
+    description: "Propose a contribution to AgentNine’s AI agent directory.",
+    path: "/join",
+  }),
+  robots: { index: false, follow: true },
+};
 
 export default function JoinPage() {
   return (

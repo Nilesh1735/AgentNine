@@ -1,7 +1,7 @@
 import { ProfileDetails } from "@/components/ProfileDetails";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Your profile", robots: { index: false, follow: false } };
+export const metadata = { title: "Your profile", robots: { index: false, follow: true } };
 
 export default function ProfilePage() {
   return (

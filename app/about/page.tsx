@@ -68,11 +68,14 @@ const teamMembers = [
   },
 ] satisfies readonly TeamRevealMember[];
 
-export const metadata = createPublicPageMetadata({
-  title: "About",
-  description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
-  path: "/about",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "About",
+    description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
+    path: "/about",
+  }),
+  robots: { index: false, follow: true },
+};
 
 export default function AboutPage() {
   const jsonLd = {

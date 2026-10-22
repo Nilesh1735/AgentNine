@@ -21,7 +21,12 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = await getCategory(slug);
-  return createPublicPageMetadata({ ...getCategoryMetadata(category), path: `/categories/${slug}` });
+  if (!category) return { title: "Category not found", robots: { index: false, follow: false } };
+  return createPublicPageMetadata({
+    ...getCategoryMetadata(category),
+    path: `/categories/${slug}`,
+    robots: { index: true, follow: true },
+  });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
