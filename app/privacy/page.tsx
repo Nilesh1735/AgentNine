@@ -2,11 +2,14 @@ import Link from "next/link";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { legalConfig } from "@/lib/legal-config";
 
-export const metadata = createPublicPageMetadata({
-  title: "Privacy policy",
-  description: "How AgentNine handles account, contact, feedback, preference, analytics, and session replay information.",
-  path: "/privacy",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "Privacy policy",
+    description: "How AgentNine handles account, contact, feedback, preference, analytics, and session replay information.",
+    path: "/privacy",
+  }),
+  robots: { index: false, follow: true },
+};
 
 const processorRows = [
   { provider: "Supabase", purpose: "Database, authentication, preferences, feedback, and account data" },

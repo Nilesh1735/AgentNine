@@ -1,7 +1,7 @@
 import { AuthForm } from "@/components/AuthForm";
 import { AuthPageShell } from "@/components/AuthPageShell";
 
-export const metadata = { title: "Sign in", robots: { index: false, follow: false } };
+export const metadata = { title: "Sign in", robots: { index: false, follow: true } };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ authError?: string }> }) {
   const { authError } = await searchParams;
