@@ -11,6 +11,8 @@ export type VisitorPreferences = {
   theme?: "light" | "dark";
   analyticsConsent?: "accepted" | "declined";
   analyticsConsentVersion?: string;
+  marketingConsent?: "accepted" | "declined";
+  marketingConsentVersion?: string;
   analyticsSessionId?: string;
   attribution?: AnalyticsAttribution;
   recentAgentSlugs?: string[];

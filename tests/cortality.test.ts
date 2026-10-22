@@ -6,22 +6,22 @@ import {
   hasCortalityConsent,
   isCortalityPublicPath,
 } from "@/lib/cortality";
-import { OPTIONAL_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
+import { OPTIONAL_CONSENT_VERSION } from "@/lib/optional-consent";
 import { getContentSecurityPolicy } from "@/lib/content-security-policy";
 import { NextRequest } from "next/server";
 import { proxy } from "../proxy";
 
 describe("Cortality consent", () => {
-  it("uses the same current optional consent as Analytics and Meta Pixel", () => {
+  it("uses the current Analytics category consent", () => {
     expect(hasCortalityConsent({ analyticsConsent: "accepted" })).toBe(false);
 
     const accepted = {
       analyticsConsent: "accepted" as const,
-      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_CONSENT_VERSION,
     };
     const declined = {
       analyticsConsent: "declined" as const,
-      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_CONSENT_VERSION,
     };
 
     expect(hasCortalityConsent(accepted)).toBe(true);

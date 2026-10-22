@@ -1,12 +1,17 @@
 "use client";
 
 import { updateVisitorPreferences } from "@/lib/visitor-preferences";
-import { OPTIONAL_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
+import { OPTIONAL_CONSENT_VERSION } from "@/lib/optional-consent";
 
-export async function saveAnalyticsConsent(value: "accepted" | "declined") {
+export async function saveOptionalConsentChoices(
+  analyticsConsent: "accepted" | "declined",
+  marketingConsent: "accepted" | "declined",
+) {
   await updateVisitorPreferences({
-    analyticsConsent: value,
-    analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
+    analyticsConsent,
+    analyticsConsentVersion: OPTIONAL_CONSENT_VERSION,
+    marketingConsent,
+    marketingConsentVersion: OPTIONAL_CONSENT_VERSION,
     analyticsSessionId: null,
     attribution: null,
   });
