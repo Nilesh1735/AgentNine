@@ -5,12 +5,12 @@ import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security
 import { attachVisitorCookie, getVisitorId } from "@/lib/visitor-state-server";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
-import { OPTIONAL_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
+import { OPTIONAL_CONSENT_VERSION } from "@/lib/optional-consent";
 
 export const runtime = "nodejs";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const preferenceKeys = new Set(["theme", "analyticsConsent", "analyticsConsentVersion", "analyticsSessionId", "attribution", "recentAgentSlugs", "compareSlugs", "setupProgress"]);
+const preferenceKeys = new Set(["theme", "analyticsConsent", "analyticsConsentVersion", "marketingConsent", "marketingConsentVersion", "analyticsSessionId", "attribution", "recentAgentSlugs", "compareSlugs", "setupProgress"]);
 
 function responseWithCookie(body: object, status: number, visitorId: string) {
   const response = NextResponse.json(body, {
@@ -26,9 +26,13 @@ function validPatch(value: unknown): value is Record<string, unknown> {
   if (!Object.keys(input).length || Object.keys(input).some((key) => !preferenceKeys.has(key))) return false;
   if ("theme" in input && input.theme !== null && input.theme !== "light" && input.theme !== "dark") return false;
   if ("analyticsConsent" in input && input.analyticsConsent !== null && input.analyticsConsent !== "accepted" && input.analyticsConsent !== "declined") return false;
+  if ("marketingConsent" in input && input.marketingConsent !== null && input.marketingConsent !== "accepted" && input.marketingConsent !== "declined") return false;
   if ("analyticsConsentVersion" in input
     && input.analyticsConsentVersion !== null
-    && input.analyticsConsentVersion !== OPTIONAL_ANALYTICS_CONSENT_VERSION) return false;
+    && input.analyticsConsentVersion !== OPTIONAL_CONSENT_VERSION) return false;
+  if ("marketingConsentVersion" in input
+    && input.marketingConsentVersion !== null
+    && input.marketingConsentVersion !== OPTIONAL_CONSENT_VERSION) return false;
   if ("analyticsSessionId" in input && input.analyticsSessionId !== null) return false;
   if ("attribution" in input && input.attribution !== null) return false;
   for (const key of ["recentAgentSlugs", "compareSlugs"] as const) {

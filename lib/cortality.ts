@@ -1,5 +1,5 @@
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
-import { OPTIONAL_ANALYTICS_CONSENT_VERSION } from "@/lib/google-analytics";
+import { hasOptionalAnalyticsConsent } from "@/lib/optional-consent";
 
 const CORTALITY_SCRIPT_URL = "https://cdn.cortality.com/c.js";
 
@@ -22,8 +22,7 @@ const exactPublicPaths = new Set([
 const allowedOrigins = new Set(["https://agentnine.pro", "https://www.agentnine.pro"]);
 
 export function hasCortalityConsent(preferences: VisitorPreferences): boolean {
-  return preferences.analyticsConsent === "accepted"
-    && preferences.analyticsConsentVersion === OPTIONAL_ANALYTICS_CONSENT_VERSION;
+  return hasOptionalAnalyticsConsent(preferences);
 }
 
 export function isCortalityPublicPath(pathname: string): boolean {

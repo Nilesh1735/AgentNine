@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { saveAnalyticsConsent } from "@/lib/analytics-consent";
+import { ConsentCategoryRow } from "@/components/ConsentCategoryRow";
+import { saveOptionalConsentChoices } from "@/lib/analytics-consent";
+import {
+  hasOptionalAnalyticsConsent,
+  hasOptionalMarketingConsent,
+} from "@/lib/optional-consent";
 import {
   loadVisitorPreferences,
   useVisitorPreferences,
 } from "@/lib/visitor-preferences";
-import {
-  OPTIONAL_ANALYTICS_CONSENT_VERSION,
-  hasGoogleAnalyticsConsent,
-} from "@/lib/google-analytics";
 
 export function AnalyticsPrivacyChoices() {
   const { preferences, ready } = useVisitorPreferences();
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [marketingEnabled, setMarketingEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [saveError, setSaveError] = useState("");
@@ -25,16 +28,24 @@ export function AnalyticsPrivacyChoices() {
     });
   }, []);
 
-  async function choose(value: "accepted" | "declined") {
+  useEffect(() => {
+    setAnalyticsEnabled(hasOptionalAnalyticsConsent(preferences));
+    setMarketingEnabled(hasOptionalMarketingConsent(preferences));
+  }, [preferences]);
+
+  async function saveChoices(analytics: boolean, marketing: boolean) {
     setSaving(true);
     setSaveError("");
     setSavedMessage("");
     try {
-      await saveAnalyticsConsent(value);
-      setSavedMessage("Your privacy choice has been saved.");
+      await saveOptionalConsentChoices(
+        analytics ? "accepted" : "declined",
+        marketing ? "accepted" : "declined",
+      );
+      setSavedMessage("Your privacy choices have been saved.");
     } catch (error) {
-      console.error("Privacy choice could not be saved", error);
-      setSaveError("Your privacy choice could not be saved. Please try again.");
+      console.error("Privacy choices could not be saved", error);
+      setSaveError("Your privacy choices could not be saved. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -50,51 +61,75 @@ export function AnalyticsPrivacyChoices() {
     }
   }
 
-  const isAllowed = hasGoogleAnalyticsConsent(preferences);
-  const currentChoice = preferences.analyticsConsentVersion === OPTIONAL_ANALYTICS_CONSENT_VERSION
-    ? preferences.analyticsConsent
-    : undefined;
-
   return (
     <section className="privacy-choice-controls" aria-labelledby="privacy-choice-heading">
-      <h2 id="privacy-choice-heading">Optional analytics and session replay</h2>
+      <h2 id="privacy-choice-heading">Manage optional services</h2>
       <p>
-        Optional Google Analytics, Meta Pixel, and Cortality session replay are {isAllowed ? "on" : "off"}.
-        {currentChoice
-          ? " You can change this choice at any time."
-          : " They stay off unless you choose to allow them."}
+        Essential storage is always on. Analytics and marketing services are optional and can be
+        changed independently.
       </p>
       {loadError ? (
         <div role="alert">
-          <p className="form-error">Your current choice could not be loaded.</p>
+          <p className="form-error">Your current choices could not be loaded.</p>
           <button className="button button-outline" type="button" onClick={() => void retryLoad()}>
             Try again
           </button>
         </div>
       ) : (
         <>
+          <div className="privacy-choice-categories">
+            <ConsentCategoryRow
+              id="privacy-essential"
+              title="Essential"
+              description="Stores core site preferences and your privacy choice. Always on."
+              checked
+              disabled
+            />
+            <ConsentCategoryRow
+              id="privacy-analytics"
+              title="Analytics"
+              description="Google Analytics measurement and Cortality session replay on eligible public pages."
+              checked={analyticsEnabled}
+              disabled={!ready || saving}
+              onChange={setAnalyticsEnabled}
+            />
+            <ConsentCategoryRow
+              id="privacy-marketing"
+              title="Marketing"
+              description="Meta Pixel PageView measurement on eligible public pages."
+              checked={marketingEnabled}
+              disabled={!ready || saving}
+              onChange={setMarketingEnabled}
+            />
+          </div>
           <div className="privacy-choice-actions">
             <button
               className="button button-outline"
               type="button"
-              aria-pressed={currentChoice === "declined"}
               disabled={!ready || saving}
-              onClick={() => void choose("declined")}
+              onClick={() => void saveChoices(false, false)}
             >
-              Decline all
+              Reject all
+            </button>
+            <button
+              className="button button-outline"
+              type="button"
+              disabled={!ready || saving}
+              onClick={() => void saveChoices(analyticsEnabled, marketingEnabled)}
+            >
+              Save preferences
             </button>
             <button
               className="button button-dark"
               type="button"
-              aria-pressed={currentChoice === "accepted"}
               disabled={!ready || saving}
-              onClick={() => void choose("accepted")}
+              onClick={() => void saveChoices(true, true)}
             >
-              Allow all
+              Accept all
             </button>
           </div>
-          {!ready ? <p role="status">Loading your current choice…</p> : null}
-          {saving ? <p role="status">Saving your choice…</p> : null}
+          {!ready ? <p role="status">Loading your current choices…</p> : null}
+          {saving ? <p role="status">Saving your choices…</p> : null}
           {savedMessage ? <p className="form-success" role="status">{savedMessage}</p> : null}
           {saveError ? <p className="form-error" role="alert">{saveError}</p> : null}
         </>

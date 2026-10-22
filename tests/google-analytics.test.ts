@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
-  OPTIONAL_ANALYTICS_CONSENT_VERSION,
   getSafePageLocation,
   getSafePageReferrer,
-  hasCurrentOptionalAnalyticsChoice,
   hasGoogleAnalyticsConsent,
   shouldTrackPageView,
 } from "@/lib/google-analytics";
+import {
+  OPTIONAL_CONSENT_VERSION,
+  hasCurrentOptionalConsentChoices,
+} from "@/lib/optional-consent";
 
 describe("Google Analytics consent", () => {
   it("does not treat first-party analytics consent as consent to Google Analytics", () => {
     expect(hasGoogleAnalyticsConsent({ analyticsConsent: "accepted" })).toBe(false);
-    expect(hasCurrentOptionalAnalyticsChoice({ analyticsConsent: "declined" })).toBe(false);
+    expect(hasCurrentOptionalConsentChoices({ analyticsConsent: "declined" })).toBe(false);
     expect(hasGoogleAnalyticsConsent({
       analyticsConsent: "accepted",
       analyticsConsentVersion: "ga4-v1",
@@ -21,17 +23,21 @@ describe("Google Analytics consent", () => {
   it("enables measurement only after the current consent version is accepted", () => {
     const accepted = {
       analyticsConsent: "accepted" as const,
-      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_CONSENT_VERSION,
+      marketingConsent: "accepted" as const,
+      marketingConsentVersion: OPTIONAL_CONSENT_VERSION,
     };
     const declined = {
       analyticsConsent: "declined" as const,
-      analyticsConsentVersion: OPTIONAL_ANALYTICS_CONSENT_VERSION,
+      analyticsConsentVersion: OPTIONAL_CONSENT_VERSION,
+      marketingConsent: "declined" as const,
+      marketingConsentVersion: OPTIONAL_CONSENT_VERSION,
     };
 
     expect(hasGoogleAnalyticsConsent(accepted)).toBe(true);
-    expect(hasCurrentOptionalAnalyticsChoice(accepted)).toBe(true);
+    expect(hasCurrentOptionalConsentChoices(accepted)).toBe(true);
     expect(hasGoogleAnalyticsConsent(declined)).toBe(false);
-    expect(hasCurrentOptionalAnalyticsChoice(declined)).toBe(true);
+    expect(hasCurrentOptionalConsentChoices(declined)).toBe(true);
   });
 });
 
