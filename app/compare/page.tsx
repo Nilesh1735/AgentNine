@@ -4,12 +4,14 @@ import { getAgent } from "@/lib/data";
 import { getAgentTrustState, getFreshnessNote } from "@/lib/trust";
 import type { Agent } from "@/lib/types";
 import { MAX_COMPARE_AGENTS, getSetupCommandPlatforms, normalizeCompareSlugs } from "@/lib/compare";
+import { createPublicPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
-export const metadata = {
+export const metadata = createPublicPageMetadata({
   title: "Compare AI agent projects",
-  robots: { index: false, follow: false },
-};
+  description: "Compare open-source AI agent versions, verification, setup platforms, costs, API requirements, and documented system access.",
+  path: "/compare",
+});
 
 const rows: Array<[string, (agent: Agent) => string]> = [
   ["Status", (agent) => getAgentTrustState(agent).label],

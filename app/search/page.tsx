@@ -6,14 +6,11 @@ import { SearchContentSkeleton } from "@/components/SearchContentSkeleton";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { toSearchAgent } from "@/lib/search-agent";
 
-export const metadata = {
-  ...createPublicPageMetadata({
-    title: "Search AI agent projects",
-    description: "Search listings by project name, category, description, or tags.",
-    path: "/search",
-  }),
-  robots: { index: false, follow: true },
-};
+export const metadata = createPublicPageMetadata({
+  title: "Search AI agent projects",
+  description: "Search open-source AI agent listings by project name, category, description, tags, and setup details.",
+  path: "/search",
+});
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
