@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createLlmIndex } from "../lib/llms";
 import type { Agent, Category } from "../lib/types";
+import type { TrustAgent } from "../lib/trust";
 
 const category = {
   id: "category-id",
@@ -14,11 +15,20 @@ const agent = {
   slug: "research-agent",
   short_description: "An agent for research workflows.",
   category_id: category.id,
-  verification_score: 3,
-} satisfies Pick<Agent, "category_id" | "name" | "slug" | "short_description" | "verification_score">;
+  verification_score: 5,
+  status: "published",
+  is_archived: false,
+  metadata_is_stale: false,
+  metadata_last_checked_at: null,
+  last_commit_at: "",
+  last_verified_date: "2026-10-25",
+  upstream_changed_since_verification: false,
+  upstream_is_archived: false,
+  setup_guide: { source_url: "https://example.com/setup", checked_at: "2026-10-25" },
+} satisfies Pick<Agent, "category_id" | "name" | "slug" | "short_description"> & TrustAgent;
 
 describe("llms.txt index", () => {
-  it("describes public content with canonical URLs and precise checklist language", () => {
+  it("describes public content and the five-step setup verification accurately", () => {
     const index = createLlmIndex({
       agents: [agent],
       categories: [category],
@@ -29,8 +39,11 @@ describe("llms.txt index", () => {
     expect(index).toContain("[News](https://agentnine.pro/news)");
     expect(index).toContain("[Research](https://agentnine.pro/categories/research)");
     expect(index).toContain("[Research Agent](https://agentnine.pro/agents/research-agent)");
-    expect(index).toContain("AgentNine checklist evidence: 3/5");
-    expect(index).toContain("not an independent security, legal, licensing, or operational certification");
+    expect(index).toContain("5/5 setup verification steps");
+    expect(index).toContain("Verified");
+    expect(index).not.toContain("Documented and Needs review");
+    expect(index).toContain("not a security audit or security certification");
+    expect(index).toContain("Needs review");
     expect(index).not.toContain("/search");
     expect(index).not.toMatch(/verification 3\/5/);
   });

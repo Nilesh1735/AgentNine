@@ -381,8 +381,8 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
         setMessage(body.error ?? "Bulk verification could not be saved.");
         return;
       }
-      const result = await response.json() as { updated?: number; verification_score?: number };
-      setMessage(`${result.updated ?? agents.length} agents verified and updated to ${result.verification_score ?? 0}/5.`);
+      const result = await response.json() as { updated?: number };
+      setMessage(`Saved 5-step setup verification checklist results for ${result.updated ?? agents.length} agents.`);
       setBulkOpen(false);
       setBulkChecklist({});
       setBulkNotes("");
@@ -400,11 +400,11 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
   if (!authenticated) return <form className="admin-login" onSubmit={signIn}><label htmlFor="admin-key">Dashboard key</label><input id="admin-key" type="password" value={key} onChange={(event) => setKey(event.target.value)} autoComplete="current-password" required /><button className="button button-dark" type="submit" disabled={signingIn}>{signingIn ? "Opening dashboard…" : "Open dashboard"}</button>{serviceError ? <p className="form-error" role="alert">{serviceError} <button type="button" className="text-link retry-inline" onClick={() => void load()}>Try again</button></p> : message ? <p className="form-error" role="alert">{message}</p> : null}</form>;
 
   return <div className="admin-dashboard">
-    <div className="admin-toolbar"><div className="admin-summary"><span><strong>{agents.length}</strong> total</span><span><strong>{agents.filter((agent) => agent.status === "published").length}</strong> published</span><span><strong>{agents.filter((agent) => agent.verification_score === 0).length}</strong> unverified</span><span><strong>{agents.filter((agent) => agent.verification_score === 5).length}</strong> complete</span></div><div className="admin-toolbar-actions"><button className="button button-light" type="button" onClick={() => void refreshCatalog()} disabled={refreshing}>{refreshing ? "Refreshing..." : "Refresh"}</button><button className="button button-light" type="button" onClick={() => void refreshGitHubMetadata()} disabled={metadataRefreshing}>{metadataRefreshing ? "Updating GitHub..." : "Update GitHub data"}</button><button className="button button-light" type="button" onClick={() => void discoverCandidates()} disabled={candidateSearching}>{candidateSearching ? "Searching GitHub..." : "Find GitHub candidates"}</button><button className="button button-light" type="button" onClick={() => setBulkOpen((open) => !open)}>Verify all agents</button><button className="button button-dark" type="button" onClick={() => { setSelected(null); setForm(emptyForm); setEditorOpen(true); }}>Add agent</button><button className="button button-light" type="button" onClick={() => void signOut()} disabled={signingOut}>{signingOut ? "Signing out..." : "Sign out"}</button></div></div>
+    <div className="admin-toolbar"><div className="admin-summary"><span><strong>{agents.length}</strong> total</span><span><strong>{agents.filter((agent) => agent.status === "published").length}</strong> published</span><span><strong>{agents.filter((agent) => agent.verification_score === 0).length}</strong> no steps recorded</span><span><strong>{agents.filter((agent) => agent.verification_score === 5).length}</strong> 5/5 setup checks</span></div><div className="admin-toolbar-actions"><button className="button button-light" type="button" onClick={() => void refreshCatalog()} disabled={refreshing}>{refreshing ? "Refreshing..." : "Refresh"}</button><button className="button button-light" type="button" onClick={() => void refreshGitHubMetadata()} disabled={metadataRefreshing}>{metadataRefreshing ? "Updating GitHub..." : "Update GitHub data"}</button><button className="button button-light" type="button" onClick={() => void discoverCandidates()} disabled={candidateSearching}>{candidateSearching ? "Searching GitHub..." : "Find GitHub candidates"}</button><button className="button button-light" type="button" onClick={() => setBulkOpen((open) => !open)}>Record checks in batch</button><button className="button button-dark" type="button" onClick={() => { setSelected(null); setForm(emptyForm); setEditorOpen(true); }}>Add agent</button><button className="button button-light" type="button" onClick={() => void signOut()} disabled={signingOut}>{signingOut ? "Signing out..." : "Sign out"}</button></div></div>
     {serviceError ? <p className="form-error" role="alert">{serviceError} <button type="button" className="text-link retry-inline" onClick={() => void load()}>Try again</button></p> : null}
     {message ? <p className={message.includes("could not") || message.includes("unavailable") ? "form-error" : "muted"} role={message.includes("could not") || message.includes("unavailable") ? "alert" : "status"} aria-live="polite">{message}</p> : null}
-    {bulkConfirmOpen ? <ConfirmDialog title="Verify all agents?" message={`This will update verification evidence for all ${agents.length} catalog agents.`} confirmLabel="Verify all" onConfirm={() => void confirmBulkVerification()} onCancel={() => setBulkConfirmOpen(false)} /> : null}
-    {bulkOpen ? <form onSubmit={saveBulkVerification} className="admin-bulk-panel"><div><p className="eyebrow">Bulk verification</p><h2>Verify all {agents.length} agents</h2><p className="muted">Each agent uses its current catalog version tag. This applies the same evidence checklist and notes to every agent in one batch.</p></div><label><input type="checkbox" checked={checks.every(([field]) => bulkChecklist[field] === true)} onChange={(event) => setBulkChecklist(Object.fromEntries(checks.map(([field]) => [field, event.target.checked])))} /> Select all checks</label>{checks.map(([field, label]) => <label key={field}><input type="checkbox" checked={bulkChecklist[field] ?? false} onChange={(event) => setBulkChecklist((current) => ({ ...current, [field]: event.target.checked }))} /> {label}</label>)}<label>Source commit SHA (optional; applies to every agent)<input value={bulkSourceCommitSha} onChange={(event) => setBulkSourceCommitSha(event.target.value)} maxLength={40} pattern="[0-9a-fA-F]{7,40}" /></label><label>Evidence notes<textarea rows={3} maxLength={4000} value={bulkNotes} onChange={(event) => setBulkNotes(event.target.value)} placeholder="Describe the evidence that applies to this batch." required /></label><div className="admin-form-actions"><button className="button button-light" type="button" onClick={() => setBulkOpen(false)}>Cancel</button><button className="button button-dark" type="submit" disabled={bulkSaving}>{bulkSaving ? "Updating agents..." : "Verify and update all"}</button></div></form> : null}
+    {bulkConfirmOpen ? <ConfirmDialog title="Record setup checks for all agents?" message={`This applies the selected setup-check results to all ${agents.length} catalog agents. Confirm each selected check was completed for every agent in the batch.`} confirmLabel="Record setup checks" onConfirm={() => void confirmBulkVerification()} onCancel={() => setBulkConfirmOpen(false)} /> : null}
+    {bulkOpen ? <form onSubmit={saveBulkVerification} className="admin-bulk-panel"><div><p className="eyebrow">Five-step setup verification</p><h2>Record checklist results for {agents.length} agents</h2><p className="muted">This records AgentNine&apos;s setup and first-run review checklist; it is not a security audit. Only select checks completed for every project in this batch.</p></div>{checks.map(([field, label]) => <label key={field}><input type="checkbox" checked={bulkChecklist[field] ?? false} onChange={(event) => setBulkChecklist((current) => ({ ...current, [field]: event.target.checked }))} /> {label}</label>)}<label>Source commit SHA (optional; applies to every agent)<input value={bulkSourceCommitSha} onChange={(event) => setBulkSourceCommitSha(event.target.value)} maxLength={40} pattern="[0-9a-fA-F]{7,40}" /></label><label>Evidence notes<textarea rows={3} maxLength={4000} value={bulkNotes} onChange={(event) => setBulkNotes(event.target.value)} placeholder="Describe which setup checks were completed." required /></label><div className="admin-form-actions"><button className="button button-light" type="button" onClick={() => setBulkOpen(false)}>Cancel</button><button className="button button-dark" type="submit" disabled={bulkSaving}>{bulkSaving ? "Recording checks..." : "Record selected checks"}</button></div></form> : null}
     <AdminOperations />
     <div className="admin-table-wrap">
       <table className="admin-table">
@@ -412,7 +412,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
           <tr>
             <th>Agent</th>
             <th>Status</th>
-            <th>Verification</th>
+            <th>5-step setup verification</th>
             <th>Last updated</th>
             <th>Actions</th>
           </tr>
@@ -437,7 +437,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
                 </select>
               </td>
               <td>
-                <span className={`admin-score admin-score-${agent.verification_score}`}>
+                <span className={`admin-score admin-score-${agent.verification_score}`} title="AgentNine setup and first-run checklist completion; not a security audit.">
                   {agent.verification_score}/5
                 </span>
               </td>
@@ -462,7 +462,33 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
         <label>category<select value={form.category_id} onChange={(event) => change("category_id", event.target.value)}><option value="">Unassigned</option>{categories.map((category) => <option value={category.id} key={category.id}>{category.name}</option>)}</select></label>
         <label>tags (comma separated)<input value={form.tags} onChange={(event) => change("tags", event.target.value)} /></label>
         <label>status<select value={form.status} onChange={(event) => change("status", event.target.value)}><option value="draft">Draft</option><option value="published">Published</option><option value="needs_review">Needs review</option><option value="archived">Archived</option></select></label>
-        <label>Install / uninstall commands (README commands only)<textarea rows={15} value={form.setup_guide} onChange={(event) => change("setup_guide", event.target.value)} placeholder={'{\n  "source_url": "https://github.com/owner/project#readme",\n  "checked_at": "",\n  "platforms": {\n    "windows": {\n      "support": "unknown",\n      "install_commands": [],\n      "uninstall_commands": []\n    },\n    "macos": {\n      "support": "unknown",\n      "install_commands": [],\n      "uninstall_commands": []\n    },\n    "linux": {\n      "support": "unknown",\n      "install_commands": [],\n      "uninstall_commands": []\n    }\n  }\n}'} /></label>
+        <label>Setup guide (source-checked OS commands and phases)<textarea rows={15} value={form.setup_guide} onChange={(event) => change("setup_guide", event.target.value)} placeholder={`{
+  "source_url": "https://github.com/owner/project#readme",
+  "checked_at": "",
+  "platforms": {
+    "windows": {
+      "support": "unknown",
+      "prerequisites": ["Node.js 20+"],
+      "install_commands": ["git clone ...", "cd project", "npm install"],
+      "terminal_note": "Keep the commands in the same terminal.",
+      "command_phases": [
+        { "title": "Prepare", "commands": ["git clone ...", "cd project"] },
+        { "title": "Install dependencies", "commands": ["npm install"] }
+      ],
+      "uninstall_commands": []
+    },
+    "macos": {
+      "support": "unknown",
+      "install_commands": [],
+      "uninstall_commands": []
+    },
+    "linux": {
+      "support": "unknown",
+      "install_commands": [],
+      "uninstall_commands": []
+    }
+  }
+}`} /></label>
         <label>API key requirement<select required={!selected} value={form.requires_api_key === null ? selected ? "unknown" : "" : form.requires_api_key ? "required" : "not-required"} onChange={(event) => change("requires_api_key", event.target.value === "unknown" ? null : event.target.value === "required")}><option value="" disabled={Boolean(selected)}>Choose a documented requirement</option><option value="unknown" disabled={!selected}>Depends on provider or not documented</option><option value="required">Required for documented setup</option><option value="not-required">Not required for documented local or default setup</option></select></label>
         <label><input type="checkbox" checked={form.is_flagship} onChange={(event) => change("is_flagship", event.target.checked)} /> flagship</label>
         {(["env_template", "common_errors", "hardware_requirements", "port_mapping", "memory_location", "network_access", "file_access", "first_launch_prompt", "cost_to_run"] as const).map((field) => <label key={field}>{field === "hardware_requirements" ? "Hardware only (CPU, RAM, GPU, disk)" : field.replaceAll("_", " ")}<textarea rows={3} value={form[field]} onChange={(event) => change(field, event.target.value)} /></label>)}

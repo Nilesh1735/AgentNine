@@ -3,6 +3,20 @@ import { formatCatalogDate } from "./agent-metadata-display";
 
 const FRESHNESS_WINDOW_MS = 180 * 24 * 60 * 60 * 1000;
 
+export type TrustAgent = Pick<
+  Agent,
+  | "is_archived"
+  | "status"
+  | "metadata_is_stale"
+  | "metadata_last_checked_at"
+  | "last_commit_at"
+  | "upstream_changed_since_verification"
+  | "upstream_is_archived"
+  | "last_verified_date"
+  | "verification_score"
+  | "setup_guide"
+>;
+
 function validDate(value: string | null | undefined) {
   if (!value || value === "Not verified") return null;
   const time = new Date(value).getTime();
@@ -10,14 +24,14 @@ function validDate(value: string | null | undefined) {
 }
 
 export type TrustState = {
-  key: "verified" | "partial" | "unverified" | "stale" | "changed" | "archived" | "unknown" | "freshness-unknown";
+  key: "verified" | "needs-review" | "archived" | "unknown";
   label: string;
   detail: string;
   className: string;
   isStale: boolean;
 };
 
-export function getAgentTrustState(agent: Agent, now = Date.now()): TrustState {
+export function getAgentTrustState(agent: TrustAgent, now = Date.now()): TrustState {
   const verifiedAt = validDate(agent.last_verified_date);
   const metadataAt = validDate(agent.metadata_last_checked_at);
   const commitAt = validDate(agent.last_commit_at);
@@ -30,51 +44,52 @@ export function getAgentTrustState(agent: Agent, now = Date.now()): TrustState {
 
   if (metadataStale) {
     return {
-      key: "stale",
+      key: "needs-review",
       label: "Needs review",
-      detail: "Repository metadata is older than the current review window, so recent changes may need rechecking.",
+      detail: "Needs review.",
       className: "trust-state trust-state-stale",
       isStale: true,
     };
   }
-  if (agent.verification_score === 5) {
-    const changed = agent.upstream_changed_since_verification;
-    const freshnessUnknown = metadataAt === null && commitAt === null;
+  if (agent.upstream_is_archived) {
     return {
-      key: changed ? "changed" : freshnessUnknown ? "freshness-unknown" : "verified",
-      label: changed ? "Project changed" : freshnessUnknown ? "Freshness unknown" : "Verified",
-      detail: changed
-        ? "The project repository changed after the recorded verification."
-        : freshnessUnknown
-          ? "All five checklist items have recorded evidence, but no repository freshness signal is available."
-          : "All five AgentNine checklist items have recorded evidence.",
-      className: freshnessUnknown ? "trust-state trust-state-unknown" : "trust-state trust-state-verified",
-      isStale: false,
+      key: "needs-review",
+      label: "Needs review",
+      detail: "The upstream repository is archived; review the listing and its supported setup before relying on it.",
+      className: "trust-state trust-state-stale",
+      isStale: true,
     };
   }
-  if (agent.verification_score > 0) {
+  if (agent.upstream_changed_since_verification) {
     return {
-      key: "partial",
-      label: `Partially verified (${agent.verification_score}/5)`,
-      detail: "Some checklist evidence is recorded. The remaining checks are still unknown.",
-      className: "trust-state trust-state-partial",
-      isStale: false,
+      key: "needs-review",
+      label: "Needs review",
+      detail: "The project repository changed after the recorded verification; its current setup needs review.",
+      className: "trust-state trust-state-stale",
+      isStale: true,
     };
   }
-  if (verifiedAt === null && metadataAt === null && commitAt === null) {
+  const guide = agent.setup_guide;
+  const hasCompleteVerification = Boolean(
+    agent.verification_score === 5
+    && guide.source_url
+    && validDate(guide.checked_at)
+    && verifiedAt !== null,
+  );
+  if (hasCompleteVerification) {
     return {
-      key: "unknown",
-      label: "No verification record",
-      detail: "No verification date or repository freshness record is available yet.",
-      className: "trust-state trust-state-unknown",
+      key: "verified",
+      label: "Verified",
+      detail: "All five setup verification steps are complete.",
+      className: "trust-state trust-state-verified",
       isStale: false,
     };
   }
   return {
-    key: "unverified",
-    label: "Unverified",
-    detail: "This record does not yet have AgentNine checklist evidence.",
-    className: "trust-state trust-state-unverified",
+    key: "unknown",
+    label: "Needs review",
+    detail: "Current setup documentation and runtime verification evidence are not recorded for this listing.",
+    className: "trust-state trust-state-unknown",
     isStale: false,
   };
 }

@@ -2,10 +2,22 @@ import type { SetupGuide, SetupPlatform } from "@/lib/types";
 
 const operatingSystems = ["windows", "macos", "linux"] as const;
 const listFields = ["prerequisites", "install_commands", "first_run_commands", "first_run_steps", "uninstall_commands", "uninstall_steps"] as const;
-const textFields = ["install_route", "hardware_notes", "download_url", "provider_setup", "data_retention"] as const;
+const textFields = ["install_route", "hardware_notes", "download_url", "download_label", "provider_setup", "data_retention", "terminal_note"] as const;
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isSetupCommandPhase(value: unknown): value is NonNullable<SetupPlatform["command_phases"]>[number] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const phase = value as Record<string, unknown>;
+  return typeof phase.title === "string"
+    && phase.title.trim().length > 0
+    && phase.title.length <= 100
+    && isStringArray(phase.commands)
+    && phase.commands.every((command) => command.length <= 4000)
+    && (phase.note === undefined || (typeof phase.note === "string" && phase.note.length <= 4000))
+    && (phase.commands.length > 0 || (typeof phase.note === "string" && Boolean(phase.note.trim())));
 }
 
 export function isHttpsUrl(value: string) {
@@ -37,6 +49,16 @@ export function normalizeSetupGuide(value: unknown): SetupGuide {
     }
     for (const field of listFields) {
       if (isStringArray(platform[field])) normalized[field] = platform[field];
+    }
+    if (Array.isArray(platform.command_phases)
+      && platform.command_phases.length <= 20
+      && platform.command_phases.every(isSetupCommandPhase)) {
+      const phases = platform.command_phases;
+      const commands = phases.flatMap((phase) => phase.commands);
+      if (commands.length && commands.every((command, index) => command === normalized.install_commands?.[index])
+        && commands.length === normalized.install_commands?.length) {
+        normalized.command_phases = phases;
+      }
     }
     normalizedPlatforms[os] = normalized;
   }
@@ -75,6 +97,20 @@ export function validateSetupGuide(value: unknown): boolean {
     for (const field of listFields) {
       const entries = platform[field];
       if (entries !== undefined && (!isStringArray(entries) || entries.length > 50 || entries.some((item) => item.length > 4000))) return false;
+    }
+    if (platform.terminal_note !== undefined
+      && (typeof platform.terminal_note !== "string" || platform.terminal_note.length > 4000)) return false;
+    if (platform.command_phases !== undefined) {
+      if (!Array.isArray(platform.command_phases)
+        || platform.command_phases.length === 0
+        || platform.command_phases.length > 20
+        || !platform.command_phases.every(isSetupCommandPhase)) return false;
+      const commands = platform.command_phases.flatMap((phase) => phase.commands);
+      const installCommands = platform.install_commands;
+      if (!commands.length
+        || !isStringArray(installCommands)
+        || commands.length !== installCommands.length
+        || commands.some((command, index) => command !== installCommands[index])) return false;
     }
   }
   return !hasDocumentedSupport || Boolean(guide.source_url && guide.checked_at);

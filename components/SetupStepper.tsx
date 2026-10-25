@@ -86,7 +86,12 @@ export function SetupStepper({ steps, storageKey, sourceUrl }: { steps: string[]
   return <div><div className="stepper-actions"><span aria-live="polite">{completedThrough >= 0 ? `Step ${Math.min(completedThrough + 1, steps.length)} of ${steps.length} reached` : "No steps completed yet"}</span><button type="button" className="copy-button" onClick={resetProgress} disabled={completedThrough < 0}>Reset steps</button></div>{copyError ? <p className="form-error" role="alert">Copy failed. Select the text manually and press Ctrl+C (or Cmd+C).</p> : null}{progressError ? <p className="form-error" role="alert">Setup progress could not be saved. Try again.</p> : null}<ol className="stepper">{steps.map((step, index) => <li className={index <= completedThrough ? "step-complete" : ""} key={`${step}-${index}`}><span className="step-number">{String(index + 1).padStart(2, "0")}</span><div className="step-content"><p>{step}</p><div className="step-actions"><button type="button" className="copy-button" onClick={() => copyStep(step, index)}>{copied === index ? "Copied" : "Copy step"}</button><button type="button" className="copy-button" onClick={() => updateProgress(index)}>{index <= completedThrough ? "Completed" : "Mark complete"}</button></div></div></li>)}</ol></div>;
 }
 
-export function CopyableCommand({ label, value }: { label: string; value: string }) {
+export function CopyableCommand({ label, value, sequenceNumber, sequenceContext }: {
+  label: string;
+  value: string;
+  sequenceNumber?: number;
+  sequenceContext?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const timeoutRef = useRef<number | null>(null);
@@ -111,5 +116,5 @@ export function CopyableCommand({ label, value }: { label: string; value: string
       setCopyError(true);
     }
   }
-  return <div className="command-card"><div><strong>{label}</strong><pre>{value}</pre>{copyError ? <small className="form-error">Copy failed. Select the command and press Ctrl+C (or Cmd+C).</small> : null}</div><button type="button" className="copy-button" onClick={copy}>{copied ? "Copied" : "Copy"}</button></div>;
+  return <div className={`command-card${sequenceNumber ? " command-card-sequence-item" : ""}`}><div>{sequenceNumber ? null : <strong>{label}</strong>}<pre>{value}</pre>{copyError ? <small className="form-error">Copy failed. Select the command and press Ctrl+C (or Cmd+C).</small> : null}</div><button type="button" className="copy-button" aria-label={sequenceNumber ? `Copy command ${sequenceNumber}${sequenceContext ? ` (${sequenceContext})` : ""}` : "Copy command"} onClick={copy}>{copied ? "Copied" : "Copy"}</button></div>;
 }

@@ -16,6 +16,7 @@ import type { Category } from "@/lib/types";
 import { getAgentOperatingSystems } from "@/lib/search-platforms";
 import { getDirectSearchScore } from "@/lib/search-ranking";
 import type { SearchAgent } from "@/lib/search-agent";
+import { getAgentTrustState } from "@/lib/trust";
 
 type FilterOption = { value: string; label: string };
 const MAX_RECENT_AGENT_SEARCHES = 5;
@@ -292,7 +293,8 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Sea
     const apiMatches = !apiKey || (apiKey === "required"
       ? agent.requires_api_key === true
       : agent.requires_api_key === false);
-    const verificationMatches = !verification || (verification === "5" && agent.verification_score === 5);
+    const verificationMatches = !verification
+      || ((verification === "complete" || verification === "5") && agent.verification_score === 5);
     const commitTime = agent.last_commit_at ? new Date(agent.last_commit_at).getTime() : 0;
     const updatedMatches = !recentlyUpdated || (commitTime > 0 && commitTime >= freshnessCutoff);
     return categoryMatches && osMatches && apiMatches && verificationMatches && updatedMatches;
@@ -342,7 +344,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Sea
     category ? ["Category", categoryById[category] ? categoryById[category].name : category, "category"] : null,
     os ? ["OS", os === "macos" ? "macOS" : os[0].toUpperCase() + os.slice(1), "os"] : null,
     apiKey ? ["API key", apiKey === "required" ? "Required" : "Not required for documented local or default setup", "apiKey"] : null,
-    verification ? ["Checklist", "5 checks recorded", "verification"] : null,
+    verification ? ["Checklist", "5-step setup verification", "verification"] : null,
     recentlyUpdated ? ["Freshness", "Past 180 days", "updated"] : null,
   ].filter(Boolean) as string[][];
   const clearAll = () => {
@@ -351,7 +353,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Sea
   };
   const hasSearchCriteria = Boolean(activeQuery || category || os || apiKey || verification || recentlyUpdated);
   const categoryName = category ? categoryById[category]?.name ?? category : "";
-  const filterSummary = [categoryName, os === "macos" ? "macOS" : os ? os[0].toUpperCase() + os.slice(1) : "", verification === "5" ? "5 checks recorded" : "", recentlyUpdated ? "Updated recently" : ""].filter(Boolean);
+  const filterSummary = [categoryName, os === "macos" ? "macOS" : os ? os[0].toUpperCase() + os.slice(1) : "", verification === "complete" || verification === "5" ? "5-step setup verification" : "", recentlyUpdated ? "Updated recently" : ""].filter(Boolean);
   const visibleFilterCount = [category, os, apiKey, verification, recentlyUpdated ? "updated" : ""].filter(Boolean).length;
   const visibleResults = results.slice(0, visibleLimit);
   const formatUpdated = (value: string) => {
@@ -391,7 +393,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Sea
         <div className="search-filters search-primary-filters">
         <FilterPopover label="Category" value={category} options={[{ value: "", label: "All categories" }, ...categories.map((item) => ({ value: item.slug, label: item.name }))]} onChange={(value) => updateParam("category", value)} />
         <FilterPopover label="OS" value={os} options={[{ value: "", label: "Any OS" }, { value: "linux", label: "Linux" }, { value: "macos", label: "macOS" }, { value: "windows", label: "Windows" }]} onChange={(value) => updateParam("os", value)} />
-        <FilterPopover label="Checklist" value={verification} options={[{ value: "", label: "Any checklist status" }, { value: "5", label: "5 checks recorded" }]} onChange={(value) => updateParam("verification", value)} />
+        <FilterPopover label="Checklist" value={verification} options={[{ value: "", label: "Any checklist status" }, { value: "complete", label: "5-step setup verification complete" }]} onChange={(value) => updateParam("verification", value)} />
         <button type="button" className={`filter-toggle${showMoreFilters ? " is-open" : ""}`} onClick={() => setShowMoreFilters((open) => !open)} aria-expanded={showMoreFilters}>More filters{visibleFilterCount > 2 ? ` (${visibleFilterCount - 2})` : ""}</button>
         </div>
         <FilterPopover label="Sort" value={sort} options={[{ value: "relevance", label: "Relevance" }, { value: "recent", label: "Recently updated" }, { value: "name", label: "Name" }, { value: "stars", label: "GitHub stars" }]} onChange={(value) => updateParam("sort", value)} />
@@ -403,7 +405,7 @@ export function SearchBox({ agents, categories, freshnessCutoff }: { agents: Sea
       {activeFilters.length > 0 && <div className="active-filters" aria-label="Active search filters"><span className="active-filters-label">Active filters</span>{activeFilters.map(([label, value, key]) => <button type="button" className="filter-chip" key={key} onClick={() => updateParam(key, "")} aria-label={`Remove ${label} filter${value ? `: ${value}` : ""}`}>{label}: {value} <Xmark size={12} aria-hidden="true" /></button>)}<button type="button" className="clear-filters" onClick={clearAll}>Clear all</button></div>}
       <div id="search-status" className="search-meta" role="status" aria-live="polite"><div><strong>{hasSearchCriteria ? `${results.length} agent${results.length === 1 ? "" : "s"}` : `${agents.length} agents`}</strong><span>{filterSummary.length ? filterSummary.join(", ") : "All published agents"}</span></div></div>
       <div className="results-list results-comfortable">
-        {visibleResults.map(({ agent }) => <div key={agent.id}><Link className="search-result" href={`/agents/${agent.slug}`} prefetch={false} onClick={() => saveRecentAgentSearch(agent.slug)}><span className="result-main"><strong>{agent.name}</strong><small>{agent.short_description}</small><span className="result-meta"><span>{categoryById[agent.category_id]?.name ?? "Uncategorized"}</span>{getAgentOperatingSystems(agent).slice(0, 2).map((item) => <span key={item}>{item === "macos" ? "macOS" : item[0].toUpperCase() + item.slice(1)}</span>)}{agent.verification_score === 5 ? <span>5 checks recorded</span> : null}{formatUpdated(agent.last_commit_at) ? <span>{formatUpdated(agent.last_commit_at)}</span> : null}</span></span><span className="result-side"><span className="result-category">{agent.stars ? `${agent.stars.toLocaleString()} GitHub stars` : "No star count recorded"}</span><ArrowUpRight size={16} aria-hidden="true" className="result-arrow" /></span></Link></div>)}
+        {visibleResults.map(({ agent }) => <div key={agent.id}><Link className="search-result" href={`/agents/${agent.slug}`} prefetch={false} onClick={() => saveRecentAgentSearch(agent.slug)}><span className="result-main"><strong>{agent.name}</strong><small>{agent.short_description}</small><span className="result-meta"><span>{categoryById[agent.category_id]?.name ?? "Uncategorized"}</span>{getAgentOperatingSystems(agent).slice(0, 2).map((item) => <span key={item}>{item === "macos" ? "macOS" : item[0].toUpperCase() + item.slice(1)}</span>)}<span>{agent.verification_score}/5 setup checks</span><span>{getAgentTrustState(agent).label}</span>{formatUpdated(agent.last_commit_at) ? <span>{formatUpdated(agent.last_commit_at)}</span> : null}</span></span><span className="result-side"><span className="result-category">{agent.stars ? `${agent.stars.toLocaleString()} GitHub stars` : "No star count recorded"}</span><ArrowUpRight size={16} aria-hidden="true" className="result-arrow" /></span></Link></div>)}
         {!results.length && <div className="empty-state" role="status" aria-live="polite"><strong>No matching agents.</strong><p>{activeQuery ? "Try another search or remove a filter." : "Remove a filter to broaden the results."}</p><button type="button" className="button button-outline" onClick={clearAll}>{activeQuery ? "Reset search" : "Reset filters"}</button></div>}
         {visibleResults.length < results.length ? <button type="button" className="load-more-results" onClick={() => setVisibleLimit((limit) => limit + 24)}>Load more agents <ArrowDown size={14} aria-hidden="true" /></button> : null}
       </div>

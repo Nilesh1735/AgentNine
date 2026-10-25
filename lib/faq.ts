@@ -49,7 +49,7 @@ export const faqGroups: FaqGroup[] = [
         id: "verified-meaning",
         question: "What does verified mean?",
         answer:
-          "It means we completed the checklist shown on the listing at the displayed date. Projects change, so check the project repository before you run anything.",
+          "It means AgentNine's five-step setup verification checklist has been completed for the listing. It is separate from the Needs review status, which can reflect repository freshness or setup documentation. Verification is not a security audit or certification; check the project's current repository before running it.",
       },
     ],
   },

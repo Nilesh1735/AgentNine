@@ -7,6 +7,7 @@ type PublicPageMetadata = {
   path: string;
   type?: "website" | "article";
   robots?: Metadata["robots"];
+  socialImagePath?: string;
 };
 
 const DEFAULT_SOCIAL_IMAGE = "/og-image.png";
@@ -46,14 +47,15 @@ export function createPublicPageMetadata({
   path,
   type = "website",
   robots,
+  socialImagePath,
 }: PublicPageMetadata): Metadata {
   const canonicalUrl = new URL(path, SITE_URL).toString();
   const metaDescription = normalizeDescription(description);
   const socialTitle = `${title} | AgentNine`;
-  const imagePath = SOCIAL_IMAGES_BY_PATH[path]
+  const imagePath = socialImagePath ?? SOCIAL_IMAGES_BY_PATH[path]
     ?? (path.startsWith("/news/") ? SOCIAL_IMAGES_BY_PATH["/news"] : DEFAULT_SOCIAL_IMAGE);
   const imageUrl = new URL(imagePath, SITE_URL).toString();
-  const imageDimensions = imagePath === DEFAULT_SOCIAL_IMAGE
+  const imageDimensions = socialImagePath || imagePath === DEFAULT_SOCIAL_IMAGE
     ? { width: 1200, height: 630 }
     : { width: 1463, height: 768 };
 

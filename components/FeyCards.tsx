@@ -135,7 +135,7 @@ function PreviewArtwork({ story }: { story: (typeof CARD_STORIES)[number] }) {
         <div className="fey-fit-stack">
           <div><span>Category</span></div>
           <div><span>Operating system</span></div>
-          <div><span>5 checks recorded</span></div>
+          <div><span>5-step setup verification</span></div>
           <div><span>API key</span></div>
           <div><span>Updated in the past 180 days</span></div>
         </div>

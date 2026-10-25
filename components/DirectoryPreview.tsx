@@ -6,10 +6,8 @@ import { useCallback, useEffect, useRef } from "react";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import type { Agent, Category } from "@/lib/types";
 import { AgentArtwork } from "@/components/AgentArtwork";
-import type { TrustState } from "@/lib/trust";
 
-type PreviewAgent = Pick<Agent, "id" | "name" | "slug" | "category_id" | "short_description" | "version_tag">
-  & { trust: Pick<TrustState, "key" | "label" | "className"> };
+type PreviewAgent = Pick<Agent, "id" | "name" | "slug" | "category_id" | "short_description" | "version_tag" | "verification_score">;
 
 type PreviewCategory = Pick<Category, "id" | "name" | "slug">;
 
@@ -96,7 +94,6 @@ export function DirectoryPreview({ agents, categories }: { agents: PreviewAgent[
             const category = categoryById.get(agent.category_id);
             const displayIndex = index % collection.length;
             const isDuplicate = index >= collection.length;
-            const { trust } = agent;
             return (
               <motion.article
                 className="agent-ring-card"
@@ -124,9 +121,7 @@ export function DirectoryPreview({ agents, categories }: { agents: PreviewAgent[
                 <p>{agent.short_description}</p>
                 <div className="agent-ring-card-bottom">
                   <span>{agent.version_tag || "Version pending"}</span>
-                  <span className={trust.key === "verified" ? "is-verified" : ""}>
-                    {trust.key === "unverified" || trust.key === "unknown" ? "Indexed" : trust.label}
-                  </span>
+                  <span>{agent.verification_score}/5 setup checks</span>
                 </div>
               </motion.article>
             );
