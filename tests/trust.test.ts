@@ -34,7 +34,10 @@ function createAgent(overrides: Partial<Agent> = {}): Agent {
     setup_guide: {},
     verification_score: 0,
     revision: 1,
+    metadata_is_stale: false,
+    upstream_is_archived: false,
     verified_operating_systems: [],
+    verified_commit_sha: null,
     verified_install_command: "",
     verified_first_task: "",
     verification_failure_conditions: "",
@@ -45,33 +48,59 @@ function createAgent(overrides: Partial<Agent> = {}): Agent {
 }
 
 describe("agent trust state freshness", () => {
-  const now = Date.parse("2026-10-12T12:00:00.000Z");
+  const now = Date.parse("2026-10-26T12:00:00.000Z");
 
-  it("does not label a fully checked agent Verified when repository freshness is unknown", () => {
-    const state = getAgentTrustState(createAgent({ verification_score: 5 }), now);
-
-    expect(state.key).toBe("freshness-unknown");
-    expect(state.label).toBe("Freshness unknown");
-    expect(state.className).toContain("trust-state-unknown");
-  });
-
-  it("labels a fully checked agent Verified when metadata freshness is current", () => {
+  it("uses Verified for the five-step checklist state", () => {
     const state = getAgentTrustState(createAgent({
       verification_score: 5,
-      metadata_last_checked_at: "2026-10-01T12:00:00.000Z",
+      last_verified_date: "2026-10-25",
+      setup_guide: { source_url: "https://example.com/setup", checked_at: "2026-10-25" },
     }), now);
 
     expect(state.key).toBe("verified");
     expect(state.label).toBe("Verified");
+    expect(state.detail).toBe("All five setup verification steps are complete.");
+    expect(state.detail).not.toContain("security audit");
   });
 
-  it("keeps project changes as the stronger signal when freshness is unknown", () => {
+  it("does not label a partial checklist Verified even when documentation was reviewed", () => {
+    const state = getAgentTrustState(createAgent({
+      verification_score: 4,
+      last_verified_date: "2026-10-25",
+      setup_guide: { source_url: "https://example.com/setup", checked_at: "2026-10-25" },
+    }), now);
+
+    expect(state.key).toBe("unknown");
+    expect(state.label).toBe("Needs review");
+  });
+
+  it("requires review when neither current documentation nor review date exists", () => {
+    const state = getAgentTrustState(createAgent({ verification_score: 5 }), now);
+
+    expect(state.key).toBe("unknown");
+    expect(state.label).toBe("Needs review");
+  });
+
+  it("requires review when the project changed after the recorded verification", () => {
     const state = getAgentTrustState(createAgent({
       verification_score: 5,
       upstream_changed_since_verification: true,
     }), now);
 
-    expect(state.key).toBe("changed");
-    expect(state.label).toBe("Project changed");
+    expect(state.key).toBe("needs-review");
+    expect(state.label).toBe("Needs review");
+  });
+
+  it("requires review when setup documentation is stale", () => {
+    const state = getAgentTrustState(createAgent({
+      metadata_is_stale: true,
+      last_verified_date: "2026-10-25",
+      setup_guide: { source_url: "https://example.com/setup", checked_at: "2026-10-25" },
+    }), now);
+
+    expect(state.key).toBe("needs-review");
+    expect(state.label).toBe("Needs review");
+    expect(state.detail).toBe("Needs review.");
+    expect(state.detail).not.toContain("metadata");
   });
 });

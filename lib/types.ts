@@ -4,13 +4,22 @@ export type OsCommands = {
   windows?: string[];
 };
 
+export type SetupCommandPhase = {
+  title: string;
+  commands: string[];
+  note?: string;
+};
+
 export type SetupPlatform = {
   support: "supported" | "unsupported" | "unknown";
   install_route?: string;
   prerequisites?: string[];
   hardware_notes?: string;
   download_url?: string;
+  download_label?: string;
   install_commands?: string[];
+  command_phases?: SetupCommandPhase[];
+  terminal_note?: string;
   first_run_commands?: string[];
   first_run_steps?: string[];
   provider_setup?: string;
@@ -68,6 +77,7 @@ export type Agent = {
   metadata_last_checked_at?: string | null;
   metadata_is_stale?: boolean | null;
   metadata_source?: string | null;
+  upstream_is_archived?: boolean | null;
   verified_commit_sha?: string | null;
   verified_operating_systems: string[];
   verified_install_command: string;

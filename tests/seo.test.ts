@@ -72,4 +72,23 @@ describe("public page SEO metadata", () => {
     }]);
     expect(metadata.twitter?.images).toEqual(["https://agentnine.pro/og-image.png"]);
   });
+
+  it("uses an agent-specific generated image when the page supplies one", () => {
+    const metadata = createPublicPageMetadata({
+      title: "Codebuff AI Agent Setup Guide",
+      description: "Review Codebuff's setup guide.",
+      path: "/agents/codebuff",
+      socialImagePath: "/social-preview/agents/codebuff",
+    });
+
+    expect(metadata.openGraph?.images).toMatchObject([{
+      url: "https://agentnine.pro/social-preview/agents/codebuff",
+      width: 1200,
+      height: 630,
+      alt: "Codebuff AI Agent Setup Guide | AgentNine",
+    }]);
+    expect(metadata.twitter?.images).toEqual([
+      "https://agentnine.pro/social-preview/agents/codebuff",
+    ]);
+  });
 });

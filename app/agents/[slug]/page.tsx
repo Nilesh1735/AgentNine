@@ -39,6 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     path: `/agents/${agent.slug}`,
     type: "article",
     robots: { index: true, follow: true },
+    socialImagePath: `/social-preview/agents/${encodeURIComponent(agent.slug)}`,
   });
 }
 

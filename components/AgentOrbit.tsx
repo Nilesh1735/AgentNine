@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import ArrowUpRight from "reicon-react/icons/ArrowUpRight";
 import type { Agent, Category } from "@/lib/types";
+import { getAgentTrustState } from "@/lib/trust";
 
 export function AgentOrbit({ agents, categories }: { agents: Agent[]; categories: Category[] }) {
   const reduceMotion = useReducedMotion();
@@ -23,6 +24,7 @@ export function AgentOrbit({ agents, categories }: { agents: Agent[]; categories
         {orbitAgents.map((agent, index) => {
           const angle = index * (360 / orbitAgents.length) - 45;
           const category = categoryById.get(agent.category_id) ?? "AI agent";
+          const trust = getAgentTrustState(agent);
           return (
             <motion.div
               className="agent-orbit-position"
@@ -44,9 +46,7 @@ export function AgentOrbit({ agents, categories }: { agents: Agent[]; categories
                 <p>{agent.short_description}</p>
                 <div className="agent-orbit-card-bottom">
                   <span>{agent.version_tag || "Version pending"}</span>
-                  <span className={agent.verification_score === 5 ? "is-verified" : ""}>
-                    {agent.verification_score === 5 ? "5 checks" : "Not checked"}
-                  </span>
+                  <span>{agent.verification_score}/5 steps</span>
                 </div>
               </article>
             </motion.div>

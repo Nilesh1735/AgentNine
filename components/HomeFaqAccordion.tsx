@@ -11,7 +11,7 @@ const questions = [
   {
     question: "What does “verified” mean?",
     answer:
-      "All five checklist items have recorded evidence, the listing is not marked stale, and no later project change is recorded. A review date appears only when one has been recorded. This is not a safety certification.",
+      "AgentNine's five-step setup verification checklist has been completed for the listing. This is separate from the Needs review status, which can reflect repository freshness or setup documentation. Verification is not a security audit or certification.",
   },
   {
     question: "Where does a listing’s information come from?",

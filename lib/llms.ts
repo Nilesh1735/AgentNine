@@ -1,7 +1,8 @@
 import type { Agent, Category } from "@/lib/types";
+import { getAgentTrustState, type TrustAgent } from "@/lib/trust";
 
 type LlmCatalog = {
-  agents: Pick<Agent, "category_id" | "name" | "slug" | "short_description" | "verification_score">[];
+  agents: Array<Pick<Agent, "category_id" | "name" | "slug" | "short_description" | "verification_score"> & TrustAgent>;
   categories: Category[];
   siteUrl: string;
 };
@@ -29,12 +30,12 @@ export function createLlmIndex({ agents, categories, siteUrl }: LlmCatalog): str
     "## Published agents",
     ...agents.map((agent) => {
       const category = categoryById.get(agent.category_id);
-      const evidence = `AgentNine checklist evidence: ${agent.verification_score}/5`;
-      return `- [${agent.name}](${siteUrl}/agents/${agent.slug}): ${agent.short_description} (${category?.name ?? "Uncategorized"}; ${evidence})`;
+      const trust = getAgentTrustState(agent);
+      return `- [${agent.name}](${siteUrl}/agents/${agent.slug}): ${agent.short_description} (${category?.name ?? "Uncategorized"}; ${agent.verification_score}/5 setup verification steps; ${trust.label})`;
     }),
     "",
     "## Trust boundary",
-    "Checklist evidence records information available to AgentNine; it is not an independent security, legal, licensing, or operational certification. Listings can be incomplete or out of date. Review the project, its license, and current setup instructions; pin a version before running it.",
+    "The setup verification score records completion of AgentNine's five-step setup review process. It is not a security audit or security certification. Verified and Needs review describe the setup-verification and repository-freshness state. Review the project's license and current setup instructions; pin a version before running it.",
   ];
   return lines.join("\n");
 }

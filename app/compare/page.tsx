@@ -17,7 +17,8 @@ const rows: Array<[string, (agent: Agent) => string]> = [
   ["Status", (agent) => getAgentTrustState(agent).label],
   ["Version", (agent) => agent.version_tag || "Not recorded"],
   ["Repository freshness", (agent) => getFreshnessNote(agent) || "Not recorded"],
-  ["Verification", (agent) => `${agent.verification_score}/5 checks recorded`],
+  ["5-step setup verification", (agent) => `${agent.verification_score}/5 checklist steps`],
+  ["Documentation status", (agent) => getAgentTrustState(agent).detail],
   ["Stars", (agent) => agent.stars ? agent.stars.toLocaleString() : "Not recorded"],
   ["Cost to run", (agent) => agent.cost_to_run || "Not recorded"],
   ["API key requirement", (agent) => agent.requires_api_key === true

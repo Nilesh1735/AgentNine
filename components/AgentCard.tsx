@@ -15,10 +15,11 @@ export function AgentCard({ agent, category, showUpstreamActivity = true }: { ag
       <AgentArtwork seed={agent.slug} categorySlug={category?.slug} />
       <div className="card-topline">
         <Link className="card-category" href={category ? `/categories/${category.slug}` : "/categories"} prefetch={false}>{category?.name ?? "Agent"}<ArrowUpRight size={12} aria-hidden="true" /></Link>
-        <span className={trust.className} aria-label={trust.detail}><span className="verification-score">{agent.verification_score}/5</span><span className="verification-label">{trust.label}</span></span>
+        <span className={trust.className} aria-label={trust.detail}>{trust.label}</span>
       </div>
-      <div className="verification-bar" aria-label={`${agent.verification_score} of 5 verification checks recorded`} role="img">
+      <div className="verification-bar" aria-label={`${agent.verification_score} of 5 setup verification steps recorded`} role="img">
         {[0, 1, 2, 3, 4].map((segment) => <span className={`verification-segment${segment < agent.verification_score ? " filled" : ""}`} key={segment} />)}
+        <span className="verification-bar-label">{agent.verification_score}/5 steps</span>
       </div>
       <h3><Link href={`/agents/${agent.slug}`} prefetch={false}>{agent.name}</Link></h3>
       <p className="line-clamp-2">{agent.short_description}</p>

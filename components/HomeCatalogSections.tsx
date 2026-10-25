@@ -6,7 +6,6 @@ import { getAgents, getCategories } from "@/lib/data";
 import { getPublishedNewsPosts } from "@/lib/news";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { SITE_URL } from "@/lib/site";
-import { getAgentTrustState } from "@/lib/trust";
 import { selectHomepagePreviewAgents } from "@/lib/homepage-preview";
 
 export async function HomeCatalogSections() {
@@ -23,7 +22,6 @@ export async function HomeCatalogSections() {
   ]);
   const latestNews = news.posts.slice(0, 3);
   const previewAgents = selectHomepagePreviewAgents(agents.data, categories.data).map((agent) => {
-    const trust = getAgentTrustState(agent);
     return {
       id: agent.id,
       name: agent.name,
@@ -31,7 +29,7 @@ export async function HomeCatalogSections() {
       category_id: agent.category_id,
       short_description: agent.short_description,
       version_tag: agent.version_tag,
-      trust: { key: trust.key, label: trust.label, className: trust.className },
+      verification_score: agent.verification_score,
     };
   });
   const previewCategories = categories.data.map(({ id, name, slug }) => ({ id, name, slug }));
