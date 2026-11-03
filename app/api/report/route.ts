@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   if (typeof input.slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input.slug) || input.slug.length > 100) {
     return NextResponse.json({ error: "Invalid request", code: "invalid_request" }, { status: 400 });
   }
-  const client = getClientIp(request);
+  const client = getRateLimitSubject(request, "isolate");
   const limitResponse = rateLimitResponse(
     await checkRequestRateLimit(`report:${client}`, 5, 60_000),
     "Reporting is rate limited. Try again shortly.",

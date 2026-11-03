@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp } from "@/lib/request-security";
+import { getRateLimitSubject } from "@/lib/request-security";
 
 export const runtime = "nodejs";
 
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const origin = request.headers.get("origin");
   if (origin && origin !== new URL(request.url).origin) return NextResponse.json({ error: "Invalid origin." }, { status: 403 });
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return NextResponse.json({ error: "JSON is required." }, { status: 415 });
-  const client = getClientIp(request);
+  const client = getRateLimitSubject(request, "isolate");
   const contentLength = request.headers.get("content-length");
   if (contentLength && /^\d+$/.test(contentLength) && Number(contentLength) > 1_024) {
     return NextResponse.json({ error: "Request too large", code: "request_too_large" }, { status: 413 });

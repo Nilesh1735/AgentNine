@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import {
   createNewsEditorSession,
   getNewsEditorKey,
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "News editor authentication is not configured." }, { status: 503 });
   }
   const limitResponse = rateLimitResponse(
-    await checkRequestRateLimit(`news-editor-login:${getClientIp(request)}`, 5, 15 * 60 * 1000),
+    await checkRequestRateLimit(`news-editor-login:${getRateLimitSubject(request, "share")}`, 5, 15 * 60 * 1000),
     "Too many attempts. Try again later.",
   );
   if (limitResponse) return limitResponse;

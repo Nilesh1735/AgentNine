@@ -3,7 +3,7 @@ import { getAgent } from "@/lib/data";
 import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { attachVisitorCookie, getVisitorId } from "@/lib/visitor-state-server";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -20,7 +20,7 @@ async function summary(agentId: string) {
 }
 
 export async function GET(request: Request) {
-  const client = getClientIp(request);
+  const client = getRateLimitSubject(request, "isolate");
   const limitResponse = rateLimitResponse(
     await checkRequestRateLimit(`feedback-summary:${client}`, 120, 60_000),
     "Feedback summaries are rate limited. Try again shortly.",
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const client = getClientIp(request);
+  const client = getRateLimitSubject(request, "isolate");
   const limitResponse = rateLimitResponse(
     await checkRequestRateLimit(`feedback:${client}`, 30, 60_000),
     "Feedback is rate limited. Try again shortly.",

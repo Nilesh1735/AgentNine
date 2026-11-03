@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { attachVisitorCookie, getVisitorId } from "@/lib/visitor-state-server";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import type { VisitorPreferences } from "@/lib/visitor-preferences";
@@ -56,7 +56,7 @@ function getOrCreateVisitorId(request: Request) {
 
 async function checkLimit(request: Request, operation: "read" | "write") {
   const result = await checkRequestRateLimit(
-    `visitor-preferences:${operation}:${getClientIp(request)}`,
+    `visitor-preferences:${operation}:${getRateLimitSubject(request, "isolate")}`,
     operation === "read" ? 120 : 60,
     60_000,
   );

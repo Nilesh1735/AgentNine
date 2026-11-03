@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
 import { CortalityRouteBoundary } from "@/components/CortalityReplay";
 import { SITE_URL } from "@/lib/site";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme-boot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -70,9 +71,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col"><CortalityRouteBoundary><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></CortalityRouteBoundary></body>
     </html>
   );

@@ -30,7 +30,11 @@ export default function CookiesPage() {
           to one year, and associates theme, comparison list, setup progress, recent agents,
           optional analytics and marketing choices, and feedback responses with a
           random visitor identifier. Clearing it in your
-          browser does not delete the related database record. Supabase authentication cookies
+          browser does not delete the related database record. A second cookie,{" "}
+          <code>agentnine_theme</code>, stores only the word <code>light</code> or{" "}
+          <code>dark</code> so the page can apply your theme before it is drawn and avoid a
+          flash of the wrong colours. It lasts up to one year, contains no identifier, and is
+          readable by the page&apos;s own scripts. Supabase authentication cookies
           beginning with <code>sb-</code> help maintain sign-in and last{" "}
           {legalConfig.authCookieLifetime}. These cookies are not used for advertising.
         </p>
