@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Propose a contribution to AgentNine’s AI agent directory.",
     path: "/join",
   }),
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 export default function JoinPage() {

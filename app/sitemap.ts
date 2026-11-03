@@ -60,6 +60,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/agents`, ...(latestAgentUpdate ? { lastModified: latestAgentUpdate } : {}), changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/news`, ...(latestNewsUpdate ? { lastModified: latestNewsUpdate } : {}), changeFrequency: "daily", priority: 0.7 },
     { url: `${base}/categories`, ...(latestAgentUpdate ? { lastModified: latestAgentUpdate } : {}), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/about` },
+    { url: `${base}/join` },
+    { url: `${base}/contact` },
+    { url: `${base}/feedback` },
     ...categories.map((category) => {
       const categoryLastModified = getLatestSitemapLastModified(
         agents.filter((agent) => agent.category_id === category.id).map((agent) => agent.updated_at),

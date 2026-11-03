@@ -53,9 +53,11 @@ describe("sitemap generation", () => {
     consoleError.mockRestore();
   });
 
-  it("does not include the noindex feedback form", async () => {
+  it("includes public pages enabled for indexing", async () => {
     const entries = await sitemap();
-    expect(entries.find((entry) => entry.url.endsWith("/feedback"))).toBeUndefined();
+    for (const path of ["/about", "/join", "/contact", "/feedback"]) {
+      expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeDefined();
+    }
   });
 
   it("uses the newest underlying content date for collection pages", async () => {
@@ -73,11 +75,8 @@ describe("sitemap generation", () => {
   it("excludes pages marked noindex from the sitemap", async () => {
     const entries = await sitemap();
     for (const path of [
-      "/about",
       "/methodology",
-      "/join",
       "/faq",
-      "/contact",
       "/privacy",
       "/cookies",
       "/terms",
@@ -114,6 +113,10 @@ describe("sitemap generation", () => {
       "https://agentnine.pro/agents",
       "https://agentnine.pro/news",
       "https://agentnine.pro/categories",
+      "https://agentnine.pro/about",
+      "https://agentnine.pro/join",
+      "https://agentnine.pro/contact",
+      "https://agentnine.pro/feedback",
     ]);
     expect(consoleError).toHaveBeenCalled();
   });

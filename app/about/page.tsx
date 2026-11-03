@@ -74,7 +74,7 @@ export const metadata = {
     description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
     path: "/about",
   }),
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {
