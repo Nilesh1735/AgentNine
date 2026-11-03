@@ -66,11 +66,16 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  // data-theme carries a server default so the attribute is never absent: six
+  // [data-theme="light"] rules in globals.css depend on it, and a visitor without
+  // JavaScript would otherwise get no theme attribute at all. THEME_BOOT_SCRIPT
+  // overwrites it before first paint, so a dark visitor still sees no flash.
   return (
     <html
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
+      data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <head>
