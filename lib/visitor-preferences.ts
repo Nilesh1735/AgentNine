@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import { writeThemeCookie } from "@/lib/theme-boot";
 
 export type AnalyticsAttribution = Partial<Record<
   "utm_source" | "utm_medium" | "utm_campaign" | "utm_term" | "utm_content",
@@ -55,7 +56,11 @@ function notify() {
 
 function applySnapshot(preferences: VisitorPreferences) {
   snapshot = { preferences, ready: true };
-  if (preferences.theme) document.documentElement.dataset.theme = preferences.theme;
+  if (preferences.theme) {
+    document.documentElement.dataset.theme = preferences.theme;
+    // Mirror into a readable cookie so the next page applies it before paint.
+    writeThemeCookie(preferences.theme);
+  }
   notify();
 }
 
