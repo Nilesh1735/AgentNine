@@ -14,13 +14,20 @@ import { metadata as signupMetadata } from "@/app/signup/page";
 import { metadata as profileMetadata } from "@/app/profile/page";
 import { metadata as accountMetadata } from "@/app/account/page";
 
-describe("static pages excluded from search indexing", () => {
+describe("public page indexing policy", () => {
   it.each([
     ["/about", aboutMetadata],
-    ["/methodology", methodologyMetadata],
     ["/join", joinMetadata],
-    ["/faq", faqMetadata],
     ["/contact", contactMetadata],
+    ["/feedback", feedbackMetadata],
+  ])("allows %s to be indexed", (_path, metadata) => {
+    expect(metadata.robots).toEqual({ index: true, follow: true });
+    expect(metadata.alternates?.canonical).toBeTruthy();
+  });
+
+  it.each([
+    ["/methodology", methodologyMetadata],
+    ["/faq", faqMetadata],
     ["/privacy", privacyMetadata],
     ["/cookies", cookiesMetadata],
     ["/terms", termsMetadata],
@@ -30,7 +37,6 @@ describe("static pages excluded from search indexing", () => {
   });
 
   it.each([
-    ["/feedback", feedbackMetadata],
     ["/privacy/choices", privacyChoicesMetadata],
     ["/login", loginMetadata],
     ["/signup", signupMetadata],
