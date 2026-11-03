@@ -21,5 +21,5 @@ export const metadata = {
     description: "Send feedback about using AgentNine. Public display requires your permission and team approval.",
     path: "/feedback",
   }),
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     description: "Suggest an AI agent, report a listing issue, or send a correction to AgentNine.",
     path: "/contact",
   }),
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 export default function ContactLayout({ children }: Readonly<{ children: React.ReactNode }>) {

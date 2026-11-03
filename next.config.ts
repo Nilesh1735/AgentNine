@@ -7,7 +7,10 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.14"],
   productionBrowserSourceMaps: false,
   async redirects() {
-    return [{ source: "/refunds", destination: "/terms", permanent: true }];
+    return [
+      { source: "/refunds", destination: "/terms", permanent: true },
+      { source: "/robot.txt", destination: "/robots.txt", permanent: true },
+    ];
   },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
