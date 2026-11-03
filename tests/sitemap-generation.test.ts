@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   getAgents: vi.fn(),
@@ -23,7 +23,10 @@ vi.mock("@/lib/site-feedback-data", () => ({
 import sitemap from "@/app/sitemap";
 
 describe("sitemap generation", () => {
+  let consoleError: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
+    consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     mocks.getAgents.mockResolvedValue({
       status: "ready",
       data: [
@@ -44,6 +47,10 @@ describe("sitemap generation", () => {
       { slug: "second-story", updated_at: null, published_at: "2026-10-19T08:00:00.000Z", created_at: "2026-10-18T08:00:00.000Z" },
     ]);
     mocks.getLatestPublishedSiteFeedbackUpdate.mockResolvedValue(new Date("2026-10-19T09:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    consoleError.mockRestore();
   });
 
   it("does not include the noindex feedback form", async () => {
@@ -88,5 +95,39 @@ describe("sitemap generation", () => {
     ]) {
       expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeDefined();
     }
+  });
+
+  it("returns core URLs when sitemap data sources are unavailable", async () => {
+    mocks.getAgents.mockResolvedValue({
+      status: "unavailable",
+      data: [],
+      errorCode: "service_unavailable",
+      retryable: true,
+    });
+    mocks.getCategories.mockRejectedValue(new Error("Category query failed"));
+    mocks.getPublishedNewsPosts.mockRejectedValue(new Error("News query failed"));
+    mocks.getLatestPublishedSiteFeedbackUpdate.mockRejectedValue(new Error("Feedback query failed"));
+
+    const entries = await sitemap();
+    expect(entries.map((entry) => entry.url)).toEqual([
+      "https://agentnine.pro",
+      "https://agentnine.pro/agents",
+      "https://agentnine.pro/news",
+      "https://agentnine.pro/categories",
+    ]);
+    expect(consoleError).toHaveBeenCalled();
+  });
+
+  it("preserves URLs from healthy data sources when another source fails", async () => {
+    mocks.getPublishedNewsPosts.mockRejectedValue(new Error("News query failed"));
+
+    const entries = await sitemap();
+    expect(entries.some((entry) => entry.url === "https://agentnine.pro/agents/first-agent")).toBe(true);
+    expect(entries.some((entry) => entry.url === "https://agentnine.pro/categories/first-category")).toBe(true);
+    expect(entries.some((entry) => entry.url === "https://agentnine.pro/news/first-story")).toBe(false);
+    expect(consoleError).toHaveBeenCalledWith(
+      "Sitemap could not load news; omitting those URLs:",
+      expect.any(Error),
+    );
   });
 });
