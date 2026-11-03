@@ -2,9 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/admin";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 
-const threeMonthsAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 92).toISOString().slice(0, 10);
+/**
+ * The discovery window, measured from the moment of the request.
+ *
+ * Computed per call rather than at module load: a warm serverless instance can be
+ * reused for a long time, and a module-level constant would freeze the window at
+ * whenever the instance first started, quietly widening it on every later run.
+ */
+function discoverySinceDate() {
+  return new Date(Date.now() - 1000 * 60 * 60 * 24 * 92).toISOString().slice(0, 10);
+}
 
 export async function POST(request: NextRequest) {
+  const threeMonthsAgo = discoverySinceDate();
   if (!await isAdminRequest(request, true)) return NextResponse.json({ error: "Unauthorized or invalid CSRF token" }, { status: 403 });
   const db = getSupabaseAdminServer();
   if (!db) return NextResponse.json({ error: "Admin data access is unavailable" }, { status: 503 });
