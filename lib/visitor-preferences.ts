@@ -25,6 +25,11 @@ export type VisitorPreferencePatch = {
   [K in keyof VisitorPreferences]?: VisitorPreferences[K] | null;
 };
 
+export function isPreferencesServiceUnavailable(error: unknown): boolean {
+  return error instanceof Error
+    && /^Preferences could not be (?:loaded|saved) \(503\)$/.test(error.message);
+}
+
 type Snapshot = { preferences: VisitorPreferences; ready: boolean };
 
 const emptyPreferences: VisitorPreferences = {};
@@ -120,7 +125,12 @@ export function useVisitorPreferences() {
 
   useEffect(() => {
     void loadVisitorPreferences().catch((error: unknown) => {
-      if (process.env.NODE_ENV === "development") console.error("Visitor preferences are unavailable", error);
+      if (process.env.NODE_ENV !== "development") return;
+      if (isPreferencesServiceUnavailable(error)) {
+        console.warn("Visitor preferences are unavailable; browser defaults are in use.");
+      } else {
+        console.error("Visitor preferences are unavailable", error);
+      }
     });
   }, []);
 
