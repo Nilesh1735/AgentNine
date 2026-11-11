@@ -37,7 +37,11 @@ export function CommunityFeedback() {
         const result = await response.json().catch(() => null) as { feedback?: PublicFeedback[]; error?: string } | null;
         if (controller.signal.aborted) return;
         if (!response.ok || !result || !Array.isArray(result.feedback)) {
-          console.error("Community feedback could not be loaded:", result?.error ?? response.status);
+          if (response.status === 503) {
+            console.warn("Community feedback is unavailable; the service returned 503.");
+          } else {
+            console.error("Community feedback could not be loaded:", result?.error ?? response.status);
+          }
           setState("error");
           return;
         }

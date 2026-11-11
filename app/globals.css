@@ -125,6 +125,23 @@
   .search-input-wrap:focus-within { transform: none; }
 }
 
+/* A single clip primitive keeps the full-screen snapshot reveal inexpensive. */
+::view-transition-group(root) { animation: none; }
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) {
+  z-index: 1;
+  clip-path: circle(0 at var(--theme-ink-x) var(--theme-ink-y));
+  animation: theme-ink-reveal 520ms cubic-bezier(.16, 1, .3, 1) both;
+  will-change: clip-path;
+}
+@keyframes theme-ink-reveal {
+  to { clip-path: circle(150vmax at var(--theme-ink-x) var(--theme-ink-y)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}
 
 .consent-banner,
 .confirm-dialog,

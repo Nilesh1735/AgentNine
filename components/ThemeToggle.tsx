@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, type MouseEvent } from "react";
+import { flushSync } from "react-dom";
 import Sun from "reicon-react/icons/Sun";
 import Moon from "reicon-react/icons/Moon";
-import { updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
-import { decideTheme, readAppliedTheme, readThemeCookie, restoreThemeCookie, writeThemeCookie } from "@/lib/theme-boot";
+import { isPreferencesServiceUnavailable, updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
+import { decideTheme, readAppliedTheme, writeThemeCookie } from "@/lib/theme-boot";
+import { transitionTheme } from "@/lib/theme-transition";
 
 type Theme = "light" | "dark";
 
@@ -32,25 +34,32 @@ export function ThemeToggle() {
     document.documentElement.dataset.theme = documentWrite;
   }, [documentWrite]);
 
-  async function toggleTheme() {
+  async function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    // The cookie as it stands, which may be absent while the page follows the
-    // operating system. Reading the applied theme here would pin a cookie the
-    // visitor never had if the save then failed.
-    const previousCookieTheme = readThemeCookie();
-    setSessionTheme(next);
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const origin = event.detail === 0
+      ? { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 }
+      : { x: event.clientX, y: event.clientY };
     setSaveFailed(false);
     // Mirror immediately so the change survives a navigation mid-save.
     writeThemeCookie(next);
+    transitionTheme(
+      { x: origin.x, y: origin.y },
+      () => flushSync(() => {
+        setSessionTheme(next);
+        document.documentElement.dataset.theme = next;
+      }),
+    );
     try {
       await updateVisitorPreferences({ theme: next });
       setSessionTheme(null);
     } catch (error) {
-      console.error("Theme preference could not be saved", error);
+      if (isPreferencesServiceUnavailable(error)) {
+        console.warn("Theme changed and saved in this browser, but could not be synced to preferences.");
+      } else {
+        console.error("Theme preference could not be saved", error);
+      }
       setSaveFailed(true);
-      // The failure message promises the choice resets on reload, so the mirror
-      // must not outlive this visit. Restore exactly what was there before.
-      restoreThemeCookie(previousCookieTheme);
     }
   }
 
@@ -59,15 +68,15 @@ export function ThemeToggle() {
       <button
         className="theme-toggle"
         type="button"
-        onClick={toggleTheme}
+        onClick={(event) => void toggleTheme(event)}
         aria-pressed={theme === "dark"}
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme${saveFailed ? ". This change could not be saved and will reset on reload" : ""}`}
-        title={saveFailed ? "Theme changed for this visit, but could not be saved." : undefined}
+        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme${saveFailed ? ". Saved in this browser, but could not be synced" : ""}`}
+        title={saveFailed ? "Theme saved in this browser, but could not be synced to preferences." : undefined}
       >
         <span className="theme-toggle-icon" aria-hidden="true">{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}</span>
       </button>
       <span className="sr-only" role="status">
-        {saveFailed ? "Theme changed for this visit, but the preference could not be saved. It will reset on reload." : ""}
+        {saveFailed ? "Theme saved in this browser, but could not be synced to your preferences." : ""}
       </span>
     </>
   );
