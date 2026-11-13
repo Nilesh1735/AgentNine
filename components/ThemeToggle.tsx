@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { flushSync } from "react-dom";
 import Sun from "reicon-react/icons/Sun";
 import Moon from "reicon-react/icons/Moon";
@@ -14,6 +14,7 @@ export function ThemeToggle() {
   const { preferences } = useVisitorPreferences();
   const [sessionTheme, setSessionTheme] = useState<Theme | null>(null);
   const [saveFailed, setSaveFailed] = useState(false);
+  const writeVersionRef = useRef(0);
   // What the pre-paint script resolved, which may be "dark" from the operating
   // system. Read after mount so the first client render matches the server's and
   // hydration stays clean.
@@ -35,6 +36,7 @@ export function ThemeToggle() {
   }, [documentWrite]);
 
   async function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
+    const writeVersion = ++writeVersionRef.current;
     const next: Theme = theme === "dark" ? "light" : "dark";
     const bounds = event.currentTarget.getBoundingClientRect();
     const origin = event.detail === 0
@@ -52,14 +54,14 @@ export function ThemeToggle() {
     );
     try {
       await updateVisitorPreferences({ theme: next });
-      setSessionTheme(null);
+      if (writeVersion === writeVersionRef.current) setSessionTheme(null);
     } catch (error) {
       if (isPreferencesServiceUnavailable(error)) {
         console.warn("Theme changed and saved in this browser, but could not be synced to preferences.");
       } else {
         console.error("Theme preference could not be saved", error);
       }
-      setSaveFailed(true);
+      if (writeVersion === writeVersionRef.current) setSaveFailed(true);
     }
   }
 

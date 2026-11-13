@@ -12,10 +12,12 @@ function hasCommands(commands: string[] | undefined): boolean {
 
 export function getSetupCommandPlatforms(agent: SetupCommandAgent): Array<typeof setupPlatforms[number]> {
   return setupPlatforms.filter((platform) => {
-    if (agent.setup_guide?.platforms?.[platform]?.support === "unsupported") return false;
+    const platformGuide = agent.setup_guide?.platforms?.[platform];
+    if (platformGuide?.support === "unsupported") return false;
     return hasCommands(agent.os_commands?.[platform])
-      || hasCommands(agent.setup_guide?.platforms?.[platform]?.install_commands)
-      || hasCommands(agent.setup_guide?.platforms?.[platform]?.first_run_commands);
+      || hasCommands(platformGuide?.install_commands)
+      || hasCommands(platformGuide?.first_run_commands)
+      || (platformGuide?.command_phases?.some((phase) => hasCommands(phase.commands)) ?? false);
   });
 }
 

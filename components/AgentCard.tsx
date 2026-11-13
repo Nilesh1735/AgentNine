@@ -29,7 +29,7 @@ export function AgentCard({ agent, category, showUpstreamActivity = true }: { ag
           <span><b>Version</b> {getCompactVersionLabel(agent.version_tag)}</span>
           <span>{freshnessNote}</span>
         </span>
-        <span className="card-actions"><CompareButton slug={agent.slug} /><Link className="text-link" href={`/agents/${agent.slug}`} prefetch={false}>View guide <ArrowRight size={14} aria-hidden="true" /></Link></span>
+        <span className="card-actions"><CompareButton slug={agent.slug} /><Link className="text-link" href={`/agents/${agent.slug}`} prefetch={false} aria-label={`View ${agent.name} guide`}>View guide <ArrowRight size={14} aria-hidden="true" /></Link></span>
       </div>
     </article>
   );

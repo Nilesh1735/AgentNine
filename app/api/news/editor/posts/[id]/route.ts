@@ -3,6 +3,7 @@ import { isNewsEditorRequest } from "@/lib/news-editor-auth";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import { jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { validateNewsPostInput } from "@/lib/news-post-validation";
+import { invalidatePublishedNewsCache } from "@/lib/news";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -43,5 +44,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     );
   }
   if (!data) return NextResponse.json({ error: "News post not found." }, { status: 404 });
+  invalidatePublishedNewsCache();
   return NextResponse.json(data);
 }

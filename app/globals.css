@@ -629,6 +629,8 @@ body:has(.faq-page) .floating-contact { display: none; }
 .team-social-links .social-link { --social-button-size: clamp(44px, 3.4vw, 46px); --social-icon-size: clamp(20px, 1.7vw, 23px); }
 .social-link::before { position: absolute; z-index: -1; width: calc(var(--social-button-size) + 5px); height: calc(var(--social-button-size) + 5px); border: 1px solid rgba(255, 255, 255, .18); border-radius: 50%; background: #212121; content: ""; transition: transform 400ms ease; }
 .social-link svg { width: var(--social-icon-size); height: var(--social-icon-size); }
+.social-link-favicon { width: var(--social-icon-size); height: var(--social-icon-size); border-radius: 4px; background: #fff; object-fit: contain; }
+.team-social-links .social-link-favicon { width: calc(var(--social-icon-size) + 6px); height: calc(var(--social-icon-size) + 6px); }
 .social-link:hover::before, .social-link:focus-visible::before { transform: scale(0); }
 .social-link:active { transform: scale(.85); }
 .social-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }

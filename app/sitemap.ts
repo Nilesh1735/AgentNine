@@ -64,6 +64,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/join` },
     { url: `${base}/contact` },
     { url: `${base}/feedback` },
+    { url: `${base}/faq` },
+    { url: `${base}/methodology` },
+    { url: `${base}/privacy` },
+    { url: `${base}/privacy/choices` },
+    { url: `${base}/cookies` },
+    { url: `${base}/terms` },
     ...categories.map((category) => {
       const categoryLastModified = getLatestSitemapLastModified(
         agents.filter((agent) => agent.category_id === category.id).map((agent) => agent.updated_at),

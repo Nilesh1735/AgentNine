@@ -97,9 +97,6 @@ export function SetupGuidePanel({ guide }: {
           {platform?.download_url
             ? <a className="setup-platform-download" href={platform.download_url} target="_blank" rel="noreferrer">{platform.download_label ?? "Official download"}</a>
             : null}
-          {(commandPhases.length || installCommands.length) && platform?.terminal_note
-            ? <p className="setup-command-terminal-note">{platform.terminal_note}</p>
-            : null}
           {commandPhases.length
             ? <>
               <div className="setup-command-phases">
@@ -111,6 +108,9 @@ export function SetupGuidePanel({ guide }: {
             : (platform && !sourceChecked && !platform.download_url)
               ? <p className="setup-platform-empty">Install instructions have not been reviewed.</p>
               : null}
+          {(commandPhases.length || installCommands.length) && platform?.terminal_note
+            ? <p className="setup-command-terminal-note">{platform.terminal_note}</p>
+            : null}
           {platform?.provider_setup && !commandPhases.length
             ? <div className="setup-platform-details">
               <h4>Provider setup</h4>

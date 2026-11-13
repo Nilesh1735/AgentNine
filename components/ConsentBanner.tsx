@@ -108,9 +108,8 @@ export function ConsentBanner() {
         <div className="consent-banner-copy">
           <strong>Privacy choices</strong>
           <p>
-            Choose whether optional analytics and marketing services may run. Read the{" "}
-            <Link href="/privacy">Privacy policy</Link> or change your choices on the{" "}
-            <Link href="/privacy/choices">Privacy choices page</Link>.
+            Optional analytics and marketing run only with your permission. Read the{" "}
+            <Link href="/privacy">Privacy policy</Link>.
           </p>
         </div>
         <div className="consent-actions">

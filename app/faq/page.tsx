@@ -6,11 +6,10 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata = {
   ...createPublicPageMetadata({
-    title: "AI agent directory FAQ: setup and verification",
+    title: "AI Agent Directory FAQ: Setup and Verification",
     description: "Answers about AI-agent listings, setup guides, source details, recorded checks, and what AgentNine verification marks mean.",
     path: "/faq",
   }),
-  robots: { index: false, follow: true },
 };
 
 export default function FaqPage() {

@@ -1,14 +1,20 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { CatalogBackground } from "@/components/CatalogBackground";
 import { HomeCatalogSections } from "@/components/HomeCatalogSections";
-import { HomeCatalogLoadingSkeleton } from "@/components/HomeLoadingSkeleton";
 import { HomeFaqAccordion } from "@/components/HomeFaqAccordion";
 import { CommunityFeedback } from "@/components/CommunityFeedback";
 import { ProfileAvatars } from "@/components/ProfileAvatars";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
+import localFont from "next/font/local";
+
+const fraunces = localFont({
+  src: "../public/fonts/Fraunces-Variable.woff2",
+  variable: "--font-fraunces",
+  display: "swap",
+  weight: "100 900",
+});
 
 const homepageDescription =
   "Explore open-source AI agents. Compare setup requirements, source repositories, and documented access across coding, research, content, and automation projects.";
@@ -44,13 +50,11 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
-      <main id="main-content">
-        <section className="catalog-cover gallery-cover">
+      <main id="main-content" className={fraunces.variable}>
+        <section className={`${fraunces.variable} catalog-cover gallery-cover`}>
           <CatalogBackground />
         </section>
-        <Suspense fallback={<HomeCatalogLoadingSkeleton />}>
-          <HomeCatalogSections />
-        </Suspense>
+        <HomeCatalogSections />
         <section className="section standards-section new-standards">
           <div className="container">
             <div className="standards-intro">
@@ -96,8 +100,11 @@ export default function Home() {
   );
 }
 
-export const metadata = createPublicPageMetadata({
-  title: "Open-Source AI Agent Directory",
-  description: homepageDescription,
-  path: "/",
-});
+export const metadata = {
+  ...createPublicPageMetadata({
+    title: "Open-Source AI Agent Directory: Setup Guides",
+    description: homepageDescription,
+    path: "/",
+  }),
+  title: { absolute: "Open-Source AI Agent Directory: Setup Guides | AgentNine" },
+};

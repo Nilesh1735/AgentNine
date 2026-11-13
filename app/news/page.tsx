@@ -5,7 +5,7 @@ import { createPublicPageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export const metadata = createPublicPageMetadata({
-  title: "AI news and analysis",
+  title: "Open-Source AI Agent News and Analysis",
   description: "News, explainers, and updates on open-source AI agents and the tools around them.",
   path: "/news",
 });

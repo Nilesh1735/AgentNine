@@ -13,10 +13,10 @@ export function ProfileAvatars({
   return (
     <MaskedAvatars
       avatars={[
-        { avatar: "/nilesh-profile.jpeg", name: "Nilesh", href: "/about" },
-        { avatar: "/ali-sibtain-profile.webp", name: "Ali", href: "/about" },
-        { avatar: "/armaan-profile.jpeg", name: "Armaan", href: "/about" },
-        { avatar: "/ronit-profile.jpeg", name: "Ronit", href: "/about" },
+        { avatar: "/nilesh-profile-optimized.webp", name: "Nilesh", href: "/about" },
+        { avatar: "/ali-sibtain-profile-optimized.webp", name: "Ali", href: "/about" },
+        { avatar: "/armaan-profile-optimized.webp", name: "Armaan", href: "/about" },
+        { avatar: "/ronit-profile-optimized.webp", name: "Ronit", href: "/about" },
         { avatar: emptyAvatar, name: "Join us", href: "/join" },
       ]}
       size={size}

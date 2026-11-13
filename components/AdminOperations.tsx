@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type OperationsView = "audit" | "login-history" | "staleness" | "broken-links" | "contact-delivery" | "analytics";
 type AuditRow = { id: string; agent_name: string; agent_slug: string | null; changed_by: string; change_reason: string; changed_at: string; fields: string[] };
@@ -54,27 +54,40 @@ export function AdminOperations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [retryingSubmissionId, setRetryingSubmissionId] = useState("");
+  const [retryingSubmissionIds, setRetryingSubmissionIds] = useState<Set<string>>(() => new Set());
+  const activeViewRef = useRef<OperationsView>("audit");
+  const loadRequestIdRef = useRef(0);
 
   async function loadRows(view: OperationsView) {
+    if (activeViewRef.current !== view) return;
+    const requestId = ++loadRequestIdRef.current;
+    const isCurrentRequest = () => (
+      requestId === loadRequestIdRef.current && activeViewRef.current === view
+    );
     try {
       const response = await fetch(`/api/admin/operations?view=${view}`, { cache: "no-store" });
       const result = await response.json() as { rows?: OperationRow[]; error?: string };
+      if (!isCurrentRequest()) return;
       if (!response.ok) {
+        setRows([]);
         setError(result.error ?? "This admin view could not be loaded.");
         return;
       }
       setRows(result.rows ?? []);
     } catch (requestError) {
+      if (!isCurrentRequest()) return;
       console.error(`Admin ${view} view could not be loaded:`, requestError);
+      setRows([]);
       setError("The dashboard service could not be reached. Try again.");
     } finally {
-      setLoading(false);
+      if (isCurrentRequest()) setLoading(false);
     }
   }
 
   function load(view: OperationsView) {
+    activeViewRef.current = view;
     setActiveView(view);
+    setRows([]);
     setLoading(true);
     setError("");
     setMessage("");
@@ -96,7 +109,11 @@ export function AdminOperations() {
         return;
       }
       setMessage(status === "in_review" ? "Report moved to in review." : `Report marked ${status}.`);
-      await load("broken-links");
+      if (activeViewRef.current === "broken-links") {
+        setRows([]);
+        setLoading(true);
+        await loadRows("broken-links");
+      }
     } catch (requestError) {
       console.error("Broken-link report status update failed:", requestError);
       setError("The report could not be updated. Try again.");
@@ -104,9 +121,10 @@ export function AdminOperations() {
   }
 
   async function retryContactDelivery(submissionId: string) {
+    if (retryingSubmissionIds.has(submissionId)) return;
     setMessage("");
     setError("");
-    setRetryingSubmissionId(submissionId);
+    setRetryingSubmissionIds((current) => new Set(current).add(submissionId));
     try {
       const response = await fetch("/api/admin/operations", {
         method: "PATCH",
@@ -116,45 +134,66 @@ export function AdminOperations() {
       const result = await response.json() as { error?: string; retryMayDuplicate?: boolean };
       if (!response.ok) {
         setError(`${result.error ?? "The notification could not be retried."}${result.retryMayDuplicate ? " The provider may already have accepted the earlier attempt; check the inbox before retrying." : ""}`);
-        await loadRows("contact-delivery");
+        if (activeViewRef.current === "contact-delivery") {
+          setRows([]);
+          setLoading(true);
+          await loadRows("contact-delivery");
+        }
         return;
       }
-      await loadRows("contact-delivery");
+      if (activeViewRef.current === "contact-delivery") {
+        setRows([]);
+        setLoading(true);
+        await loadRows("contact-delivery");
+      }
       setMessage("Notification delivered.");
     } catch (requestError) {
       console.error("Contact notification retry failed:", requestError);
       setError("The notification retry could not be confirmed. Refresh the queue before trying again.");
     } finally {
-      setRetryingSubmissionId("");
+      setRetryingSubmissionIds((current) => {
+        const next = new Set(current);
+        next.delete(submissionId);
+        return next;
+      });
     }
   }
 
   useEffect(() => {
     let cancelled = false;
+    const requestId = ++loadRequestIdRef.current;
+    const isCurrentRequest = () => (
+      !cancelled
+      && requestId === loadRequestIdRef.current
+      && activeViewRef.current === "audit"
+    );
     void fetch("/api/admin/operations?view=audit", { cache: "no-store" })
       .then(async (response) => ({
         response,
         result: await response.json() as { rows?: OperationRow[]; error?: string },
       }))
       .then(({ response, result }) => {
-        if (cancelled) return;
+        if (!isCurrentRequest()) return;
         if (!response.ok) {
+          setRows([]);
           setError(result.error ?? "This admin view could not be loaded.");
           return;
         }
         setRows(result.rows ?? []);
       })
       .catch((requestError: unknown) => {
-        if (cancelled) return;
+        if (!isCurrentRequest()) return;
         console.error("Admin audit view could not be loaded:", requestError);
+        setRows([]);
         setError("The dashboard service could not be reached. Try again.");
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (isCurrentRequest()) setLoading(false);
       });
 
     return () => {
       cancelled = true;
+      if (requestId === loadRequestIdRef.current) loadRequestIdRef.current += 1;
     };
   }, []);
 
@@ -271,10 +310,10 @@ export function AdminOperations() {
                     <button
                       className="text-link"
                       type="button"
-                      disabled={retryingSubmissionId === row.submission_id}
+                      disabled={retryingSubmissionIds.has(row.submission_id)}
                       onClick={() => void retryContactDelivery(row.submission_id)}
                     >
-                      {retryingSubmissionId === row.submission_id ? "Retrying..." : "Retry notification"}
+                      {retryingSubmissionIds.has(row.submission_id) ? "Retrying..." : "Retry notification"}
                     </button>
                   ) : <small>{row.delivery_configured ? "Delivery is currently being processed. Refresh this view in a few minutes." : "Configure contact email delivery before retrying this item."}</small>}
                 </div>

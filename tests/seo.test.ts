@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { createPublicPageMetadata } from "../lib/seo";
+import { createAgentPageTitle, createPublicPageMetadata } from "../lib/seo";
 
 describe("public page SEO metadata", () => {
   it("uses the apex site origin for canonicals and social metadata", () => {
@@ -18,6 +18,43 @@ describe("public page SEO metadata", () => {
       type: "website",
     });
     expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
+  });
+
+  it("keeps agent detail titles within the target range without dropping the project name", () => {
+    for (const name of [
+      "Pi",
+      "Aider",
+      "AgentGPT",
+      "GPT Researcher",
+      "mini-SWE-agent",
+      "Open Interpreter",
+    ]) {
+      const title = createAgentPageTitle(name);
+      const brandedTitle = `${title} | AgentNine`;
+
+      expect(title).toContain(name);
+      expect(brandedTitle.length).toBeGreaterThanOrEqual(50);
+      expect(brandedTitle.length).toBeLessThanOrEqual(60);
+    }
+  });
+
+  it("caps generated descriptions at 155 characters without splitting a word", () => {
+    const metadata = createPublicPageMetadata({
+      title: "Directory description",
+      description: "A useful description for AgentNine visitors. ".repeat(10),
+      path: "/description-test",
+    });
+
+    expect(metadata.description?.length).toBeLessThanOrEqual(155);
+    expect(metadata.description).toMatch(/\.\.\.$/);
+    expect(metadata.description).not.toMatch(/\s\.\.\.$/);
+
+    const unbrokenDescription = createPublicPageMetadata({
+      title: "Long word",
+      description: "x".repeat(200),
+      path: "/description-test",
+    });
+    expect(unbrokenDescription.description).toHaveLength(155);
   });
 
   it.each([

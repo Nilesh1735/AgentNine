@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isNewsEditorRequest } from "@/lib/news-editor-auth";
-import { getAllNewsPosts } from "@/lib/news";
+import { getAllNewsPosts, invalidatePublishedNewsCache } from "@/lib/news";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import { jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { validateNewsPostInput } from "@/lib/news-post-validation";
@@ -30,5 +30,6 @@ export async function POST(request: NextRequest) {
     console.error("News post could not be created:", error.message);
     return errorResponse(error.code === "23505" ? "That article URL is already in use." : "News post could not be saved.", error.code === "23505" ? 409 : 503);
   }
+  invalidatePublishedNewsCache();
   return NextResponse.json(data, { status: 201 });
 }

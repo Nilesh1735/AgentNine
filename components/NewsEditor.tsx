@@ -224,7 +224,7 @@ export function NewsEditor() {
       <aside className="news-editor-sidebar">
         <div className="news-editor-toolbar">
           <h2>Articles</h2>
-          <button className="button-light" type="button" onClick={newPost}>New article</button>
+          <button className="button-light" type="button" onClick={newPost} disabled={saving}>New article</button>
         </div>
         {loading ? <p className="news-editor-state" role="status">Loading articles…</p> : null}
         {!loading && !posts.length ? <p className="news-editor-state">No articles yet. Start with a new article.</p> : null}
@@ -235,6 +235,7 @@ export function NewsEditor() {
                 className={`news-editor-post${selected?.id === post.id ? " is-selected" : ""}`}
                 type="button"
                 onClick={() => selectPost(post)}
+                disabled={saving}
               >
                 <span>{post.title}</span>
                 <small>{post.status === "published" ? "Published" : "Draft"}</small>
@@ -242,7 +243,7 @@ export function NewsEditor() {
             </li>
           ))}
         </ul>
-        <button className="news-editor-signout" type="button" onClick={signOut}>Sign out</button>
+        <button className="news-editor-signout" type="button" onClick={signOut} disabled={saving || loading}>Sign out</button>
       </aside>
       <div className="news-editor-main">
         <form className="news-editor-form contact-form" onSubmit={savePost}>
@@ -251,6 +252,7 @@ export function NewsEditor() {
             <input
               maxLength={180}
               value={form.title}
+              disabled={saving}
               onChange={(event) => {
                 const title = event.target.value;
                 setForm((current) => ({ ...current, title, slug: slugEdited ? current.slug : slugFromTitle(title) }));
@@ -264,7 +266,7 @@ export function NewsEditor() {
               maxLength={120}
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={form.slug}
-              disabled={selected?.status === "published"}
+              disabled={saving || selected?.status === "published"}
               onChange={(event) => {
                 setSlugEdited(true);
                 setForm((current) => ({ ...current, slug: event.target.value }));
@@ -274,7 +276,7 @@ export function NewsEditor() {
           </label>
           <label className="news-editor-field">
             Short summary
-            <textarea maxLength={300} rows={3} value={form.summary} onChange={(event) => setForm((current) => ({ ...current, summary: event.target.value }))} required />
+            <textarea maxLength={300} rows={3} value={form.summary} onChange={(event) => setForm((current) => ({ ...current, summary: event.target.value }))} required disabled={saving} />
           </label>
           <div className="news-editor-writing-grid">
             <label className="news-editor-field">
@@ -285,6 +287,7 @@ export function NewsEditor() {
                 value={form.content_markdown}
                 onChange={(event) => setForm((current) => ({ ...current, content_markdown: event.target.value }))}
                 required
+                disabled={saving}
               />
               <span className="news-editor-hint">Use # headings, **bold**, lists, and [links](https://example.com). Raw HTML is not rendered.</span>
             </label>
@@ -298,11 +301,11 @@ export function NewsEditor() {
           <div className="news-editor-form-row">
             <label className="news-editor-field">
               Author
-              <input maxLength={100} value={form.author_name} onChange={(event) => setForm((current) => ({ ...current, author_name: event.target.value }))} required />
+              <input maxLength={100} value={form.author_name} onChange={(event) => setForm((current) => ({ ...current, author_name: event.target.value }))} required disabled={saving} />
             </label>
             <label className="news-editor-field">
               Publication status
-              <select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as NewsPostStatus }))}>
+              <select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as NewsPostStatus }))} disabled={saving}>
                 <option value="draft">Draft (private)</option>
                 <option value="published">Published (public)</option>
               </select>
@@ -310,7 +313,7 @@ export function NewsEditor() {
           </div>
           <label className="news-editor-field">
             Source URLs (one HTTPS URL per line)
-            <textarea rows={3} value={form.source_urls} onChange={(event) => setForm((current) => ({ ...current, source_urls: event.target.value }))} />
+            <textarea rows={3} value={form.source_urls} onChange={(event) => setForm((current) => ({ ...current, source_urls: event.target.value }))} disabled={saving} />
           </label>
           <div className="news-editor-actions">
             <button className="button button-dark" type="submit" disabled={saving}>{saving ? "Saving…" : selected ? "Save article" : "Create article"}</button>

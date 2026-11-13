@@ -86,6 +86,7 @@ export function MaskedAvatars({
                     {avatars.map((person, index) => {
                         const isHovered = hoveredIndex === index
                         const isPrevHovered = hoveredIndex === index - 1
+                        const isRemoteAvatar = /^https?:\/\//i.test(person.avatar)
                         const nameOffset = offset + 0.375 + (6 - person.name.length) / 2
 
                         const baseOffset = -size * 1.5
@@ -190,7 +191,8 @@ export function MaskedAvatars({
                                             alt={person.name}
                                             width={size}
                                             height={size}
-                                            unoptimized
+                                            unoptimized={isRemoteAvatar}
+                                            sizes={`${size}px`}
                                             className="absolute inset-0 w-full h-full object-cover bg-oklch(0.97 0 0) dark:bg-oklch(0.269 0 0)"
                                         />
                                     </motion.span>

@@ -72,16 +72,17 @@ describe("sitemap generation", () => {
     expect(entries.find((entry) => entry.url.endsWith("/news/second-story"))?.lastModified).toEqual(lastAgentUpdate);
   });
 
-  it("excludes pages marked noindex from the sitemap", async () => {
+  it("includes public information and policy pages in the sitemap", async () => {
     const entries = await sitemap();
     for (const path of [
       "/methodology",
       "/faq",
       "/privacy",
+      "/privacy/choices",
       "/cookies",
       "/terms",
     ]) {
-      expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeUndefined();
+      expect(entries.find((entry) => entry.url === `https://agentnine.pro${path}`)).toBeDefined();
     }
   });
 
@@ -117,6 +118,12 @@ describe("sitemap generation", () => {
       "https://agentnine.pro/join",
       "https://agentnine.pro/contact",
       "https://agentnine.pro/feedback",
+      "https://agentnine.pro/faq",
+      "https://agentnine.pro/methodology",
+      "https://agentnine.pro/privacy",
+      "https://agentnine.pro/privacy/choices",
+      "https://agentnine.pro/cookies",
+      "https://agentnine.pro/terms",
     ]);
     expect(consoleError).toHaveBeenCalled();
   });

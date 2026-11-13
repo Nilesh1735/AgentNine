@@ -1,20 +1,43 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ConsentBanner } from "@/components/ConsentBanner";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-import { MetaPixel } from "@/components/MetaPixel";
-import { CortalityReplay } from "@/components/CortalityReplay";
 import ArrowUp from "reicon-react/icons/ArrowUp";
 import { getPreferredScrollBehavior } from "@/lib/reduced-motion";
+import { hasOptionalAnalyticsConsent, hasOptionalMarketingConsent } from "@/lib/optional-consent";
+import { useVisitorPreferences } from "@/lib/visitor-preferences";
+
+const GoogleAnalytics = dynamic(
+  () => import("@/components/GoogleAnalytics").then((module) => module.GoogleAnalytics),
+  { ssr: false },
+);
+const MetaPixel = dynamic(
+  () => import("@/components/MetaPixel").then((module) => module.MetaPixel),
+  { ssr: false },
+);
+const CortalityReplay = dynamic(
+  () => import("@/components/CortalityReplay").then((module) => module.CortalityReplay),
+  { ssr: false },
+);
 
 export function SiteUtilities() {
   const pathname = usePathname();
   const [progress, setProgress] = useState(0);
   const [showTop, setShowTop] = useState(false);
+  const [loadAnalyticsTools, setLoadAnalyticsTools] = useState(false);
+  const [loadMarketingTools, setLoadMarketingTools] = useState(false);
+  const { preferences, ready } = useVisitorPreferences();
   const showFloatingContact = !["/login", "/signup", "/forgot-password", "/reset-password"].includes(pathname);
+
+  useEffect(() => {
+    if (!ready) return;
+    if (hasOptionalAnalyticsConsent(preferences)) setLoadAnalyticsTools(true);
+    if (hasOptionalMarketingConsent(preferences)) setLoadMarketingTools(true);
+  }, [preferences, ready]);
+
   useEffect(() => {
     let frame = 0;
     const update = () => {
@@ -38,9 +61,8 @@ export function SiteUtilities() {
 
   return <>
     <div className="scroll-progress" style={{ transform: `scaleX(${progress / 100})` }} aria-hidden="true" />
-    <GoogleAnalytics />
-    <MetaPixel />
-    <CortalityReplay />
+    {loadAnalyticsTools ? <><GoogleAnalytics /><CortalityReplay /></> : null}
+    {loadMarketingTools ? <MetaPixel /> : null}
     <ConsentBanner />
     <div className="site-utilities">
       {showFloatingContact ? <Link className="floating-contact" href="/contact" aria-label="Contact AgentNine">Contact</Link> : null}

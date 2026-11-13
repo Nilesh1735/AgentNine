@@ -3,7 +3,7 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...createPublicPageMetadata({
-    title: "Contact",
+    title: "Contact AgentNine About an AI Agent Listing",
     description: "Suggest an AI agent, report a listing issue, or send a correction to AgentNine.",
     path: "/contact",
   }),

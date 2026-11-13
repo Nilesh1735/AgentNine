@@ -18,24 +18,33 @@ export function DeleteAccountForm() {
     }
     setPending(true);
     setMessage("");
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) {
-      setMessage("Sign in again before deleting your account.");
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        setMessage("Sign in again before deleting your account.");
+        return;
+      }
+      const response = await fetch("/api/account/delete", {
+        method: "POST",
+        headers: { authorization: `Bearer ${data.session.access_token}`, "content-type": "application/json" },
+      });
+      const result = await response.json().catch(() => null) as { error?: string } | null;
+      if (!response.ok) {
+        setMessage(result?.error ?? "Could not delete your account.");
+        return;
+      }
+      try {
+        await supabase.auth.signOut();
+      } catch (error) {
+        console.error("Deleted account session could not be cleared locally:", error);
+      }
+      router.replace("/");
+    } catch (error) {
+      console.error("Account deletion request failed:", error);
+      setMessage("Could not complete the account deletion request. Check your connection and try again.");
+    } finally {
       setPending(false);
-      return;
     }
-    const response = await fetch("/api/account/delete", {
-      method: "POST",
-      headers: { authorization: `Bearer ${data.session.access_token}`, "content-type": "application/json" },
-    });
-    const result = await response.json().catch(() => null) as { error?: string } | null;
-    if (!response.ok) {
-      setMessage(result?.error ?? "Could not delete your account.");
-      setPending(false);
-      return;
-    }
-    await supabase.auth.signOut();
-    router.push("/");
   }
 
   return (

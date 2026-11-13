@@ -17,7 +17,7 @@ export default function FeedbackPage() {
 
 export const metadata = {
   ...createPublicPageMetadata({
-    title: "Share feedback",
+    title: "Send Feedback to AgentNine's AI Agent Directory",
     description: "Send feedback about using AgentNine. Public display requires your permission and team approval.",
     path: "/feedback",
   }),
