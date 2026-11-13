@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
 import { isContactDeliveryConfigured, sendContactDelivery } from "@/lib/contact-delivery";
 
@@ -31,7 +31,7 @@ function profileUrl(value: unknown, host: string) {
 }
 
 export async function POST(request: Request) {
-  const client = getClientIp(request);
+  const client = getRateLimitSubject(request, "isolate");
   const ipLimit = rateLimitResponse(
     await checkRequestRateLimit(`contact:${client}`, 5, 60_000),
     "Contact is rate limited. Try again shortly.",

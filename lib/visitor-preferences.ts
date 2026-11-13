@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
+import { writeThemeCookie } from "@/lib/theme-boot";
 
 export type AnalyticsAttribution = Partial<Record<
   "utm_source" | "utm_medium" | "utm_campaign" | "utm_term" | "utm_content",
@@ -23,6 +24,11 @@ export type VisitorPreferences = {
 export type VisitorPreferencePatch = {
   [K in keyof VisitorPreferences]?: VisitorPreferences[K] | null;
 };
+
+export function isPreferencesServiceUnavailable(error: unknown): boolean {
+  return error instanceof Error
+    && /^Preferences could not be (?:loaded|saved) \(503\)$/.test(error.message);
+}
 
 type Snapshot = { preferences: VisitorPreferences; ready: boolean };
 
@@ -56,7 +62,11 @@ function notify() {
 
 function applySnapshot(preferences: VisitorPreferences) {
   snapshot = { preferences, ready: true };
-  if (preferences.theme) document.documentElement.dataset.theme = preferences.theme;
+  if (preferences.theme) {
+    document.documentElement.dataset.theme = preferences.theme;
+    // Mirror into a readable cookie so the next page applies it before paint.
+    writeThemeCookie(preferences.theme);
+  }
   notify();
 }
 
@@ -126,7 +136,12 @@ export function useVisitorPreferences() {
 
   useEffect(() => {
     void loadVisitorPreferences().catch((error: unknown) => {
-      if (process.env.NODE_ENV === "development") console.error("Visitor preferences are unavailable", error);
+      if (process.env.NODE_ENV !== "development") return;
+      if (isPreferencesServiceUnavailable(error)) {
+        console.warn("Visitor preferences are unavailable; browser defaults are in use.");
+      } else {
+        console.error("Visitor preferences are unavailable", error);
+      }
     });
   }, []);
 

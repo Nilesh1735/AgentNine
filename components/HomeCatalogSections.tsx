@@ -15,7 +15,11 @@ export async function HomeCatalogSections() {
     getPublishedNewsPosts().then(
       (posts) => ({ status: "ready" as const, posts }),
       (error: unknown) => {
-        console.error("Homepage news section could not load published posts:", error);
+        if (error instanceof Error && error.message === "Public Supabase configuration is required to load news.") {
+          console.warn("Homepage news is unavailable until public Supabase configuration is provided.");
+        } else {
+          console.error("Homepage news section could not load published posts:", error);
+        }
         return { status: "unavailable" as const, posts: [] };
       },
     ),

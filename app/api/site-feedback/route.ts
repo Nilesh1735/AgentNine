@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { getSupabaseAdminServer } from "@/lib/supabase";
 import { validateSiteFeedbackInput } from "@/lib/site-feedback";
 
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const limitResponse = rateLimitResponse(
-    await checkRequestRateLimit(`site-feedback-public:${getClientIp(request)}`, 60, 60_000),
+    await checkRequestRateLimit(`site-feedback-public:${getRateLimitSubject(request, "isolate")}`, 60, 60_000),
     "Feedback is rate limited. Try again shortly.",
   );
   if (limitResponse) return limitResponse;
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const limitResponse = rateLimitResponse(
-    await checkRequestRateLimit(`site-feedback-submit:${getClientIp(request)}`, 5, 60_000),
+    await checkRequestRateLimit(`site-feedback-submit:${getRateLimitSubject(request, "isolate")}`, 5, 60_000),
     "Feedback is rate limited. Try again shortly.",
   );
   if (limitResponse) return limitResponse;

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import {
   createNewsEditorSession,
   getNewsEditorKey,
   getNewsEditorSession,
+  revokeNewsEditorSession,
   isValidNewsEditorKey,
   newsEditorCookieNames,
   newsEditorCookieOptions,
@@ -13,7 +14,7 @@ import { checkRequestRateLimit } from "@/lib/rate-limit";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
 
 export async function GET(request: NextRequest) {
-  const session = getNewsEditorSession(request);
+  const session = await getNewsEditorSession(request);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   return NextResponse.json({ csrf: session.csrf });
 }
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "News editor authentication is not configured." }, { status: 503 });
   }
   const limitResponse = rateLimitResponse(
-    await checkRequestRateLimit(`news-editor-login:${getClientIp(request)}`, 5, 15 * 60 * 1000),
+    await checkRequestRateLimit(`news-editor-login:${getRateLimitSubject(request, "share")}`, 5, 15 * 60 * 1000),
     "Too many attempts. Try again later.",
   );
   if (limitResponse) return limitResponse;
@@ -60,7 +61,14 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   if (!isTrustedOrigin(request)) return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
-  const response = NextResponse.json({ ok: true });
+  // Clearing cookies alone leaves a captured token valid until it expires.
+  const revoked = await revokeNewsEditorSession(request);
+  const response = revoked
+    ? NextResponse.json({ ok: true })
+    : NextResponse.json(
+      { error: "This browser was signed out, but the server could not revoke copied session tokens. They may remain valid until expiry." },
+      { status: 503 },
+    );
   response.cookies.delete(newsEditorCookieNames.session);
   response.cookies.delete(newsEditorCookieNames.csrf);
   return response;

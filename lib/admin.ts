@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { NextRequest } from "next/server";
 import { getSupabaseAdminServer } from "@/lib/supabase";
-import { getClientIp } from "@/lib/request-security";
 import { checkRequestRateLimit, type RateLimitResult } from "@/lib/rate-limit";
 
 const SESSION_SECONDS = 60 * 60;
@@ -31,11 +30,10 @@ export function isTrustedOrigin(request: NextRequest) {
   });
 }
 
-export function rateLimit(ip: string): Promise<RateLimitResult> {
-  return checkRequestRateLimit(`admin-login:${ip}`, 5, 15 * 60 * 1000);
+/** `subject` comes from getRateLimitSubject and is not necessarily an IP address. */
+export function rateLimit(subject: string): Promise<RateLimitResult> {
+  return checkRequestRateLimit(`admin-login:${subject}`, 5, 15 * 60 * 1000);
 }
-
-export { getClientIp };
 
 export function createAdminSession() {
   const expires = Math.floor(Date.now() / 1000) + SESSION_SECONDS;

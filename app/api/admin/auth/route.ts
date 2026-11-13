@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminCookieOptions, createAdminSession, isTrustedOrigin, rateLimit, revokeAdminSession } from "@/lib/admin";
 import { getSupabaseAdminServer } from "@/lib/supabase";
-import { getClientIp, jsonBodyError, readJsonBody } from "@/lib/request-security";
+import { getClientIp, getRateLimitSubject, jsonBodyError, readJsonBody } from "@/lib/request-security";
 import { rateLimitResponse } from "@/lib/rate-limit-response";
 import { timingSafeStringEqual } from "@/lib/timing-safe";
 
@@ -12,8 +12,12 @@ async function auditLogin(success: boolean, request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   if (!isTrustedOrigin(request)) return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
-  const ip = getClientIp(request);
-  const limitResponse = rateLimitResponse(await rateLimit(ip), "Too many attempts. Try again later.");
+  // Credential endpoint: an unresolved client shares one bucket so brute-force
+  // protection survives, rather than every request getting its own allowance.
+  const limitResponse = rateLimitResponse(
+    await rateLimit(getRateLimitSubject(request, "share")),
+    "Too many attempts. Try again later.",
+  );
   if (limitResponse) return limitResponse;
   const parsed = await readJsonBody<unknown>(request, 2_048);
   if (!parsed.ok) return NextResponse.json(jsonBodyError(parsed), { status: parsed.status });

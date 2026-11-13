@@ -124,7 +124,7 @@ export default function PrivacyPage() {
           Cortality says its replay records mouse, scroll, and click positions, page-layout images,
           and page HTML, while blanking typed text and form values. This includes activity on
           Contact and Join pages. AgentNine has not independently verified the vendor&apos;s capture
-          behavior. This includes activity on Contact and Join pages. Do not submit confidential
+          behavior. Do not submit confidential
           information on these pages while session replay is enabled. Cortality may receive the captured session data and process
           it under its own terms. The replay tag is not activated for signed-in visitors, and
           declining or withdrawing permission

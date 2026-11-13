@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { SiteUtilities } from "@/components/SiteUtilities";
 import { CortalityRouteBoundary } from "@/components/CortalityReplay";
 import { SITE_URL } from "@/lib/site";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme-boot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,10 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  // data-theme carries a server default so the attribute is never absent: six
+  // [data-theme="light"] rules in globals.css depend on it, and a visitor without
+  // JavaScript would otherwise get no theme attribute at all. THEME_BOOT_SCRIPT
+  // overwrites it before first paint, so a dark visitor still sees no flash.
   return (
     <html
       lang="en"
@@ -65,6 +70,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-theme="light"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col"><CortalityRouteBoundary><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></CortalityRouteBoundary></body>
     </html>
   );

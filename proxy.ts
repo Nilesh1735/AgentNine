@@ -57,5 +57,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  // Static assets and the favicon need neither the regional gate nor a CSP header
+  // (a CSP on a subresource is inert), so they are excluded. Pages, API routes and
+  // files under public/ stay in scope: the regional gate must still cover them.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

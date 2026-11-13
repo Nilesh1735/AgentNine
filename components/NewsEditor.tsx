@@ -129,7 +129,15 @@ export function NewsEditor() {
   async function signOut() {
     setError("");
     try {
-      await readResponse<{ ok: boolean }>(await fetch("/api/news/editor/auth", { method: "DELETE" }));
+      const response = await fetch("/api/news/editor/auth", { method: "DELETE" });
+      if (response.status === 503) {
+        setAuthenticated(false);
+        setCsrf("");
+        setPosts([]);
+        setSelected(null);
+        setForm(emptyForm);
+      }
+      await readResponse<{ ok: boolean }>(response);
       setAuthenticated(false);
       setCsrf("");
       setPosts([]);
