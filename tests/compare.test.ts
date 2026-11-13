@@ -35,6 +35,23 @@ describe("comparison setup command signal", () => {
     expect(getSetupCommandPlatforms(agent)).toEqual(["windows", "macos"]);
   });
 
+  it("recognizes setup phases without legacy command arrays", () => {
+    const agent = {
+      os_commands: {},
+      setup_guide: {
+        platforms: {
+          linux: {
+            support: "supported" as const,
+            command_phases: [{ title: "Install", commands: ["npm install example"] }],
+          },
+        },
+      },
+    };
+
+    expect(hasSetupCommands(agent)).toBe(true);
+    expect(getSetupCommandPlatforms(agent)).toEqual(["linux"]);
+  });
+
   it("does not report commands for an explicitly unsupported operating system", () => {
     const agent = {
       os_commands: { linux: [], macos: [], windows: ["install example"] },

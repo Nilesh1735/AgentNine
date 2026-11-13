@@ -8,7 +8,6 @@ export const metadata = {
     description: "Terms for using AgentNine and reviewing listed AI-agent projects.",
     path: "/terms",
   }),
-  robots: { index: false, follow: true },
 };
 
 export default function TermsPage() {

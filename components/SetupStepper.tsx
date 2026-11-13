@@ -46,7 +46,7 @@ export function SetupStepper({ steps, storageKey, sourceUrl }: { steps: string[]
 
   async function saveProgress(next: number) {
     try {
-      await updateVisitorPreferences({ setupProgress: { ...preferences.setupProgress, [storageKey]: next } });
+      await updateVisitorPreferences({ setupProgress: { [storageKey]: next } });
       setProgressError(false);
     } catch (error) {
       console.error("Setup progress could not be saved", error);

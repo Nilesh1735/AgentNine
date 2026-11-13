@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 import { SocialLinks, type SocialLink } from "@/components/SocialLinks";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,8 @@ export interface TeamRevealMember {
 
   image?: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 
   imagePosition?: string;
 
@@ -75,12 +78,13 @@ function Portrait({ member, active, compact }: { member: TeamRevealMember; activ
       />
 
       {member.image ? (
-
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={member.image}
           alt={member.imageAlt ?? member.name}
+          width={member.imageWidth ?? 768}
+          height={member.imageHeight ?? 1024}
           loading="lazy"
+          sizes={compact ? "(max-width: 559px) 46vw, 18vw" : "(max-width: 559px) 46vw, 30vw"}
           draggable={false}
           className={cn(
             "relative block grayscale transition-[filter,opacity] duration-500 ease-out motion-reduce:transition-none",

@@ -105,7 +105,7 @@ describe("SetupGuidePanel official downloads", () => {
     expect(windows).toContain('aria-label="Copy command 1 (Prepare)"');
   });
 
-  it("renders terminal guidance before legacy multi-command sequences", () => {
+  it("renders terminal guidance after legacy multi-command sequences", () => {
     const markup = renderGuide({
       platforms: {
         windows: {
@@ -118,8 +118,8 @@ describe("SetupGuidePanel official downloads", () => {
 
     const windows = getWindowsPanelMarkup(markup);
 
-    expect(windows.indexOf("same terminal")).toBeLessThan(windows.indexOf("Install commands"));
-    expect(windows.indexOf("same terminal")).toBeLessThan(windows.indexOf("git clone"));
+    expect(windows.indexOf("git clone")).toBeLessThan(windows.indexOf("same terminal"));
+    expect(windows.indexOf("npm install")).toBeLessThan(windows.indexOf("same terminal"));
   });
 
   it("does not show a missing-shell-command message when a reviewed official download exists", () => {

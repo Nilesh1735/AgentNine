@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import Sun from "reicon-react/icons/Sun";
 import Moon from "reicon-react/icons/Moon";
 import { updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
@@ -11,6 +11,7 @@ export function ThemeToggle() {
   const { preferences } = useVisitorPreferences();
   const [sessionTheme, setSessionTheme] = useState<Theme | null>(null);
   const [saveFailed, setSaveFailed] = useState(false);
+  const writeVersionRef = useRef(0);
   const theme: Theme = sessionTheme ?? preferences.theme ?? "light";
 
   useLayoutEffect(() => {
@@ -18,16 +19,17 @@ export function ThemeToggle() {
   }, [theme]);
 
   async function toggleTheme() {
+    const writeVersion = ++writeVersionRef.current;
     const current = theme;
     const next: Theme = current === "dark" ? "light" : "dark";
     setSessionTheme(next);
     setSaveFailed(false);
     try {
       await updateVisitorPreferences({ theme: next });
-      setSessionTheme(null);
+      if (writeVersion === writeVersionRef.current) setSessionTheme(null);
     } catch (error) {
       console.error("Theme preference could not be saved", error);
-      setSaveFailed(true);
+      if (writeVersion === writeVersionRef.current) setSaveFailed(true);
     }
   }
 

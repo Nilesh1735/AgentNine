@@ -7,7 +7,6 @@ export const metadata = {
   description: "Review or change optional analytics, session replay, and marketing choices on AgentNine.",
   path: "/privacy/choices",
   }),
-  robots: { index: false, follow: true },
 };
 
 export default function PrivacyChoicesPage() {

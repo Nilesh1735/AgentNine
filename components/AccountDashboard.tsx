@@ -42,8 +42,19 @@ export function AccountDashboard() {
       return;
     }
     let active = true;
-    void supabase.auth.getUser().then(async ({ data }) => {
+    void supabase.auth.getUser().then(async ({ data, error }) => {
       if (!active) return;
+      if (error) {
+        if (error.name === "AuthSessionMissingError") {
+          setAuthenticated(false);
+          setLoading(false);
+          return;
+        }
+        console.error("Account authentication could not be verified:", error);
+        setMessage("Your account could not be loaded right now.");
+        setLoading(false);
+        return;
+      }
       if (!data.user) {
         setAuthenticated(false);
         setLoading(false);
@@ -92,6 +103,7 @@ export function AccountDashboard() {
       <div className="agent-grid">{[0, 1, 2].map((item) => <AccountAgentSkeleton key={item} />)}</div>
     </section>
   </div>;
+  if (authenticated === null && message) return <div className="account-empty" role="alert"><h2>Your account could not be loaded.</h2><p>{message}</p><button className="button button-dark" type="button" onClick={() => window.location.reload()}>Try again</button></div>;
   if (!authenticated) return <div className="account-empty"><h2>Sign in to view saved agents.</h2><Link className="button button-dark" href="/login">Sign in</Link></div>;
   return (
     <div className="account-dashboard">

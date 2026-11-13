@@ -37,7 +37,7 @@ export function SiteFeedbackModeration() {
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [filter, setFilter] = useState<StatusFilter>("pending");
   const [loading, setLoading] = useState(true);
-  const [savingId, setSavingId] = useState("");
+  const [savingIds, setSavingIds] = useState<Set<string>>(() => new Set());
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -66,7 +66,8 @@ export function SiteFeedbackModeration() {
   }, []);
 
   async function updateStatus(row: FeedbackRow, status: SiteFeedbackStatus) {
-    setSavingId(row.id);
+    if (savingIds.has(row.id)) return;
+    setSavingIds((current) => new Set(current).add(row.id));
     setError("");
     setMessage("");
     try {
@@ -88,7 +89,11 @@ export function SiteFeedbackModeration() {
       console.error("Admin feedback update failed:", requestError);
       setError("The moderation service could not be reached. Check your connection and try again.");
     } finally {
-      setSavingId("");
+      setSavingIds((current) => {
+        const next = new Set(current);
+        next.delete(row.id);
+        return next;
+      });
     }
   }
 
@@ -142,22 +147,22 @@ export function SiteFeedbackModeration() {
               </p>
               <div className="admin-feedback-actions">
                 {row.status === "pending" && row.publication_consent ? (
-                  <button className="button button-dark" type="button" disabled={savingId === row.id} onClick={() => void updateStatus(row, "published")}>
-                    {savingId === row.id ? "Saving..." : "Approve and publish"}
+                  <button className="button button-dark" type="button" disabled={savingIds.has(row.id)} onClick={() => void updateStatus(row, "published")}>
+                    {savingIds.has(row.id) ? "Saving..." : "Approve and publish"}
                   </button>
                 ) : null}
                 {row.status === "pending" ? (
-                  <button className="button button-light" type="button" disabled={savingId === row.id} onClick={() => void updateStatus(row, "rejected")}>
+                  <button className="button button-light" type="button" disabled={savingIds.has(row.id)} onClick={() => void updateStatus(row, "rejected")}>
                     Do not publish
                   </button>
                 ) : null}
                 {row.status === "published" ? (
-                  <button className="button button-light" type="button" disabled={savingId === row.id} onClick={() => void updateStatus(row, "rejected")}>
+                  <button className="button button-light" type="button" disabled={savingIds.has(row.id)} onClick={() => void updateStatus(row, "rejected")}>
                     Remove from homepage
                   </button>
                 ) : null}
                 {row.status === "rejected" ? (
-                  <button className="button button-light" type="button" disabled={savingId === row.id} onClick={() => void updateStatus(row, "pending")}>
+                  <button className="button button-light" type="button" disabled={savingIds.has(row.id)} onClick={() => void updateStatus(row, "pending")}>
                     Return to pending
                   </button>
                 ) : null}

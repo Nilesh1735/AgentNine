@@ -10,7 +10,6 @@ export const metadata = {
     description: "Answers about AI-agent listings, setup guides, source details, recorded checks, and what AgentNine verification marks mean.",
     path: "/faq",
   }),
-  robots: { index: false, follow: true },
 };
 
 export default function FaqPage() {

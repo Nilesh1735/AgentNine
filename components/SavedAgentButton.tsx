@@ -62,7 +62,7 @@ export function SavedAgentButton({ agentId, slug }: { agentId: string; slug?: st
   return (
     <div className="save-agent">
       <button type="button" className={`button button-outline save-agent-button${saved ? " is-saved" : ""}`} onClick={toggleSaved} disabled={pending} aria-pressed={saved}>
-        <span aria-hidden="true">{saved ? "Saved" : "Save agent"}</span>
+        <span>{saved ? "Saved" : "Save agent"}</span>
       </button>
       {message ? <p className="save-agent-message" role="status">{message}</p> : null}
     </div>

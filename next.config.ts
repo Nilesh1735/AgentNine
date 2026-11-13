@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.14"],
   productionBrowserSourceMaps: false,
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
   async redirects() {
     return [
       { source: "/refunds", destination: "/terms", permanent: true },

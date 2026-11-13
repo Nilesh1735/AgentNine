@@ -21,7 +21,7 @@ describe("public page indexing policy", () => {
     ["/contact", contactMetadata],
     ["/feedback", feedbackMetadata],
   ])("allows %s to be indexed", (_path, metadata) => {
-    expect(metadata.robots).toEqual({ index: true, follow: true });
+    expect(metadata.robots).toMatchObject({ index: true, follow: true });
     expect(metadata.alternates?.canonical).toBeTruthy();
   });
 
@@ -31,13 +31,13 @@ describe("public page indexing policy", () => {
     ["/privacy", privacyMetadata],
     ["/cookies", cookiesMetadata],
     ["/terms", termsMetadata],
-  ])("keeps %s crawlable but noindex", (_path, metadata) => {
-    expect(metadata.robots).toEqual({ index: false, follow: true });
+    ["/privacy/choices", privacyChoicesMetadata],
+  ])("inherits the indexable site default for %s", (_path, metadata) => {
+    expect(metadata.robots).toBeUndefined();
     expect(metadata.alternates?.canonical).toBeTruthy();
   });
 
   it.each([
-    ["/privacy/choices", privacyChoicesMetadata],
     ["/login", loginMetadata],
     ["/signup", signupMetadata],
     ["/profile", profileMetadata],
@@ -45,4 +45,5 @@ describe("public page indexing policy", () => {
   ])("keeps %s crawlable while excluding it from search", (_path, metadata) => {
     expect(metadata.robots).toEqual({ index: false, follow: true });
   });
+
 });

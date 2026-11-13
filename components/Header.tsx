@@ -91,11 +91,33 @@ export function Header() {
   useEffect(() => {
     const supabase = getSupabaseBrowser();
     if (!supabase) return;
-    void supabase.auth.getUser().then(({ data }) => {
+    let authListenerUpdated = false;
+    const setSignedOut = () => {
+      setSignedIn(false);
+      setUserEmail("");
+    };
+    void supabase.auth.getUser().then(({ data, error }) => {
+      if (authListenerUpdated) return;
+      if (error) {
+        if (error.name === "AuthSessionMissingError") {
+          setSignedOut();
+          return;
+        }
+        console.error("Header authentication state could not be verified", error);
+        return;
+      }
       setSignedIn(Boolean(data.user));
       setUserEmail(data.user?.email ?? "");
+    }).catch((error: unknown) => {
+      if (authListenerUpdated) return;
+      if (error instanceof Error && error.name === "AuthSessionMissingError") {
+        setSignedOut();
+        return;
+      }
+      console.error("Header authentication state could not be verified", error);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      authListenerUpdated = true;
       setSignedIn(Boolean(session?.user));
       setUserEmail(session?.user?.email ?? "");
     });

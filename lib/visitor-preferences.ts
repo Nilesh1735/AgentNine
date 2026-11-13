@@ -30,6 +30,7 @@ const emptyPreferences: VisitorPreferences = {};
 const emptySnapshot: Snapshot = { preferences: emptyPreferences, ready: false };
 let snapshot = emptySnapshot;
 let loading: Promise<void> | null = null;
+let preferenceWriteQueue: Promise<void> = Promise.resolve();
 const listeners = new Set<() => void>();
 
 export function normalizeVisitorPreferences(preferences: VisitorPreferences): VisitorPreferences {
@@ -91,16 +92,26 @@ export async function loadVisitorPreferences() {
 
 export async function updateVisitorPreferences(patch: VisitorPreferencePatch) {
   await loadVisitorPreferences();
-  const response = await fetchPreferences({
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(patch),
-    keepalive: true,
+  const write = preferenceWriteQueue.then(async () => {
+    const effectivePatch: VisitorPreferencePatch = patch.setupProgress && typeof patch.setupProgress === "object"
+      ? {
+          ...patch,
+          setupProgress: { ...snapshot.preferences.setupProgress, ...patch.setupProgress },
+        }
+      : patch;
+    const response = await fetchPreferences({
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(effectivePatch),
+      keepalive: true,
+    });
+    if (!response.ok) throw new Error(`Preferences could not be saved (${response.status})`);
+    const result = await response.json() as { preferences?: VisitorPreferences };
+    applySnapshot(normalizeVisitorPreferences(result.preferences ?? {}));
+    return snapshot.preferences;
   });
-  if (!response.ok) throw new Error(`Preferences could not be saved (${response.status})`);
-  const result = await response.json() as { preferences?: VisitorPreferences };
-  applySnapshot(normalizeVisitorPreferences(result.preferences ?? {}));
-  return snapshot.preferences;
+  preferenceWriteQueue = write.then(() => undefined, () => undefined);
+  return write;
 }
 
 export function useVisitorPreferences() {

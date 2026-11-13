@@ -9,7 +9,6 @@ export const metadata: Metadata = {
     description: "How AgentNine records verification evidence, freshness, and uncertainty.",
     path: "/methodology",
   }),
-  robots: { index: false, follow: true },
 };
 
 export default function MethodologyPage() {

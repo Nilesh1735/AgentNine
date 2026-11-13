@@ -32,8 +32,9 @@ export function CortalityReplay() {
     const supabase = getSupabaseBrowser();
     if (!supabase) return;
     let active = true;
+    let authListenerUpdated = false;
     void supabase.auth.getUser().then(({ data, error }) => {
-      if (!active) return;
+      if (!active || authListenerUpdated) return;
       if (error) {
         if (error.name === "AuthSessionMissingError") {
           authState.current = "signed-out";
@@ -48,10 +49,11 @@ export function CortalityReplay() {
       previousAuthState.current = authState.current;
       setAuthRevision((revision) => revision + 1);
     }).catch((error: unknown) => {
-      if (!active) return;
+      if (!active || authListenerUpdated) return;
       console.error("Cortality eligibility could not be verified", error);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      authListenerUpdated = true;
       const nextState = session?.user ? "signed-in" : "signed-out";
       authState.current = nextState;
       if (previousAuthState.current === "signed-out" && nextState === "signed-in"

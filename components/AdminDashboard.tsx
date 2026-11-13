@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { AdminOperations } from "@/components/AdminOperations";
@@ -115,6 +115,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
   const [authenticated, setAuthenticated] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [verificationSaving, setVerificationSaving] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkChecklist, setBulkChecklist] = useState<Record<string, boolean>>({});
   const [bulkNotes, setBulkNotes] = useState("");
@@ -128,6 +129,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
   const [serviceError, setServiceError] = useState("");
   const [signingIn, setSigningIn] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const loadRequestIdRef = useRef(0);
 
   function handleSessionResponse(response: Response) {
     if (response.status !== 401 && response.status !== 403) return false;
@@ -138,10 +140,12 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
   }
 
   async function load() {
+    const requestId = ++loadRequestIdRef.current;
     setLoading(true);
     setServiceError("");
     try {
       const response = await fetch("/api/admin/agents");
+      if (requestId !== loadRequestIdRef.current) return;
       if (response.status === 401 || response.status === 403) {
         setAuthenticated(false);
         return;
@@ -151,6 +155,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
         return;
       }
       const nextAgents = await response.json() as AdminAgent[];
+      if (requestId !== loadRequestIdRef.current) return;
       setAgents(nextAgents);
       setAuthenticated(true);
       return nextAgents;
@@ -158,7 +163,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
       console.error("Admin catalog request failed:", error);
       setServiceError("The dashboard service could not be reached. Check your connection and try again.");
     } finally {
-      setLoading(false);
+      if (requestId === loadRequestIdRef.current) setLoading(false);
     }
   }
   async function refreshCatalog() {
@@ -243,6 +248,8 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
         setServiceError("Sign out failed. Please try again.");
         return;
       }
+      loadRequestIdRef.current += 1;
+      setLoading(false);
       setAuthenticated(false);
       setAgents([]);
       setSelected(null);
@@ -336,7 +343,9 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
 
   async function saveVerification(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (verificationSaving) return;
     if (!selected || !version.trim()) { setMessage("Select an agent and provide the checked version."); return; }
+    setVerificationSaving(true);
     try {
       const response = await fetch("/api/admin/agents/verifications", {
         method: "POST",
@@ -357,6 +366,8 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
     } catch (error) {
       console.error("Verification save failed:", error);
       setMessage("Verification evidence could not be saved because the dashboard service is unavailable.");
+    } finally {
+      setVerificationSaving(false);
     }
   }
 
@@ -494,7 +505,7 @@ export function AdminDashboard({ categories }: { categories: Category[] }) {
         {(["env_template", "common_errors", "hardware_requirements", "port_mapping", "memory_location", "network_access", "file_access", "first_launch_prompt", "cost_to_run"] as const).map((field) => <label key={field}>{field === "hardware_requirements" ? "Hardware only (CPU, RAM, GPU, disk)" : field.replaceAll("_", " ")}<textarea rows={3} value={form[field]} onChange={(event) => change(field, event.target.value)} /></label>)}
         <div className="admin-form-actions"><button className="button button-light" type="button" onClick={() => setEditorOpen(false)}>Cancel</button><button className="button button-dark" type="submit" disabled={saving}>{saving ? "Saving..." : "Save agent"}</button></div>
       </form>
-      {selected ? <form onSubmit={saveVerification} className="admin-form"><h3>Verification checklist</h3><label>Checked version<input required value={version} onChange={(event) => setVersion(event.target.value)} /></label><label>Source commit SHA (optional)<input value={sourceCommitSha} onChange={(event) => setSourceCommitSha(event.target.value)} maxLength={40} pattern="[0-9a-fA-F]{7,40}" /></label>{checks.map(([field, label]) => <label key={field}><input type="checkbox" checked={checklist[field] ?? false} onChange={(event) => setChecklist((current) => ({ ...current, [field]: event.target.checked }))} /> {label}</label>)}<label>Evidence notes<textarea rows={3} maxLength={4000} value={notes} onChange={(event) => setNotes(event.target.value)} /></label><button className="button button-dark" type="submit">Save checklist</button></form> : null}
+      {selected ? <form onSubmit={saveVerification} className="admin-form"><h3>Verification checklist</h3><label>Checked version<input required value={version} onChange={(event) => setVersion(event.target.value)} /></label><label>Source commit SHA (optional)<input value={sourceCommitSha} onChange={(event) => setSourceCommitSha(event.target.value)} maxLength={40} pattern="[0-9a-fA-F]{7,40}" /></label>{checks.map(([field, label]) => <label key={field}><input type="checkbox" checked={checklist[field] ?? false} onChange={(event) => setChecklist((current) => ({ ...current, [field]: event.target.checked }))} /> {label}</label>)}<label>Evidence notes<textarea rows={3} maxLength={4000} value={notes} onChange={(event) => setNotes(event.target.value)} /></label><button className="button button-dark" type="submit" disabled={verificationSaving}>{verificationSaving ? "Saving checklist..." : "Save checklist"}</button></form> : null}
     </div> : null}
   </div>;
 }

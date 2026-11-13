@@ -2,13 +2,27 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import ArrowRight from "reicon-react/icons/ArrowRight";
 import { MAX_COMPARE_AGENTS, normalizeCompareSlugs, toggleCompareSlug } from "@/lib/compare";
 import { trackEvent } from "@/lib/analytics";
 import { updateVisitorPreferences, useVisitorPreferences } from "@/lib/visitor-preferences";
 
 export function CompareButton({ slug }: { slug: string }) {
+  return (
+    <Suspense fallback={
+      <span className="compare-control" aria-busy="true">
+        <button type="button" className="button button-outline compare-button" disabled aria-pressed={false}>
+          Compare
+        </button>
+      </span>
+    }>
+      <CompareButtonContent slug={slug} />
+    </Suspense>
+  );
+}
+
+function CompareButtonContent({ slug }: { slug: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();

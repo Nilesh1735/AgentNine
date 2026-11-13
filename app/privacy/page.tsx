@@ -8,7 +8,6 @@ export const metadata = {
     description: "How AgentNine handles account, contact, feedback, preference, analytics, and session replay information.",
     path: "/privacy",
   }),
-  robots: { index: false, follow: true },
 };
 
 const processorRows = [

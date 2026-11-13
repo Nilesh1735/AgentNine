@@ -7,6 +7,8 @@ import { serializeJsonLd } from "@/lib/json-ld";
 import { createPublicPageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
+const nileshPortfolioUrl = "https://nileshraj.pro";
+
 const teamMembers = [
   {
     id: "nilesh",
@@ -15,12 +17,15 @@ const teamMembers = [
     expertise: "AI engineer and founder of AgentNine.",
     image: "/nilesh-profile.jpeg",
     imageAlt: "Illustrated black-and-white portrait of Nilesh",
+    imageWidth: 768,
+    imageHeight: 1119,
     imagePosition: "center 18%",
     accent: "var(--blue)",
     socialLinks: [
       { platform: "GitHub", href: "https://github.com/Nilesh1735" },
       { platform: "LinkedIn", href: "https://www.linkedin.com/in/nilesh-raj-ai" },
       { platform: "X", href: "https://x.com/NileshR1735" },
+      { platform: "Portfolio", href: nileshPortfolioUrl, iconSrc: "/nilesh-portfolio-favicon.png" },
     ],
   },
   {
@@ -30,11 +35,14 @@ const teamMembers = [
     expertise: "Leads marketing for AgentNine.",
     image: "/ali-sibtain-profile.webp",
     imageAlt: "Illustrated portrait provided for Ali Sibtain",
+    imageWidth: 768,
+    imageHeight: 1024,
     imagePosition: "center 18%",
     accent: "var(--blue)",
     socialLinks: [
       { platform: "GitHub", href: "https://github.com/alisibtain001-hub" },
       { platform: "LinkedIn", href: "https://www.linkedin.com/in/mohd-ali-sibtain/" },
+      { platform: "Portfolio", href: "https://alisibtain.framer.website", iconSrc: "/ali-portfolio-favicon.png" },
     ],
   },
   {
@@ -44,6 +52,8 @@ const teamMembers = [
     expertise: "Contributes to AgentNine development.",
     image: "/armaan-profile.jpeg",
     imageAlt: "Illustrated black-and-white profile portrait of Armaan Amba",
+    imageWidth: 768,
+    imageHeight: 768,
     imagePosition: "center center",
     profileSize: "compact",
     accent: "var(--blue)",
@@ -58,6 +68,8 @@ const teamMembers = [
     expertise: "Works on performance marketing at AgentNine.",
     image: "/ronit-profile.jpeg",
     imageAlt: "Black-and-white illustrated portrait of Ronit Jaiswal",
+    imageWidth: 768,
+    imageHeight: 789,
     imagePosition: "center center",
     profileSize: "compact",
     profilePosition: "right",
@@ -105,7 +117,7 @@ export default function AboutPage() {
             <div className="founder-actions">
               <Link
                 className="founder-action"
-                href="https://nileshraj-portfolio.vercel.app/"
+                href={nileshPortfolioUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -118,7 +130,7 @@ export default function AboutPage() {
           </div>
           <figure className="founder-portrait">
             <Link
-              href="https://nileshraj-portfolio.vercel.app/"
+              href={nileshPortfolioUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Visit Nilesh’s portfolio (opens in a new tab)"
