@@ -16,7 +16,7 @@ import { VerificationSummary } from "@/components/VerificationSummary";
 import { getAgentTrustState } from "@/lib/trust";
 import { SetupGuidePanel } from "@/components/SetupGuidePanel";
 import { formatCatalogDate, getCompactVersionLabel, getReleaseRecord } from "@/lib/agent-metadata-display";
-import { createPublicPageMetadata } from "@/lib/seo";
+import { createAgentPageTitle, createPublicPageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!agent) return { title: "Agent not found", robots: { index: false, follow: false } };
   const description = `Review ${agent.name}, an open-source AI agent. Check its setup guide, source repository, system requirements, and documented access. ${agent.short_description}`;
   return createPublicPageMetadata({
-    title: `${agent.name} AI Agent Setup Guide`,
+    title: createAgentPageTitle(agent.name),
     description,
     path: `/agents/${agent.slug}`,
     type: "article",

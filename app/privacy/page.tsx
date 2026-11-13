@@ -4,7 +4,7 @@ import { legalConfig } from "@/lib/legal-config";
 
 export const metadata = {
   ...createPublicPageMetadata({
-    title: "Privacy policy",
+    title: "AgentNine Privacy: Data Use and Your Choices",
     description: "How AgentNine handles account, contact, feedback, preference, analytics, and session replay information.",
     path: "/privacy",
   }),

@@ -8,7 +8,7 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const metadata = createPublicPageMetadata({
-  title: "Compare AI agent projects",
+  title: "Compare Open-Source AI Agents: Setup and Access",
   description: "Compare open-source AI agent versions, verification, setup platforms, costs, API requirements, and documented system access.",
   path: "/compare",
 });

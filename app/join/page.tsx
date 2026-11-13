@@ -4,8 +4,8 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...createPublicPageMetadata({
-    title: "Join AgentNine",
-    description: "Propose a contribution to AgentNine’s AI agent directory.",
+    title: "Contribute to the AgentNine AI Agent Directory",
+    description: "Suggest an AI agent, propose a correction, or offer another contribution to AgentNine's AI agent directory.",
     path: "/join",
   }),
   robots: { index: true, follow: true },

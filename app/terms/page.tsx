@@ -4,7 +4,7 @@ import { legalConfig } from "@/lib/legal-config";
 
 export const metadata = {
   ...createPublicPageMetadata({
-    title: "Terms of service",
+    title: "AgentNine Terms for AI Agent Directory Visitors",
     description: "Terms for using AgentNine and reviewing listed AI-agent projects.",
     path: "/terms",
   }),

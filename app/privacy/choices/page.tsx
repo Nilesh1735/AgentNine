@@ -3,7 +3,7 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata = {
   ...createPublicPageMetadata({
-  title: "Privacy choices",
+  title: "Manage AgentNine Privacy and Consent Choices",
   description: "Review or change optional analytics, session replay, and marketing choices on AgentNine.",
   path: "/privacy/choices",
   }),

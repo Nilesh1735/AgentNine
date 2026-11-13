@@ -1,4 +1,5 @@
 import { getSupabaseAdminServer, getSupabasePublicServer } from "@/lib/supabase";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 export type NewsPostStatus = "draft" | "published";
 
@@ -20,8 +21,9 @@ export type NewsPostSummary = Omit<NewsPost, "content_markdown">;
 
 const publicListFields = "id,title,slug,summary,author_name,source_urls,status,published_at,created_at,updated_at";
 const publicFields = `${publicListFields},content_markdown`;
+const PUBLISHED_NEWS_TAG = "news:published";
 
-export async function getPublishedNewsPosts(): Promise<NewsPostSummary[]> {
+const loadPublishedNewsPosts = unstable_cache(async (): Promise<NewsPostSummary[]> => {
   const supabase = getSupabasePublicServer();
   if (!supabase) throw new Error("Public Supabase configuration is required to load news.");
   const { data, error } = await supabase
@@ -34,9 +36,13 @@ export async function getPublishedNewsPosts(): Promise<NewsPostSummary[]> {
     throw new Error("Published news is unavailable.");
   }
   return (data ?? []) as NewsPostSummary[];
+}, ["published-news-list-v1"], { revalidate: 60, tags: [PUBLISHED_NEWS_TAG] });
+
+export function getPublishedNewsPosts(): Promise<NewsPostSummary[]> {
+  return loadPublishedNewsPosts();
 }
 
-export async function getPublishedNewsPost(slug: string): Promise<NewsPost | undefined> {
+const loadPublishedNewsPost = unstable_cache(async (slug: string): Promise<NewsPost | undefined> => {
   const supabase = getSupabasePublicServer();
   if (!supabase) throw new Error("Public Supabase configuration is required to load news.");
   const { data, error } = await supabase
@@ -50,6 +56,14 @@ export async function getPublishedNewsPost(slug: string): Promise<NewsPost | und
     throw new Error("News article is unavailable.");
   }
   return data ? data as NewsPost : undefined;
+}, ["published-news-post-v1"], { revalidate: 60, tags: [PUBLISHED_NEWS_TAG] });
+
+export function getPublishedNewsPost(slug: string): Promise<NewsPost | undefined> {
+  return loadPublishedNewsPost(slug);
+}
+
+export function invalidatePublishedNewsCache() {
+  revalidateTag(PUBLISHED_NEWS_TAG, { expire: 0 });
 }
 
 export async function getAllNewsPosts(): Promise<NewsPost[]> {

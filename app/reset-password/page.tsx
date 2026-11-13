@@ -1,7 +1,13 @@
 import { ResetPasswordForm } from "@/components/RecoveryForm";
 import { AuthPageShell } from "@/components/AuthPageShell";
+import { createPublicPageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Choose a new password", robots: { index: false, follow: false } };
+export const metadata = createPublicPageMetadata({
+  title: "Set a New Password for Your AgentNine Account",
+  description: "Choose a new password for your AgentNine account to restore access to your saved agents and setup tools.",
+  path: "/reset-password",
+  robots: { index: false, follow: false },
+});
 
 export default function ResetPasswordPage() {
   return (

@@ -11,6 +11,8 @@ type PublicPageMetadata = {
 };
 
 const DEFAULT_SOCIAL_IMAGE = "/og-image.png";
+const TITLE_BRAND_SUFFIX = " | AgentNine";
+const MAX_DESCRIPTION_LENGTH = 155;
 const SOCIAL_IMAGES_BY_PATH: Record<string, string> = {
   "/about": "/social-previews/og-about.png",
   "/agents": "/social-previews/og-agents.png",
@@ -34,11 +36,41 @@ const SOCIAL_IMAGES_BY_PATH: Record<string, string> = {
 
 function normalizeDescription(description: string): string {
   const normalized = description.replace(/\s+/g, " ").trim();
-  if (normalized.length <= 160) return normalized;
+  if (normalized.length <= MAX_DESCRIPTION_LENGTH) return normalized;
 
-  const truncated = normalized.slice(0, 157);
+  const truncated = normalized.slice(0, MAX_DESCRIPTION_LENGTH - 3);
   const wordBoundary = truncated.lastIndexOf(" ");
   return `${truncated.slice(0, wordBoundary > 0 ? wordBoundary : truncated.length).trimEnd()}...`;
+}
+
+export function createAgentPageTitle(name: string): string {
+  const title = `${name} AI Agent Setup Guide`;
+  const brandedLength = title.length + TITLE_BRAND_SUFFIX.length;
+  if (brandedLength >= 50) return title;
+
+  const detailedTitle = `${name} AI Agent: Setup, Requirements & Access`;
+  const detailedLength = detailedTitle.length + TITLE_BRAND_SUFFIX.length;
+  if (detailedLength >= 50 && detailedLength <= 60) return detailedTitle;
+
+  const conciseRequirementsTitle = `${name} AI Agent: Requirements`;
+  const conciseRequirementsLength =
+    conciseRequirementsTitle.length + TITLE_BRAND_SUFFIX.length;
+  if (conciseRequirementsLength >= 50 && conciseRequirementsLength <= 60) {
+    return conciseRequirementsTitle;
+  }
+
+  const setupRequirementsTitle = `${name} AI Agent: Setup & Requirements`;
+  const setupRequirementsLength =
+    setupRequirementsTitle.length + TITLE_BRAND_SUFFIX.length;
+  if (setupRequirementsLength >= 50 && setupRequirementsLength <= 60) {
+    return setupRequirementsTitle;
+  }
+
+  const requirementsTitle = `${title}: Requirements`;
+  const requirementsLength = requirementsTitle.length + TITLE_BRAND_SUFFIX.length;
+  return requirementsLength >= 50 && requirementsLength <= 60
+    ? requirementsTitle
+    : title;
 }
 
 export function createPublicPageMetadata({

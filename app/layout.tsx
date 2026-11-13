@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import localFont from "next/font/local";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -19,13 +18,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   preload: false,
-});
-
-const fraunces = localFont({
-  src: "../public/fonts/Fraunces-Variable.ttf",
-  variable: "--font-fraunces",
-  display: "swap",
-  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -71,7 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
       data-scroll-behavior="smooth"
       data-theme="light"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col"><CortalityRouteBoundary><a className="skip-link" href="#main-content">Skip to content</a><Header /><SiteUtilities />{children}<Footer /></CortalityRouteBoundary></body>
     </html>

@@ -8,7 +8,7 @@ import { serializeJsonLd } from "@/lib/json-ld";
 export const dynamic = "force-dynamic";
 
 export const metadata = createPublicPageMetadata({
-  title: "Open-Source AI Agent Listings",
+  title: "Open-Source AI Agent Listings and Setup Guides",
   description: "Browse open-source AI agent listings, then check each project's repository, setup guide, system requirements, and documented access.",
   path: "/agents",
 });
@@ -40,6 +40,17 @@ export default async function AgentsPage() {
       <div className="container">
         <div className="page-heading">
           <h1>All agents.</h1>
+          <p>
+            Browse open-source AI agents with links to their source repositories and available setup
+            information. Check the original project for current instructions. Browse by{" "}
+            <Link href="/categories">category</Link>, search by project details, or compare{" "}
+            <Link href="/compare">setup and access notes</Link> for agents you are considering.
+          </p>
+          <p>
+            AgentNine&apos;s recorded checks are not a security certification or compatibility
+            guarantee. Read the <Link href="/methodology">review method</Link> and confirm current
+            requirements in the project repository.
+          </p>
         </div>
         {result.status === "unavailable" || !agents.length ? (
           <CatalogState result={result} itemLabel="published agents" emptyDescription="No agents are published yet." />

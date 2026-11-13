@@ -5,8 +5,8 @@ import { createPublicPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...createPublicPageMetadata({
-    title: "Trust and methodology",
-    description: "How AgentNine records verification evidence, freshness, and uncertainty.",
+    title: "AgentNine Review Method: Evidence and Freshness",
+    description: "How AgentNine records setup-check evidence, repository freshness, and the limits of its verification process.",
     path: "/methodology",
   }),
 };
@@ -35,6 +35,7 @@ export default function MethodologyPage() {
             <h2>What this is not</h2>
             <p>A listing status is not a license determination, safety certification, security audit, endorsement, or guarantee that the project has stayed unchanged.</p>
             <p>Read the source repository, license, permissions, provider terms, and current issues before running an agent.</p>
+            <p>Recorded checks describe a point in time; confirm current instructions and dependencies in the linked repository.</p>
           </article>
         </section>
         <div className="trust-page-actions">

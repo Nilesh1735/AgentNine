@@ -15,7 +15,7 @@ const teamMembers = [
     name: "Nilesh Raj",
     role: "Founder & Tech Lead",
     expertise: "AI engineer and founder of AgentNine.",
-    image: "/nilesh-profile.jpeg",
+    image: "/nilesh-profile-optimized.webp",
     imageAlt: "Illustrated black-and-white portrait of Nilesh",
     imageWidth: 768,
     imageHeight: 1119,
@@ -33,7 +33,7 @@ const teamMembers = [
     name: "Ali Sibtain",
     role: "Marketing Lead",
     expertise: "Leads marketing for AgentNine.",
-    image: "/ali-sibtain-profile.webp",
+    image: "/ali-sibtain-profile-optimized.webp",
     imageAlt: "Illustrated portrait provided for Ali Sibtain",
     imageWidth: 768,
     imageHeight: 1024,
@@ -50,7 +50,7 @@ const teamMembers = [
     name: "Armaan Amba",
     role: "AI Intern",
     expertise: "Contributes to AgentNine development.",
-    image: "/armaan-profile.jpeg",
+    image: "/armaan-profile-optimized.webp",
     imageAlt: "Illustrated black-and-white profile portrait of Armaan Amba",
     imageWidth: 768,
     imageHeight: 768,
@@ -66,7 +66,7 @@ const teamMembers = [
     name: "Ronit Jaiswal",
     role: "Performance Marketing Executive",
     expertise: "Works on performance marketing at AgentNine.",
-    image: "/ronit-profile.jpeg",
+    image: "/ronit-profile-optimized.webp",
     imageAlt: "Black-and-white illustrated portrait of Ronit Jaiswal",
     imageWidth: 768,
     imageHeight: 789,
@@ -82,8 +82,8 @@ const teamMembers = [
 
 export const metadata = {
   ...createPublicPageMetadata({
-    title: "About",
-    description: "How AgentNine selects, reviews, and maintains AI agent project listings.",
+    title: "About AgentNine: AI Agent Listings and Review",
+    description: "Learn how AgentNine selects AI agent projects, records source and setup information, and maintains listings over time.",
     path: "/about",
   }),
   robots: { index: true, follow: true },
@@ -137,7 +137,7 @@ export default function AboutPage() {
             >
               <FounderPortraitMotion>
                 <Image
-                  src="/nilesh-profile.jpeg"
+                  src="/nilesh-profile-optimized.webp"
                   alt="Illustrated black-and-white profile portrait of Nilesh"
                   width={768}
                   height={1024}

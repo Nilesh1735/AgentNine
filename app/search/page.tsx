@@ -7,7 +7,7 @@ import { createPublicPageMetadata } from "@/lib/seo";
 import { toSearchAgent } from "@/lib/search-agent";
 
 export const metadata = createPublicPageMetadata({
-  title: "Search AI agent projects",
+  title: "Search Open-Source AI Agents and Setup Guides",
   description: "Search open-source AI agent listings by project name, category, description, tags, and setup details.",
   path: "/search",
 });

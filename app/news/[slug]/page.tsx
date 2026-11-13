@@ -20,13 +20,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!post) {
     return { title: "News article not found", robots: { index: false, follow: false } };
   }
-  return createPublicPageMetadata({
+  const metadata = createPublicPageMetadata({
     title: post.title,
     description: post.summary,
     path: `/news/${post.slug}`,
     type: "article",
     robots: { index: true, follow: true },
   });
+  return post.title.length + " | AgentNine".length > 60 && post.title.length <= 60
+    ? { ...metadata, title: { absolute: post.title } }
+    : metadata;
 }
 
 export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
